@@ -3775,19 +3775,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "wang-file-searcher"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-opener",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "tempfile"
 version = "3.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5276,4 +5263,17 @@ dependencies = [
  "static_assertions",
  "syn 2.0.100",
  "winnow 0.7.6",
+]
+
+[[package]]
+name = "文件搜索工具"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-opener",
+ "tracing",
+ "tracing-subscriber",
 ]
