@@ -13,6 +13,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     init_logger();
     tauri::Builder::default()
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
             #[cfg(debug_assertions)] // 仅在调试构建时包含此代码
             {
