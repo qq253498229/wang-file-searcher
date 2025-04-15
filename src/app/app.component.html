@@ -1,10 +1,1 @@
-<div class="search-input">
-  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-    <input type="text" nz-input [(ngModel)]="searchText" (keyup.enter)="search()" #searchInputRef/>
-  </nz-input-group>
-  <ng-template #suffixIconButton>
-    <button nz-button nzType="primary" nzSearch>
-      <nz-icon nzType="search"/>
-    </button>
-  </ng-template>
-</div>
+<app-content-input-group (onTextChange)="inputChange($event)"></app-content-input-group>

@@ -1,45 +1,29 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared/shared.module';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-import { listen } from '@tauri-apps/api/event';
+import { ContentInputGroupComponent } from './pages/content-input-group/content-input-group.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, SharedModule, NzMenuModule],
+  imports: [CommonModule, SharedModule, ContentInputGroupComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  searchText = ``;
-  @ViewChild('searchInputRef') searchInputRef!: ElementRef;
+  param: {
+    inputText?: string
+  } = {};
 
-  async ngOnInit() {
-    await this.globalRegisterShortcut();
+  ngOnInit(): void {
   }
 
-  async globalRegisterShortcut() {
-    await this.registerShortcut();
-    await listen('tauri://blur', async event => {
-      await unregisterAll();
-    });
-    await listen('tauri://focus', async event => {
-      await this.registerShortcut();
-    });
-  }
-
-  async registerShortcut() {
-    await unregisterAll();
-    await register('CommandOrControl+/', (e) => {
-      if (e.state === 'Released') {
-        this.searchInputRef.nativeElement.focus();
-      }
-    });
+  inputChange($event: string) {
+    this.param.inputText = $event;
+    this.search();
   }
 
   search() {
-    console.log('search', this.searchText);
+    console.log('search', this.param);
   }
 }
