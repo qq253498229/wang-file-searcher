@@ -1,1 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+@import "ng-zorro-antd/ng-zorro-antd.dark.min.css";
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+
+
+  .top-input-group {
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .middle-group {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+
+    .left-option-group {
+      min-width: 400px;
+      max-width: 750px;
+      padding: 16px;
+      overflow-y: auto;
+      position: relative;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .right-result-group {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+  }
+
+}

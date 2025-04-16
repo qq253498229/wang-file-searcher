@@ -5,7 +5,7 @@ import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 
 @Component({
-  selector: 'app-content-input-group',
+  selector: 'wang-content-input-group',
   imports: [
     CommonModule, SharedModule,
   ],

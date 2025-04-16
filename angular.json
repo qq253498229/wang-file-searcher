@@ -11,7 +11,8 @@
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss",
-          "skipTests": true
+          "skipTests": true,
+          "inlineStyle": true
         },
         "@schematics/angular:class": {
           "skipTests": true
@@ -37,7 +38,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "wang",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
