@@ -10,7 +10,7 @@ import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
     CommonModule, SharedModule,
   ],
   templateUrl: './content-input-group.component.html',
-  styleUrl: './content-input-group.component.scss',
+  styles: [],
 })
 export class ContentInputGroupComponent implements OnInit {
   searchText = ``;

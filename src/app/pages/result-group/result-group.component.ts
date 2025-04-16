@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'wang-result-group',
   imports: [],
   templateUrl: './result-group.component.html',
-  styleUrl: './result-group.component.scss'
+  styles: [],
 })
 export class ResultGroupComponent {
 

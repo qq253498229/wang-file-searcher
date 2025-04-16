@@ -6,7 +6,7 @@ import { SharedModule } from '../../shared/shared.module';
   selector: 'wang-location-group',
   imports: [CommonModule, SharedModule],
   templateUrl: './location-group.component.html',
-  styleUrl: './location-group.component.scss',
+  styles: [],
 })
 export class LocationGroupComponent {
 
