@@ -1,18 +1,14 @@
+use crate::command::register_all_commands;
 use crate::utils::init_logger;
 use tauri::Manager;
 
-mod utils;
-
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+pub mod command;
+pub mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     init_logger();
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
             #[cfg(debug_assertions)] // 仅在调试构建时包含此代码
@@ -22,8 +18,9 @@ pub fn run() {
             }
             Ok(())
         })
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
+        .plugin(tauri_plugin_opener::init());
+    builder = register_all_commands(builder);
+    builder
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

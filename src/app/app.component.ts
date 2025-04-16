@@ -13,19 +13,6 @@ import { ResultGroupComponent } from './pages/result-group/result-group.componen
   styles: [],
 })
 export class AppComponent implements OnInit {
-  param: {
-    inputText?: string
-  } = {};
-
   ngOnInit(): void {
-  }
-
-  inputChange($event: string) {
-    this.param.inputText = $event;
-    this.search();
-  }
-
-  search() {
-    console.log('search', this.param);
   }
 }

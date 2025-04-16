@@ -1,3 +1,5 @@
+pub mod file_utils;
+
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 

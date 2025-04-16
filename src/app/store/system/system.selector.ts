@@ -2,9 +2,9 @@ import { createSelector } from '@ngxs/store';
 import { SystemState, SystemStateModel } from './system.state';
 
 export class SystemSelector {
-  static testState() {
+  static result() {
     return createSelector([SystemState], (state: SystemStateModel) => {
-        return state.testState;
+        return state.result;
       },
     );
   }

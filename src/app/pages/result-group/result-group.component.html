@@ -1,1 +1,3 @@
-<p>result-group works!</p>
+@for (item of result(); track item.id) {
+  <p>{{ item.path }}</p>
+}

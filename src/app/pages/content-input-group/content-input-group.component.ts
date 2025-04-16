@@ -1,21 +1,21 @@
-import { Component, ElementRef, OnInit, output, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
+import { Store } from '@ngxs/store';
+import { Search } from '../../store/system/system.action';
 
 @Component({
   selector: 'wang-content-input-group',
-  imports: [
-    CommonModule, SharedModule,
-  ],
+  imports: [CommonModule, SharedModule],
   templateUrl: './content-input-group.component.html',
   styles: [],
 })
 export class ContentInputGroupComponent implements OnInit {
   searchText = ``;
   @ViewChild('searchInputRef') searchInputRef!: ElementRef;
-  onTextChange = output<string>();
+  store = inject(Store);
 
   async ngOnInit() {
     await this.globalRegisterShortcut();
@@ -41,6 +41,6 @@ export class ContentInputGroupComponent implements OnInit {
   }
 
   search() {
-    this.onTextChange.emit(this.searchText.trim());
+    this.store.dispatch(new Search(this.searchText.trim()));
   }
 }

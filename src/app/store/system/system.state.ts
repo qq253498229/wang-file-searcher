@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { SystemAction } from './system.action';
+import { Search } from './system.action';
+import { invoke } from '@tauri-apps/api/core';
 
 export interface SystemStateModel {
-  testState: number;
+  result: any[];
 }
 
 @State<SystemStateModel>({
   name: 'system',
   defaults: {
-    testState: 0,
+    result: [],
   },
 })
 @Injectable({
@@ -21,10 +22,12 @@ export class SystemState implements NgxsOnInit {
     ctx.patchState({testState: state.testState || 0});
   }
 
-  @Action(SystemAction.ChangeTestState)
-  ChangeTestState(ctx: StateContext<SystemStateModel>) {
-    let state = ctx.getState();
-    ctx.patchState({testState: state.testState + 1});
+  @Action(Search)
+  Search(ctx: StateContext<SystemStateModel>, {text}: Search) {
+    console.log('Search==', text);
+    invoke('search', {options: {text, path: []}}).then((result) => {
+      console.log('result==', result);
+    });
   }
 
 }

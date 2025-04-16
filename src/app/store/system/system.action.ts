@@ -1,5 +1,6 @@
-export namespace SystemAction {
-  export class ChangeTestState {
-    static readonly type = `[system] 改变测试状态`;
+export class Search {
+  static readonly type = `[system] 搜索`;
+
+  constructor(public text: string) {
   }
 }
