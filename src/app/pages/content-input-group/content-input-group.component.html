@@ -1,10 +1,13 @@
-<div class="search-input">
-  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-    <input type="text" nz-input [(ngModel)]="searchText" (keyup.enter)="search()" #searchInputRef/>
-  </nz-input-group>
-  <ng-template #suffixIconButton>
-    <button nz-button nzType="primary" nzSearch>
-      <nz-icon nzType="search"/>
-    </button>
-  </ng-template>
-</div>
+<form [formGroup]="searchTextForm" ngxsForm="system.searchTextForm">
+  <div class="search-input">
+    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+      <input type="text" nz-input formControlName="text"
+             (keyup.enter)="search()" #searchInputRef/>
+    </nz-input-group>
+    <ng-template #suffixIconButton>
+      <button nz-button nzType="primary" type="button" nzSearch (click)="search()">
+        <nz-icon nzType="search"/>
+      </button>
+    </ng-template>
+  </div>
+</form>

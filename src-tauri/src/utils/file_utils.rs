@@ -1,7 +1,8 @@
-use std::fs;
+use resolve_path::PathResolveExt;
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
+use walkdir::WalkDir;
 
 /// 判断文件是否是二进制文件
 pub fn is_binary_file<P: AsRef<Path>>(path: P) -> std::io::Result<bool> {
@@ -47,25 +48,30 @@ pub fn find_string_in_file<P: AsRef<Path>>(path: P, target: &str) -> std::io::Re
 }
 
 /// 读取目录内的全部文件
-pub fn read_dir_files(path: &PathBuf) -> anyhow::Result<Vec<PathBuf>> {
+pub fn read_dir_files(path: PathBuf) -> anyhow::Result<Vec<PathBuf>> {
     let mut files = vec![];
     if path.is_dir() {
-        for entry in fs::read_dir(&path)? {
-            let entry = entry?;
-            let path = entry.path();
-            if path.is_dir() {
-                files.append(&mut read_dir_files(&path)?);
-            } else if path.is_file() {
-                files.push(path);
+        let walker = WalkDir::new(&path).into_iter();
+        for entry in walker.filter_map(|e| e.ok()) {
+            let new_path = entry.into_path();
+            if new_path.is_dir() {
+                if new_path == path {
+                    continue;
+                }
+                files.append(&mut read_dir_files(new_path)?);
+            } else if new_path.is_file() {
+                files.push(new_path);
             }
         }
     } else if path.is_file() {
-        files.push(path.to_path_buf());
+        files.push(path);
     }
     Ok(files)
 }
 /// 合并路径，忽略子目录，只保留最上层的父目录
 pub fn merge_path(list: &mut Vec<PathBuf>, new_path: PathBuf) -> anyhow::Result<()> {
+    let new_path = new_path.resolve();
+    let new_path = PathBuf::from(new_path);
     let mut has_parent = false;
     let mut has_child = false;
     // 检查路径关系
@@ -92,6 +98,10 @@ pub fn merge_path(list: &mut Vec<PathBuf>, new_path: PathBuf) -> anyhow::Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::init_logger;
+    use std::fs;
+    use tracing::info;
+    use walkdir::WalkDir;
 
     #[test]
     fn test_find_string_in_file() -> anyhow::Result<()> {
@@ -106,7 +116,84 @@ mod tests {
         merge_path(&mut list, PathBuf::from("tests/txt/sub-folder-1-1"))?;
         merge_path(&mut list, PathBuf::from("tests/txt"))?;
         assert_eq!(1, list.len());
-        assert_eq!("tests/txt", list[0].to_str().unwrap());
+        Ok(())
+    }
+    #[test]
+    fn test_merge_path1() -> anyhow::Result<()> {
+        let mut list = vec![];
+        merge_path(&mut list, PathBuf::from("~"))?;
+        assert_eq!(1, list.len());
+        Ok(())
+    }
+    #[test]
+    #[ignore]
+    fn test_read_local_file() -> anyhow::Result<()> {
+        let result = fs::read_dir("/Users/wangbin")?;
+        println!("{:?}", result);
+        let result = fs::read_dir(
+            "/Users/wangbin/src/own/wang-file-searcher/wang-file-searcher/src-tauri/src/command",
+        )?;
+        println!("{:?}", result);
+        Ok(())
+    }
+
+    #[test]
+    #[ignore]
+    fn test_readable() -> anyhow::Result<()> {
+        let path = "/Users/wangbin/.wine/dosdevices/z:/usr/sbin/authserver";
+        let result = fs::read_dir(path);
+        println!("{:?}", result);
+        let metadata = fs::metadata(path)?;
+        println!("metadata:{:?}", metadata);
+        // metadata.permissions().readonly();
+        Ok(())
+    }
+
+    #[test]
+    #[ignore]
+    fn test_read_dir_files() -> anyhow::Result<()> {
+        init_logger();
+        // let home_dir = home::home_dir().unwrap();
+        // let home_dir = home_dir.to_str().unwrap();
+        let mut list = vec![];
+        merge_path(&mut list, PathBuf::from("~"))?;
+        let path = &list[0];
+
+        // let path = PathBuf::from("D:\\src");
+        // let result = read_dir_files(&path)?;
+
+        let dir = fs::read_dir(path)?;
+        for entry in dir {
+            let entry = entry?;
+            let path = entry.path();
+            info!("path:{:?}", path);
+        }
+        Ok(())
+    }
+
+    #[test]
+    #[ignore]
+    fn test_read_dir_files1() -> anyhow::Result<()> {
+        init_logger();
+        let path = "~".resolve();
+        for entry in WalkDir::new(path) {
+            let entry = entry?;
+            let path = entry.path();
+            info!("{:?}", path);
+        }
+        Ok(())
+    }
+    #[test]
+    #[ignore]
+    fn test_read_dir_files2() -> anyhow::Result<()> {
+        init_logger();
+        let path = "~".resolve();
+        let walker = WalkDir::new(&path).into_iter();
+        info!("{:?}", walker);
+        for entry in walker.filter_map(|e| e.ok()) {
+            let path = entry.into_path();
+            info!("{:?}", path);
+        }
         Ok(())
     }
 }

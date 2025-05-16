@@ -12,7 +12,7 @@ import { SystemSelector } from '../../store/system/system.selector';
 })
 export class ResultGroupComponent implements OnInit {
   store = inject(Store);
-  result = this.store.selectSignal(SystemSelector.result());
+  searchResult = this.store.selectSignal(SystemSelector.searchResult());
 
   ngOnInit() {
 
