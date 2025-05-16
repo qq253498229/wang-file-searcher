@@ -19,6 +19,10 @@
     <td>{{ data.create_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
     <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
     <td>
+      <button type="button" nz-button nzType="primary" nzSize="small"
+              (click)="localOpen(data)">
+        本地浏览
+      </button>
     </td>
   </tr>
   </tbody>
