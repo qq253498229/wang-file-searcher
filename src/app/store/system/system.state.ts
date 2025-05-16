@@ -43,7 +43,8 @@ export class SystemState implements NgxsOnInit {
       text: ctx.getState().searchTextForm.model.text.trim(),
       options: {
         // includes: ctx.getState().searchOptionForm.model.includes,
-        includes: [{path: `D:\\src`, path_type: 'FullPath'}],
+        includes: [{path: `D:\\src\\own\\wang-file-searcher\\src\\assets`, path_type: 'FullPath'}],
+        // includes: [{path: `D:\\src`, path_type: 'FullPath'}],
         excludes: [
           {path: 'target', path_type: 'PartPath'},
           {path: 'node_modules', path_type: 'PartPath'},
@@ -56,9 +57,7 @@ export class SystemState implements NgxsOnInit {
       },
     };
     console.log('options', options);
-    invoke('search', {options}).then((result) => {
-      console.log('result==', result);
-    });
+    invoke('search', {options}).then();
     // return ctx.dispatch([new UpdateFormValue({path: 'system.searchTextForm', value: {text: ''}})]);
   }
 
@@ -71,7 +70,6 @@ export class SystemState implements NgxsOnInit {
     if (ctx.getState().searchResult.length > 10000) {
       return ctx.dispatch(new StopSearch());
     }
-    console.log('receiveResult==', data.payload);
     let newState = immutable.push(ctx.getState(),
       ['searchResult'], data.payload);
     ctx.setState(newState);

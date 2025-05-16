@@ -6,7 +6,8 @@ import { LocationGroupComponent } from './pages/location-group/location-group.co
 import { ResultGroupComponent } from './pages/result-group/result-group.component';
 import { listen } from '@tauri-apps/api/event';
 import { Store } from '@ngxs/store';
-import { ReceiveResult } from './store/system/system.action';
+import { ReceiveResult, StopSearch } from './store/system/system.action';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-root',
@@ -17,11 +18,13 @@ import { ReceiveResult } from './store/system/system.action';
 })
 export class AppComponent implements OnInit {
   store = inject(Store);
+  notify = inject(NzNotificationService);
 
   ngOnInit(): void {
     listen(`search_result`, (e: any) => {
-      if (!!e.is_done && e.is_done === true) {
-        alert('搜索完成');
+      if (!!e.payload.is_done && e.payload.is_done === true) {
+        this.notify.success(`搜索完成`, ``, {nzDuration: 0});
+        this.store.dispatch(new StopSearch());
       } else {
         this.store.dispatch(new ReceiveResult(e));
       }

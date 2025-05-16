@@ -1,6 +1,7 @@
 use crate::command::entity::{PathType, SearchOptions, SearchResult};
 use crate::utils::file_utils::{find_string_in_file, merge_path};
 use crate::AppState;
+use serde_json::json;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::{fs, thread};
@@ -36,6 +37,7 @@ fn search_files(options: &SearchOptions, app: &AppHandle) -> anyhow::Result<()> 
         }
         let _ = search_and_send_event(options, path, search_text, app);
     }
+    app.emit("search_result", json!({"is_done":true}))?;
     Ok(())
 }
 /// 检查搜索状态，如果已经停止了则返回true
