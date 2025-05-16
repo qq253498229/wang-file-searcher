@@ -15,33 +15,34 @@ export class ResultGroupComponent implements OnInit {
   store = inject(Store);
   searchResult = this.store.selectSignal(SystemSelector.searchResult());
 
-// <tr>
-// <th>路径</th>
-// <th>大小</th>
-// <th>创建时间</th>
-// <th>更新时间</th>
-// </tr>
-
   listOfColumn = [
     {
       title: '路径',
-      compare: (a: any, b: any) => a.name.localeCompare(b.name),
+      compare: (a: any, b: any) => a.path.localeCompare(b.path),
       priority: false,
+      sortDirections: ['descend', 'ascend', null],
+      sortOrder: null,
     },
     {
       title: '大小',
       compare: (a: any, b: any) => a.size - b.size,
       priority: false,
+      sortDirections: ['descend', 'ascend', null],
+      sortOrder: null,
     },
     {
       title: '创建时间',
       compare: (a: any, b: any) => a.create_at - b.create_at,
       priority: 2,
+      sortDirections: ['descend', 'ascend', null],
+      sortOrder: null,
     },
     {
       title: '更新时间',
       compare: (a: any, b: any) => a.update_at - b.update_at,
       priority: 1,
+      sortDirections: ['descend', 'ascend', null],
+      sortOrder: 'descend',
     },
   ];
 

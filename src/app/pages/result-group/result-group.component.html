@@ -2,7 +2,10 @@
   <thead>
   <tr>
     @for (column of listOfColumn; track column) {
-      <th [nzSortFn]="column.compare" [nzSortPriority]="column.priority">
+      <th [nzSortFn]="column.compare"
+          [nzSortPriority]="column.priority"
+          [nzSortOrder]="column.sortOrder"
+      >
         {{ column.title }}
       </th>
     }

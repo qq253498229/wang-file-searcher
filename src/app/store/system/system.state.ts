@@ -64,6 +64,10 @@ export class SystemState implements NgxsOnInit {
   @Action(ReceiveResult)
   receiveResult(ctx: StateContext<SystemStateModel>, {data}: ReceiveResult) {
     console.log('receiveResult==', data);
+    let path = data.payload.path;
+    if (ctx.getState().searchResult.findIndex(s => s.path === path) !== -1) {
+      return;
+    }
     let newState = immutable.insert(ctx.getState(),
       ['searchResult'], data.payload);
     console.log('newState==', newState);
