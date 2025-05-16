@@ -4,6 +4,7 @@ import { ReceiveResult, Search, StopSearch } from './system.action';
 import { USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
 import * as immutable from 'object-path-immutable';
+import { Observable } from 'rxjs';
 
 export interface SystemStateModel {
   searchResult: any[];
@@ -67,7 +68,11 @@ export class SystemState implements NgxsOnInit {
     if (ctx.getState().searchResult.findIndex(s => s.path === path) !== -1) {
       return;
     }
-    let newState = immutable.insert(ctx.getState(),
+    if (ctx.getState().searchResult.length > 10000) {
+      return ctx.dispatch(new StopSearch());
+    }
+    console.log('receiveResult==', data.payload);
+    let newState = immutable.push(ctx.getState(),
       ['searchResult'], data.payload);
     ctx.setState(newState);
   }
