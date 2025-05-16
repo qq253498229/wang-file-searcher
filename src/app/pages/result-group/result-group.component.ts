@@ -42,7 +42,7 @@ export class ResultGroupComponent implements OnInit {
       compare: (a: any, b: any) => a.update_at - b.update_at,
       priority: 1,
       sortDirections: ['descend', 'ascend', null],
-      sortOrder: 'descend',
+      sortOrder: null,
     },
   ];
 
