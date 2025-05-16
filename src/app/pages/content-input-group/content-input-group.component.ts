@@ -55,4 +55,12 @@ export class ContentInputGroupComponent implements OnInit {
   stopSearch() {
     this.store.dispatch(new StopSearch());
   }
+
+  get searchText() {
+    return this.searchTextForm.getRawValue().text;
+  }
+
+  set searchText(value) {
+    this.searchTextForm.patchValue({text: value});
+  }
 }
