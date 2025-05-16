@@ -23,7 +23,6 @@ export class AppComponent implements OnInit {
       if (!!e.is_done && e.is_done === true) {
         alert('搜索完成');
       } else {
-        console.log('callback===', e);
         this.store.dispatch(new ReceiveResult(e));
       }
     }).then();
