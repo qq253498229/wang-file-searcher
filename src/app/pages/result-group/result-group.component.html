@@ -1,3 +1,21 @@
-@for (item of searchResult(); track item.id) {
-  <p>{{ item.path }}</p>
-}
+<nz-table #basicTable [nzData]="searchResult()">
+  <thead>
+  <tr>
+    @for (column of listOfColumn; track column) {
+      <th [nzSortFn]="column.compare" [nzSortPriority]="column.priority">
+        {{ column.title }}
+      </th>
+    }
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let data of basicTable.data">
+    <td>{{ data.path }}</td>
+    <td>{{ data.size|fileSize }}</td>
+    <td>{{ data.create_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
+    <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
+    <td>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

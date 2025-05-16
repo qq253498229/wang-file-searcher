@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { Search } from './system.action';
+import { ReceiveResult, Search } from './system.action';
 import { USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
+import * as immutable from 'object-path-immutable';
 
 export interface SystemStateModel {
   searchResult: any[];
   searchTextForm: any;
   searchOptionForm: any;
+  searchStatus: boolean;
 }
 
 @State<SystemStateModel>({
@@ -16,6 +18,7 @@ export interface SystemStateModel {
     searchResult: [],
     searchTextForm: {},
     searchOptionForm: {model: {includes: [USER_HOME_FOLDER]}},
+    searchStatus: false,
   },
 })
 @Injectable({
@@ -28,11 +31,13 @@ export class SystemState implements NgxsOnInit {
       searchResult: state.searchResult || [],
       searchForm: state.searchForm || {},
       searchOptionForm: state.searchOptionForm || {model: {includes: [USER_HOME_FOLDER]}},
+      searchStatus: state.searchStatus || false,
     });
   }
 
   @Action(Search)
   Search(ctx: StateContext<SystemStateModel>) {
+    ctx.patchState({searchStatus: true});
     let options = {
       text: ctx.getState().searchTextForm.model.text.trim(),
       options: {
@@ -45,6 +50,7 @@ export class SystemState implements NgxsOnInit {
           {path: '.angular', path_type: 'PartPath'},
           {path: '.vscode', path_type: 'PartPath'},
           {path: 'dist', path_type: 'PartPath'},
+          // {path: 'yarn.lock', path_type: 'PartPath'},
         ],
       },
     };
@@ -53,6 +59,15 @@ export class SystemState implements NgxsOnInit {
       console.log('result==', result);
     });
     // return ctx.dispatch([new UpdateFormValue({path: 'system.searchTextForm', value: {text: ''}})]);
+  }
+
+  @Action(ReceiveResult)
+  receiveResult(ctx: StateContext<SystemStateModel>, {data}: ReceiveResult) {
+    console.log('receiveResult==', data);
+    let newState = immutable.insert(ctx.getState(),
+      ['searchResult'], data.payload);
+    console.log('newState==', newState);
+    ctx.setState(newState);
   }
 
 }
