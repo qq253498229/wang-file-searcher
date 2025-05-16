@@ -1,4 +1,5 @@
-<nz-table #basicTable [nzData]="searchResult()">
+<nz-table #basicTable [nzData]="searchResult()"
+          [nzFrontPagination]="false">
   <thead>
   <tr>
     @for (column of listOfColumn; track column) {
