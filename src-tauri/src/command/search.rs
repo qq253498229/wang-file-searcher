@@ -1,15 +1,28 @@
 use crate::command::entity::{PathType, SearchOptions, SearchResult};
 use crate::utils::file_utils::{find_string_in_file, merge_path};
+use crate::AppState;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use std::{fs, thread};
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, Manager};
 use walkdir::WalkDir;
 
 #[tauri::command]
 pub fn search(options: SearchOptions, app: AppHandle) -> Result<(), String> {
+    let app_handle = app.clone();
+    let state = app_handle.state::<Mutex<AppState>>();
+    let mut state = state.lock().unwrap();
+    state.is_stop = false;
     thread::spawn(move || {
         let _ = search_files(&options, &app);
     });
+    Ok(())
+}
+#[tauri::command]
+pub fn stop_search(app: AppHandle) -> Result<(), String> {
+    let state = app.state::<Mutex<AppState>>();
+    let mut state = state.lock().unwrap();
+    state.is_stop = true;
     Ok(())
 }
 
@@ -18,9 +31,18 @@ fn search_files(options: &SearchOptions, app: &AppHandle) -> anyhow::Result<()> 
     let search_text = options.text.as_ref().unwrap();
     let all_file_path = find_all_path(&options)?;
     for path in all_file_path {
+        if check_search_status_is_stop(&app) {
+            break;
+        }
         let _ = search_and_send_event(options, path, search_text, app);
     }
     Ok(())
+}
+/// 检查搜索状态，如果已经停止了则返回true
+fn check_search_status_is_stop(app: &AppHandle) -> bool {
+    let state = app.state::<Mutex<AppState>>();
+    let state = state.lock().unwrap();
+    state.is_stop
 }
 /// 搜索文件，如果搜到了则向前端发送事件
 fn search_and_send_event(
@@ -29,6 +51,9 @@ fn search_and_send_event(
     search_text: &str,
     app: &AppHandle,
 ) -> anyhow::Result<()> {
+    if check_search_status_is_stop(&app) {
+        return Ok(());
+    }
     // info!("search_and_send_event:{path:?}");
     for exclude in &options.options.excludes {
         match exclude.path_type {

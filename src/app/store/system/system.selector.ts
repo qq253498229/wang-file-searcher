@@ -8,4 +8,11 @@ export class SystemSelector {
       },
     );
   }
+
+  static searchIsStop() {
+    return createSelector([SystemState], (state: SystemStateModel) => {
+        return state.searchIsStop;
+      },
+    );
+  }
 }

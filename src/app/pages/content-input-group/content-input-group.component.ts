@@ -4,8 +4,9 @@ import { SharedModule } from '../../shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { Store } from '@ngxs/store';
-import { Search } from '../../store/system/system.action';
+import { Search, StopSearch } from '../../store/system/system.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SystemSelector } from '../../store/system/system.selector';
 
 @Component({
   selector: 'wang-content-input-group',
@@ -22,6 +23,7 @@ export class ContentInputGroupComponent implements OnInit {
   searchTextForm: FormGroup = this.fb.group({
     text: ['', Validators.required],
   });
+  searchIsStop = this.store.selectSignal(SystemSelector.searchIsStop());
 
   async ngOnInit() {
     await this.globalRegisterShortcut();
@@ -48,5 +50,9 @@ export class ContentInputGroupComponent implements OnInit {
 
   search() {
     this.store.dispatch(new Search());
+  }
+
+  stopSearch() {
+    this.store.dispatch(new StopSearch());
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { ReceiveResult, Search } from './system.action';
+import { ReceiveResult, Search, StopSearch } from './system.action';
 import { USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
 import * as immutable from 'object-path-immutable';
@@ -9,7 +9,7 @@ export interface SystemStateModel {
   searchResult: any[];
   searchTextForm: any;
   searchOptionForm: any;
-  searchStatus: boolean;
+  searchIsStop: boolean;
 }
 
 @State<SystemStateModel>({
@@ -18,7 +18,7 @@ export interface SystemStateModel {
     searchResult: [],
     searchTextForm: {},
     searchOptionForm: {model: {includes: [USER_HOME_FOLDER]}},
-    searchStatus: false,
+    searchIsStop: true,
   },
 })
 @Injectable({
@@ -28,16 +28,16 @@ export class SystemState implements NgxsOnInit {
   ngxsOnInit(ctx: StateContext<any>): void {
     let state = ctx.getState();
     ctx.patchState({
-      searchResult: state.searchResult || [],
+      searchResult: [],
       searchForm: state.searchForm || {},
       searchOptionForm: state.searchOptionForm || {model: {includes: [USER_HOME_FOLDER]}},
-      searchStatus: state.searchStatus || false,
+      searchIsStop: state.searchIsStop || true,
     });
   }
 
   @Action(Search)
   Search(ctx: StateContext<SystemStateModel>) {
-    ctx.patchState({searchStatus: true});
+    ctx.patchState({searchIsStop: false, searchResult: []});
     let options = {
       text: ctx.getState().searchTextForm.model.text.trim(),
       options: {
@@ -68,6 +68,12 @@ export class SystemState implements NgxsOnInit {
       ['searchResult'], data.payload);
     console.log('newState==', newState);
     ctx.setState(newState);
+  }
+
+  @Action(StopSearch)
+  async stopSearch(ctx: StateContext<SystemStateModel>) {
+    await invoke('stop_search');
+    ctx.patchState({searchIsStop: true});
   }
 
 }
