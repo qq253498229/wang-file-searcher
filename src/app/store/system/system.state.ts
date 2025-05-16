@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
 import { Search } from './system.action';
 import { USER_HOME_FOLDER } from '../../shared/location';
-import { UpdateFormValue } from '@ngxs/form-plugin';
 import { invoke } from '@tauri-apps/api/core';
 
 export interface SystemStateModel {
@@ -37,7 +36,16 @@ export class SystemState implements NgxsOnInit {
     let options = {
       text: ctx.getState().searchTextForm.model.text.trim(),
       options: {
-        includes: ctx.getState().searchOptionForm.model.includes,
+        // includes: ctx.getState().searchOptionForm.model.includes,
+        includes: [{path: `D:\\src`, path_type: 'FullPath'}],
+        excludes: [
+          {path: 'target', path_type: 'PartPath'},
+          {path: 'node_modules', path_type: 'PartPath'},
+          {path: '.idea', path_type: 'PartPath'},
+          {path: '.angular', path_type: 'PartPath'},
+          {path: '.vscode', path_type: 'PartPath'},
+          {path: 'dist', path_type: 'PartPath'},
+        ],
       },
     };
     console.log('options', options);

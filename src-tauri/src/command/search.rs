@@ -1,40 +1,10 @@
+use crate::command::entity::{PathType, SearchOptions, SearchResult};
 use crate::utils::file_utils::{find_string_in_file, merge_path};
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::{fs, thread};
 use tauri::{AppHandle, Emitter};
-use tracing::info;
 use walkdir::WalkDir;
 
-#[derive(Deserialize, Serialize, Debug, Default)]
-pub struct SearchOptions {
-    pub text: Option<String>,
-    pub options: Options,
-}
-impl SearchOptions {
-    pub fn add_includes(&mut self, path: String) {
-        self.options.includes.push(SearchPath {
-            label: String::from(""),
-            path,
-        });
-    }
-}
-#[derive(Deserialize, Serialize, Debug, Default)]
-pub struct Options {
-    pub includes: Vec<SearchPath>,
-}
-#[derive(Deserialize, Serialize, Debug, Default)]
-pub struct SearchPath {
-    pub label: String,
-    pub path: String,
-}
-#[derive(Deserialize, Serialize, Debug, Default, Clone)]
-pub struct SearchResult {
-    pub path: PathBuf,
-    pub size: u64,
-    pub create_at: u128,
-    pub update_at: u128,
-}
 #[tauri::command]
 pub fn search(options: SearchOptions, app: AppHandle) -> Result<(), String> {
     thread::spawn(move || {
@@ -48,13 +18,33 @@ fn search_files(options: &SearchOptions, app: &AppHandle) -> anyhow::Result<()> 
     let search_text = options.text.as_ref().unwrap();
     let all_file_path = find_all_path(&options)?;
     for path in all_file_path {
-        let _ = search_and_send_event(path, search_text, app);
+        let _ = search_and_send_event(options, path, search_text, app);
     }
     Ok(())
 }
 /// 搜索文件，如果搜到了则向前端发送事件
-fn search_and_send_event(path: PathBuf, search_text: &str, app: &AppHandle) -> anyhow::Result<()> {
-    info!("search_and_send_event:{path:?}");
+fn search_and_send_event(
+    options: &SearchOptions,
+    path: PathBuf,
+    search_text: &str,
+    app: &AppHandle,
+) -> anyhow::Result<()> {
+    // info!("search_and_send_event:{path:?}");
+    for exclude in &options.options.excludes {
+        match exclude.path_type {
+            PathType::FullPath => {
+                if path.starts_with(&exclude.path) {
+                    return Ok(());
+                }
+            }
+            PathType::PartPath => {
+                if path.to_string_lossy().contains(&exclude.path) {
+                    return Ok(());
+                }
+            }
+        }
+    }
+
     if path.is_dir() || !path.is_file() {
         let walker = WalkDir::new(&path).into_iter();
         for entry in walker.filter_map(|e| e.ok()) {
@@ -62,7 +52,7 @@ fn search_and_send_event(path: PathBuf, search_text: &str, app: &AppHandle) -> a
             if new_path == path {
                 continue;
             }
-            let _ = search_and_send_event(new_path, search_text, &app);
+            let _ = search_and_send_event(options, new_path, search_text, &app);
         }
         return Ok(());
     }
@@ -104,6 +94,7 @@ fn find_all_path(options: &SearchOptions) -> anyhow::Result<Vec<PathBuf>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::command::entity::SearchOptions;
     use std::path::Path;
 
     #[test]
