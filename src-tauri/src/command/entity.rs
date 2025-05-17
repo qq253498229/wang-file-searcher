@@ -1,36 +1,36 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+/// 命令参数
 #[derive(Deserialize, Serialize, Debug, Default)]
-pub struct SearchOptions {
+pub struct Param {
     pub text: Option<String>,
-    pub options: Options,
+    pub includes: Vec<SearchOption>,
+    pub excludes: Vec<SearchOption>,
 }
-impl SearchOptions {
+impl Param {
     pub fn add_includes(&mut self, path: String) {
-        let search_path = SearchPath::from(&path);
-        self.options.includes.push(search_path);
+        let search_path = SearchOption::from(&path);
+        self.includes.push(search_path);
     }
 }
+/// 搜索选项
 #[derive(Deserialize, Serialize, Debug, Default)]
-pub struct Options {
-    pub includes: Vec<SearchPath>,
-    pub excludes: Vec<SearchPath>,
+pub struct SearchOption {
+    pub input: String,
+    #[serde(rename = "type")]
+    pub typee: OptionType,
 }
-#[derive(Deserialize, Serialize, Debug, Default)]
-pub struct SearchPath {
-    pub path: String,
-    pub path_type: PathType,
-}
-impl SearchPath {
+impl SearchOption {
     pub fn from(name: &str) -> Self {
         let mut r = Self::default();
-        r.path = String::from(name);
+        r.input = String::from(name);
         r
     }
 }
+/// 选项类型
 #[derive(Deserialize, Serialize, Debug, Default)]
-pub enum PathType {
+pub enum OptionType {
     /// 完整路径，可以是绝对路径也可以是相对路径
     #[default]
     FullPath,

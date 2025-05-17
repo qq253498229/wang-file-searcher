@@ -1,4 +1,4 @@
-use crate::command::entity::{PathType, SearchOptions, SearchResult};
+use crate::command::entity::{OptionType, Param, SearchResult};
 use crate::utils::file_utils::{find_string_in_file, merge_path};
 use crate::AppState;
 use serde_json::json;
@@ -9,13 +9,14 @@ use tauri::{AppHandle, Emitter, Manager};
 use walkdir::WalkDir;
 
 #[tauri::command]
-pub fn search(options: SearchOptions, app: AppHandle) -> Result<(), String> {
+pub fn search(param: Param, app: AppHandle) -> Result<(), String> {
+    println!("search param:{param:#?}");
     let app_handle = app.clone();
     let state = app_handle.state::<Mutex<AppState>>();
     let mut state = state.lock().unwrap();
     state.is_stop = false;
     thread::spawn(move || {
-        let _ = search_files(&options, &app);
+        let _ = search_files(&param, &app);
     });
     Ok(())
 }
@@ -28,14 +29,14 @@ pub fn stop_search(app: AppHandle) -> Result<(), String> {
 }
 
 /// 根据选项搜索全部文件
-fn search_files(options: &SearchOptions, app: &AppHandle) -> anyhow::Result<()> {
-    let search_text = options.text.as_ref().unwrap();
-    let all_file_path = find_all_path(&options)?;
+fn search_files(param: &Param, app: &AppHandle) -> anyhow::Result<()> {
+    let search_text = param.text.as_ref().unwrap();
+    let all_file_path = find_all_path(&param)?;
     for path in all_file_path {
         if check_search_status_is_stop(&app) {
             break;
         }
-        let _ = search_and_send_event(options, path, search_text, app);
+        let _ = search_and_send_event(param, path, search_text, app);
     }
     app.emit("search_result", json!({"is_done":true}))?;
     Ok(())
@@ -48,7 +49,7 @@ fn check_search_status_is_stop(app: &AppHandle) -> bool {
 }
 /// 搜索文件，如果搜到了则向前端发送事件
 fn search_and_send_event(
-    options: &SearchOptions,
+    param: &Param,
     path: PathBuf,
     search_text: &str,
     app: &AppHandle,
@@ -57,15 +58,15 @@ fn search_and_send_event(
         return Ok(());
     }
     // info!("search_and_send_event:{path:?}");
-    for exclude in &options.options.excludes {
-        match exclude.path_type {
-            PathType::FullPath => {
-                if path.starts_with(&exclude.path) {
+    for exclude in &param.excludes {
+        match exclude.typee {
+            OptionType::FullPath => {
+                if path.starts_with(&exclude.input) {
                     return Ok(());
                 }
             }
-            PathType::PartPath => {
-                if path.to_string_lossy().contains(&exclude.path) {
+            OptionType::PartPath => {
+                if path.to_string_lossy().contains(&exclude.input) {
                     return Ok(());
                 }
             }
@@ -79,7 +80,7 @@ fn search_and_send_event(
             if new_path == path {
                 continue;
             }
-            let _ = search_and_send_event(options, new_path, search_text, &app);
+            let _ = search_and_send_event(param, new_path, search_text, &app);
         }
         return Ok(());
     }
@@ -109,10 +110,10 @@ fn search_and_send_event(
     Ok(())
 }
 /// 获取所有的搜索路径
-fn find_all_path(options: &SearchOptions) -> anyhow::Result<Vec<PathBuf>> {
+fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
     let mut path_list = vec![];
-    for include in options.options.includes.iter() {
-        let path = PathBuf::from(&include.path);
+    for include in param.includes.iter() {
+        let path = PathBuf::from(&include.input);
         merge_path(&mut path_list, path)?;
     }
     Ok(path_list)
@@ -121,37 +122,37 @@ fn find_all_path(options: &SearchOptions) -> anyhow::Result<Vec<PathBuf>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::command::entity::SearchOptions;
+    use crate::command::entity::Param;
     use std::path::Path;
 
     #[test]
     fn test_search() -> anyhow::Result<()> {
-        let mut options = SearchOptions::default();
-        options.text = Some("test".to_string());
-        options.add_includes("tests/txt".to_string());
-        options.add_includes("tests/txt/sub-folder-1-1".to_string());
-        let result = find_all_path(&options)?;
+        let mut param = Param::default();
+        param.text = Some("test".to_string());
+        param.add_includes("tests/txt".to_string());
+        param.add_includes("tests/txt/sub-folder-1-1".to_string());
+        let result = find_all_path(&param)?;
         assert_eq!(5, result.len());
         Ok(())
     }
     #[test]
     fn test_search1() -> anyhow::Result<()> {
-        let mut options = SearchOptions::default();
-        options.text = Some("test2".to_string());
-        options.add_includes("tests/txt".to_string());
-        options.add_includes("tests/txt/sub-folder-1-1".to_string());
-        let result = find_all_path(&options)?;
+        let mut param = Param::default();
+        param.text = Some("test2".to_string());
+        param.add_includes("tests/txt".to_string());
+        param.add_includes("tests/txt/sub-folder-1-1".to_string());
+        let result = find_all_path(&param)?;
         assert_eq!(1, result.len());
         Ok(())
     }
 
     #[test]
     fn test_resolve_relate_path() -> anyhow::Result<()> {
-        let mut options = SearchOptions::default();
-        options.text = Some("test2".to_string());
-        options.add_includes("tests/txt".to_string());
-        options.add_includes("tests/txt/sub-folder-1-1".to_string());
-        let result = find_all_path(&options)?;
+        let mut param = Param::default();
+        param.text = Some("test2".to_string());
+        param.add_includes("tests/txt".to_string());
+        param.add_includes("tests/txt/sub-folder-1-1".to_string());
+        let result = find_all_path(&param)?;
         assert_eq!(1, result.len());
         Ok(())
     }

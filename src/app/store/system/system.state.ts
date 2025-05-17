@@ -8,8 +8,17 @@ import { Observable } from 'rxjs';
 
 export interface SystemStateModel {
   result: any[];
+  /**
+   * 搜索文本
+   */
   textForm: any;
+  /**
+   * 搜索选项
+   */
   optionForm: any;
+  /**
+   * 搜索是否结束
+   */
   isStop: boolean;
 }
 
@@ -39,25 +48,25 @@ export class SystemState implements NgxsOnInit {
   @Action(Search)
   Search(ctx: StateContext<SystemStateModel>) {
     ctx.patchState({isStop: false, result: []});
-    let options = {
+    let param = {
       text: ctx.getState().textForm.model.text.trim(),
-      options: {
-        // includes: ctx.getState().searchOptionForm.model.includes,
-        includes: [{path: `D:\\src\\own\\wang-file-searcher\\src-tauri\\tests`, path_type: 'FullPath'}],
-        // includes: [{path: `D:\\src`, path_type: 'FullPath'}],
-        excludes: [
-          {path: 'target', path_type: 'PartPath'},
-          {path: 'node_modules', path_type: 'PartPath'},
-          {path: '.idea', path_type: 'PartPath'},
-          {path: '.angular', path_type: 'PartPath'},
-          {path: '.vscode', path_type: 'PartPath'},
-          {path: 'dist', path_type: 'PartPath'},
-          // {path: 'yarn.lock', path_type: 'PartPath'},
-        ],
-      },
+      // includes: ctx.getState().searchOptionForm.model.includes,
+      includes: [
+        {input: `D:\\src\\own\\wang-file-searcher\\src-tauri\\tests`, type: 'FullPath'},
+      ],
+      // includes: [{input: `D:\\src`, type: 'FullPath'}],
+      excludes: [
+        {input: 'target', type: 'PartPath'},
+        {input: 'node_modules', type: 'PartPath'},
+        {input: '.idea', type: 'PartPath'},
+        {input: '.angular', type: 'PartPath'},
+        {input: '.vscode', type: 'PartPath'},
+        {input: 'dist', type: 'PartPath'},
+        // {input: 'yarn.lock', type: 'PartPath'},
+      ],
     };
     // console.log('options', options);
-    invoke('search', {options}).then();
+    invoke('search', {param}).then();
     // return ctx.dispatch([new UpdateFormValue({path: 'system.textForm', value: {text: ''}})]);
   }
 
