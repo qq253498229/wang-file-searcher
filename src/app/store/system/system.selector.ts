@@ -2,16 +2,16 @@ import { createSelector } from '@ngxs/store';
 import { SystemState, SystemStateModel } from './system.state';
 
 export class SystemSelector {
-  static searchResult() {
+  static result() {
     return createSelector([SystemState], (state: SystemStateModel) => {
-        return state.searchResult;
+        return state.result;
       },
     );
   }
 
-  static searchIsStop() {
+  static isStop() {
     return createSelector([SystemState], (state: SystemStateModel) => {
-        return state.searchIsStop;
+        return state.isStop;
       },
     );
   }

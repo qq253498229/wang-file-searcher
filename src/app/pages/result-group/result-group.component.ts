@@ -14,7 +14,7 @@ import { invoke } from '@tauri-apps/api/core';
 })
 export class ResultGroupComponent implements OnInit {
   store = inject(Store);
-  searchResult = this.store.selectSignal(SystemSelector.searchResult());
+  result = this.store.selectSignal(SystemSelector.result());
 
   listOfColumn = [
     {

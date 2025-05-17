@@ -20,10 +20,10 @@ export class ContentInputGroupComponent implements OnInit {
 
   @ViewChild('searchInputRef') searchInputRef!: ElementRef;
 
-  searchTextForm: FormGroup = this.fb.group({
+  textForm: FormGroup = this.fb.group({
     text: ['', Validators.required],
   });
-  searchIsStop = this.store.selectSignal(SystemSelector.searchIsStop());
+  isStop = this.store.selectSignal(SystemSelector.isStop());
 
   async ngOnInit() {
     await this.globalRegisterShortcut();
@@ -57,10 +57,10 @@ export class ContentInputGroupComponent implements OnInit {
   }
 
   get searchText() {
-    return this.searchTextForm.getRawValue().text;
+    return this.textForm.getRawValue().text;
   }
 
   set searchText(value) {
-    this.searchTextForm.patchValue({text: value});
+    this.textForm.patchValue({text: value});
   }
 }
