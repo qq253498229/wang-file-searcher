@@ -9,12 +9,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SystemSelector } from '../../store/system/system.selector';
 
 @Component({
-  selector: 'wang-content-input-group',
+  selector: 'wang-text-input',
   imports: [CommonModule, SharedModule],
-  templateUrl: './content-input-group.component.html',
+  templateUrl: './text-input.component.html',
   styles: [],
 })
-export class ContentInputGroupComponent implements OnInit {
+export class TextInputComponent implements OnInit {
   store = inject(Store);
   fb = inject(FormBuilder);
 

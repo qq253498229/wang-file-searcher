@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 
 @Component({
-  selector: 'wang-location-group',
+  selector: 'wang-option',
   imports: [CommonModule, SharedModule],
-  templateUrl: './location-group.component.html',
+  templateUrl: './option.component.html',
   styles: [],
 })
-export class LocationGroupComponent {
+export class OptionComponent {
 
 }

@@ -7,12 +7,12 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { invoke } from '@tauri-apps/api/core';
 
 @Component({
-  selector: 'wang-result-group',
+  selector: 'wang-result',
   imports: [CommonModule, SharedModule, NzTableModule],
-  templateUrl: './result-group.component.html',
+  templateUrl: './result.component.html',
   styles: [],
 })
-export class ResultGroupComponent implements OnInit {
+export class ResultComponent implements OnInit {
   store = inject(Store);
   result = this.store.selectSignal(SystemSelector.result());
 
