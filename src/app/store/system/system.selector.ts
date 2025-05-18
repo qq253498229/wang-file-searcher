@@ -15,4 +15,32 @@ export class SystemSelector {
       },
     );
   }
+
+  static includes() {
+    return createSelector([SystemState], (state: SystemStateModel) => {
+        return state.includes;
+      },
+    );
+  }
+
+  static includeOptions() {
+    return createSelector([SystemState], (state: SystemStateModel) => {
+        return state.includeOptions;
+      },
+    );
+  }
+
+  static excludes() {
+    return createSelector([SystemState], (state: SystemStateModel) => {
+        return state.excludes;
+      },
+    );
+  }
+
+  static excludeOptions() {
+    return createSelector([SystemState], (state: SystemStateModel) => {
+        return state.excludeOptions;
+      },
+    );
+  }
 }

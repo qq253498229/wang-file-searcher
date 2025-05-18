@@ -1,1 +1,100 @@
-<p>location-group works!</p>
+<h3>搜索位置</h3>
+<div class="location">
+  @for (include of includes(); track $index) {
+    <nz-row>
+      <div nz-col nzSpan="20">
+        <nz-select class="select" [ngModel]="include.input" (ngModelChange)="changeInclude('includes',$index,$event)">
+          @for (option of includeOptions(); track $index) {
+            <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
+          }
+          <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="include.input === '~'"></nz-option>
+          <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>
+        </nz-select>
+      </div>
+      <div nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':includes().length===1}"
+           (click)="delete('includes',$index)">
+        <nz-icon nzType="minus-circle" nzTheme="outline"/>
+      </div>
+      <div nz-col nzSpan="2" class="icon"
+           nz-dropdown nzTrigger="click" [nzDropdownMenu]="addIncludeMenu">
+        <nz-icon nzType="plus-circle" nzTheme="outline"/>
+      </div>
+      <nz-dropdown-menu #addIncludeMenu="nzDropdownMenu">
+        <ul nz-menu>
+          @for (option of includeOptions(); track $index) {
+            <li nz-menu-item (click)="add('includes',option.input)">{{ option.input }}</li>
+          }
+          @if (!hasHomeInclude) {
+            <li nz-menu-item (click)="add('includes','~')">用户HOME目录</li>
+          }
+          <li nz-menu-item (click)="add('includes','')">选择路径</li>
+        </ul>
+      </nz-dropdown-menu>
+    </nz-row>
+  }
+
+  @for (exclude of excludes(); track $index) {
+    <nz-row>
+      <nz-col nzSpan="4" class="exclude-span">
+        <span>排除：</span>
+      </nz-col>
+      <div nz-col nzSpan="16">
+        <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="changeInclude('excludes',$index,$event)">
+          @for (option of excludeOptions(); track $index) {
+            <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
+          }
+          <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>
+        </nz-select>
+      </div>
+      <div nz-col nzSpan="2" class="icon" (click)="delete('excludes',$index)">
+        <nz-icon nzType="minus-circle" nzTheme="outline"/>
+      </div>
+      <div nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" (click)="add('excludes','')">
+        <nz-icon nzType="plus-circle" nzTheme="outline"/>
+      </div>
+    </nz-row>
+  }
+  @if (excludes().length === 0) {
+    <nz-row>
+      <nz-col nzOffset="4">
+        <button nz-button (click)="add('excludes','')">
+          <nz-icon nzType="plus"/>
+          排除路径
+        </button>
+      </nz-col>
+    </nz-row>
+  }
+
+  <!--
+
+    <button nz-button nz-dropdown [nzDropdownMenu]="menu2">
+      <nz-icon nzType="plus"/>
+      排除
+      <nz-icon nzType="down"/>
+    </button>
+    <nz-dropdown-menu #menu2="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item (click)="add('includes','filename')">手动输入文件名</li>
+        <li nz-menu-item (click)="add('includes','custom')">手动输入路径</li>
+      </ul>
+    </nz-dropdown-menu>
+  -->
+
+  <!--
+    <button nz-button nz-dropdown [nzDropdownMenu]="menu1">
+      <nz-icon nzType="plus"/>
+      包含
+      <nz-icon nzType="down"/>
+    </button>
+    <nz-dropdown-menu #menu1="nzDropdownMenu">
+      <ul nz-menu>
+        @if (!hasHomeInclude) {
+          <li nz-menu-item (click)="add('includes','home')">用户HOME目录</li>
+        }
+        <li nz-menu-item (click)="add('includes','filename')">手动输入文件名</li>
+        <li nz-menu-item (click)="add('includes','custom')">手动输入路径</li>
+      </ul>
+    </nz-dropdown-menu>
+    -->
+</div>
+<button type="button" (click)="test()" nz-button nzType="primary">test</button>
