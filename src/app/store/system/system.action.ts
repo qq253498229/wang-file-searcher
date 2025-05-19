@@ -13,41 +13,23 @@ export class ReceiveResult {
   }
 }
 
-export class ChangeInclude {
-  static readonly type = `[system] 改变包含位置选项`;
+export class AddOption {
+  static readonly type = `[system] 改变位置选项`;
 
-  constructor(public idx: number, public type: string) {
+  constructor(public type: string, public input: string) {
   }
 }
 
-export class ChangeExclude {
-  static readonly type = `[system] 改变排除位置选项`;
+export class ChangeOption {
+  static readonly type = `[system] 添加位置选项`;
 
-  constructor(public idx: number, public type: string) {
+  constructor(public type: string, public idx: number, public input: string) {
   }
 }
 
-export class RemoveInclude {
-  static readonly type = `[system] 移除包含位置选项`;
+export class DeleteOption {
+  static readonly type = `[system] 删除位置选项`;
 
-  constructor(public idx: number) {
+  constructor(public type: string, public idx: number) {
   }
-}
-
-export class RemoveExclude {
-  static readonly type = `[system] 移除排除位置选项`;
-
-  constructor(public idx: number) {
-  }
-}
-
-export class AddInclude {
-  static readonly type = `[system] 添加包含位置选项`;
-
-  constructor(public type: string) {
-  }
-}
-
-export class AddExclude {
-  static readonly type = `[system] 添加排除位置`;
 }

@@ -7,14 +7,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import {
-  AddExclude,
-  AddInclude,
-  ChangeExclude,
-  ChangeInclude,
-  RemoveExclude,
-  RemoveInclude,
-} from '../../store/system/system.action';
+import { AddOption, ChangeOption, DeleteOption } from '../../store/system/system.action';
 
 @Component({
   selector: 'wang-option',
@@ -51,26 +44,14 @@ export class OptionComponent implements OnInit {
   }
 
   add(type: string, input: string): void {
-    if (type === 'includes') {
-      this.store.dispatch(new AddInclude(input));
-    } else if (type === 'excludes') {
-      this.store.dispatch(new AddExclude());
-    }
+    this.store.dispatch(new AddOption(type, input));
+  }
+
+  change(type: string, idx: number, input: string) {
+    this.store.dispatch(new ChangeOption(type, idx, input));
   }
 
   delete(type: string, idx: number) {
-    if (type === 'includes') {
-      this.store.dispatch(new RemoveInclude(idx));
-    } else if (type === 'excludes') {
-      this.store.dispatch(new RemoveExclude(idx));
-    }
-  }
-
-  changeInclude(type: 'includes' | 'excludes', idx: number, $event: any) {
-    if (type === 'includes') {
-      this.store.dispatch(new ChangeInclude(idx, $event));
-    } else if (type === 'excludes') {
-      this.store.dispatch(new ChangeExclude(idx, $event));
-    }
+    this.store.dispatch(new DeleteOption(type, idx));
   }
 }

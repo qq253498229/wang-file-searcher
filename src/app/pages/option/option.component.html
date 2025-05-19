@@ -3,7 +3,7 @@
   @for (include of includes(); track $index) {
     <nz-row>
       <div nz-col nzSpan="20">
-        <nz-select class="select" [ngModel]="include.input" (ngModelChange)="changeInclude('includes',$index,$event)">
+        <nz-select class="select" [ngModel]="include.input" (ngModelChange)="change('includes',$index,$event)">
           @for (option of includeOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
@@ -39,7 +39,7 @@
         <span>排除：</span>
       </nz-col>
       <div nz-col nzSpan="16">
-        <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="changeInclude('excludes',$index,$event)">
+        <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="change('excludes',$index,$event)">
           @for (option of excludeOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }

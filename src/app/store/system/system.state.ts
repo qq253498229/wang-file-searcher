@@ -1,15 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { Action, NgxsOnChanges, NgxsOnInit, NgxsSimpleChange, State, StateContext } from '@ngxs/store';
-import {
-  AddExclude,
-  AddInclude, ChangeExclude,
-  ChangeInclude,
-  ReceiveResult, RemoveExclude,
-  RemoveInclude,
-  Search,
-  StopSearch,
-} from './system.action';
-import { INCLUDE_OPTIONS, SearchOption, USER_HOME_FOLDER } from '../../shared/location';
+import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
+import { AddOption, ChangeOption, DeleteOption, ReceiveResult, Search, StopSearch } from './system.action';
+import { INCLUDE_OPTIONS, USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
 import * as immutable from 'object-path-immutable';
 import { Observable } from 'rxjs';
@@ -117,164 +109,37 @@ export class SystemState implements NgxsOnInit {
     ctx.patchState({isStop: true});
   }
 
-  @Action(ChangeInclude)
-  changeInclude(ctx: StateContext<SystemStateModel>, {idx, type}: ChangeInclude) {
-    if (type === '~') {
-      ctx.setState(immutable.set(ctx.getState(), ['includes', idx], USER_HOME_FOLDER));
-      return;
-    }
-    if (type !== '') {
-      let findIndex = ctx.getState().includes.findIndex((s: any, i: number) => {
-        return i !== idx && s.input === type;
-      });
-      if (findIndex !== -1) {
-        this.message.info(`路径已经存在`);
-        let option = ctx.getState().includes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['includes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['includes', idx], option));
-        });
-        return;
-      }
-      let option = ctx.getState().includeOptions.find((s: any) => s.input === type);
-      ctx.setState(immutable.set(ctx.getState(), ['includes', idx], option));
-      return;
-    }
-    open({multiple: false, directory: true}).then((r) => {
-      if (!r || r.trim().length === 0) {
-        let option = ctx.getState().includes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['includes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['includes', idx], option));
-        });
-        return;
-      }
-      if (ctx.getState().includes.findIndex((s: any) => s.input === r) !== -1) {
-        this.message.info(`路径已经存在`);
-        let option = ctx.getState().includes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['includes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['includes', idx], option));
-        });
-        return;
-      }
-      let option = {label: r, type: 'FullPath', input: r, flag: 'custom'};
-      let newState = immutable.set(ctx.getState(), ['includes', idx], option);
-      if (ctx.getState().includeOptions.findIndex((s: any) => s.input === r) === -1) {
-        newState = immutable.push(newState, ['includeOptions'], option);
-      }
-      ctx.setState(newState);
-    });
-  }
-
-  @Action(ChangeExclude)
-  changeExclude(ctx: StateContext<SystemStateModel>, {idx, type}: ChangeExclude) {
-    if (type !== '') {
-      let findIndex = ctx.getState().excludes.findIndex((s: any, i: number) => {
-        return i !== idx && s.input === type;
-      });
-      if (findIndex !== -1) {
-        this.message.info(`路径已经存在`);
-        let option = ctx.getState().excludes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], option));
-        });
-        return;
-      }
-      let option = ctx.getState().excludeOptions.find((s: any) => s.input === type);
-      ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], option));
-      return;
-    }
-    open({multiple: false, directory: true}).then((r) => {
-      if (!r || r.trim().length === 0) {
-        let option = ctx.getState().excludes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], option));
-        });
-        return;
-      }
-      if (ctx.getState().excludes.findIndex((s: any) => s.input === r) !== -1) {
-        this.message.info(`路径已经存在`);
-        let option = ctx.getState().excludes[idx];
-        ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], {label: '', type: ''}));
-        setTimeout(() => {
-          ctx.setState(immutable.set(ctx.getState(), ['excludes', idx], option));
-        });
-        return;
-      }
-      let option = {label: r, type: 'FullPath', input: r, flag: 'custom'};
-      let newState = immutable.set(ctx.getState(), ['excludes', idx], option);
-      if (ctx.getState().excludeOptions.findIndex((s: any) => s.input === r) === -1) {
-        newState = immutable.push(newState, ['excludeOptions'], option);
-      }
-      ctx.setState(newState);
-    });
-  }
-
-  @Action(AddInclude)
-  addInclude(ctx: StateContext<SystemStateModel>, {type}: AddInclude) {
-    if (type === '~') {
-      ctx.setState(immutable.push(ctx.getState(), ['includes'], USER_HOME_FOLDER));
-      return;
-    }
-    if (type === '') {
+  @Action(AddOption)
+  addOption(ctx: StateContext<SystemStateModel>, {type, input}: AddOption) {
+    // input:'' 选择
+    // input:'home' 用户HOME目录
+    console.log('addOption', type, input);
+    let findIndex = ctx.getState().includes.findIndex((s: any, idx: number) => true);
+    if (input === '') {
       open({multiple: false, directory: true}).then((r) => {
-        if (!r || r.trim().length === 0) {
-          return;
-        }
-        if (ctx.getState().includes.findIndex((s: any) => s.input === r) !== -1) {
-          this.message.info(`路径已经存在`);
-          return;
-        }
-        let option = {label: r, type: 'FullPath', input: r, flag: 'custom'};
-        let newState = immutable.push(ctx.getState(), ['includes'], option);
-        if (ctx.getState().includeOptions.findIndex((s: any) => s.input === r) === -1) {
-          newState = immutable.push(newState, ['includeOptions'], option);
-        }
-        ctx.setState(newState);
+        this.addOptionWithCheck(r);
       });
       return;
     }
-    if (ctx.getState().includes.findIndex((s: any) => s.input === type) !== -1) {
-      this.message.info(`路径已经存在`);
-      return;
-    }
-    let option = ctx.getState().includeOptions.find((s: any) => s.input === type);
-    ctx.setState(immutable.push(ctx.getState(), ['includes'], option));
-    return;
   }
 
-  @Action(AddExclude)
-  addExclude(ctx: StateContext<SystemStateModel>) {
-    open({multiple: false, directory: true}).then((r) => {
-      if (!r || r.length === 0) {
-        return;
-      }
-      if (ctx.getState().excludes.findIndex((s: any) => s.input === r) !== -1) {
-        this.message.info(`路径已经存在`);
-        return;
-      }
-      let option = {label: r, type: 'FullPath', input: r, flag: 'custom'};
-      let newState = immutable.push(ctx.getState(), ['excludes'], option);
-      if (ctx.getState().excludeOptions.findIndex((s: any) => s.input === r) === -1) {
-        newState = immutable.push(newState, ['excludeOptions'], option);
-      }
-      ctx.setState(newState);
-    });
+  addOptionWithCheck(r: string | null) {
+    // 如果是空值，说明取消了选择框，那么需要先设置成别的值然后再改回来，否则select值会改变
+    // 如果有值，则判断是否合法
+    // 兜底，最后添加选项
+    if (!r) return;
+    console.log('r', r);
   }
 
-  @Action(RemoveInclude)
-  removeInclude(ctx: StateContext<SystemStateModel>, {idx}: RemoveInclude) {
-    let newState = immutable.del(ctx.getState(), ['includes', idx]);
-    ctx.setState(newState);
+  @Action(ChangeOption)
+  changeOption(ctx: StateContext<SystemStateModel>, {type, idx, input}: ChangeOption) {
+    console.log('changeOption', type, idx, input);
   }
 
-  @Action(RemoveExclude)
-  removeExclude(ctx: StateContext<SystemStateModel>, {idx}: RemoveExclude) {
-    let newState = immutable.del(ctx.getState(), ['excludes', idx]);
-    ctx.setState(newState);
+  @Action(DeleteOption)
+  deleteOption(ctx: StateContext<SystemStateModel>, {type, idx}: DeleteOption) {
+    console.log('deleteOption', type, idx);
   }
+
 
 }
