@@ -25,17 +25,6 @@ export class OptionComponent implements OnInit {
   excludesOptions = this.store.selectSignal(SystemSelector.excludesOptions());
 
   ngOnInit(): void {
-    // let optionForm = this.store.selectSnapshot(SystemSelector.optionForm());
-    // console.log('optionForm', this.store.selectSnapshot(SystemSelector.optionForm()));
-    // console.log('includes', this.includes());
-    // console.log('includeOptions', this.includeOptions());
-  }
-
-  test() {
-    console.log('test includes', this.includes());
-    console.log('test includesOptions', this.includesOptions());
-    console.log('test excludes', this.excludes());
-    console.log('test excludesOptions', this.excludesOptions());
   }
 
   get hasHomeInclude() {

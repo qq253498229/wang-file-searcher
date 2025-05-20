@@ -4,10 +4,10 @@ import { SharedModule } from './shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { Store } from '@ngxs/store';
 import { ReceiveResult, StopSearch } from './store/system/system.action';
-import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { TextInputComponent } from './pages/text-input/text-input.component';
 import { OptionComponent } from './pages/option/option.component';
 import { ResultComponent } from './pages/result/result.component';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-root',
@@ -18,12 +18,12 @@ import { ResultComponent } from './pages/result/result.component';
 })
 export class AppComponent implements OnInit {
   store = inject(Store);
-  notify = inject(NzNotificationService);
+  message = inject(NzMessageService);
 
   ngOnInit(): void {
     listen(`search_result`, (e: any) => {
       if (!!e.payload.is_done && e.payload.is_done === true) {
-        this.notify.success(`搜索完成`, ``, {nzDuration: 0});
+        this.message.success(`搜索完成`);
         this.store.dispatch(new StopSearch());
       } else {
         this.store.dispatch(new ReceiveResult(e));
