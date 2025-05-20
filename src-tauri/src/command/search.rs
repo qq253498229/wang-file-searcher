@@ -10,7 +10,6 @@ use walkdir::WalkDir;
 
 #[tauri::command]
 pub fn search(param: Param, app: AppHandle) -> Result<(), String> {
-    println!("search param:{param:#?}");
     let app_handle = app.clone();
     let state = app_handle.state::<Mutex<AppState>>();
     let mut state = state.lock().unwrap();
