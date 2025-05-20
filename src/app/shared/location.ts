@@ -20,10 +20,10 @@ export const USER_HOME_FOLDER: SearchOption =
 export const CUSTOM_INPUT_PATH: SearchOption =
   {label: '手动输入路径', type: 'PartPath', input: ``, flag: `custom`};
 
-export const INCLUDE_OPTIONS: SearchOption[] = [
-  USER_HOME_FOLDER,
-  CUSTOM_INPUT_PATH,
-];
+// export const INCLUDE_OPTIONS: SearchOption[] = [
+//   USER_HOME_FOLDER,
+//   CUSTOM_INPUT_PATH,
+// ];
 /**
  * 搜索选项
  */

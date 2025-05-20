@@ -39,8 +39,7 @@ export class OptionComponent implements OnInit {
   }
 
   get hasHomeInclude() {
-    let includes = this.includes() as any[];
-    return includes.findIndex(s => s.flag === 'home') !== -1;
+    return this.includes().findIndex(s => s.input === '~') !== -1;
   }
 
   add(type: 'includes' | 'excludes', input: string): void {

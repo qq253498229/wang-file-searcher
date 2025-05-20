@@ -7,7 +7,7 @@
           @for (option of includesOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
-          <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="include.input === '~'"></nz-option>
+          <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="hasHomeInclude"></nz-option>
           <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>
         </nz-select>
       </div>
