@@ -6,7 +6,7 @@ permissions:
 jobs:
   release_ubuntu:
     runs-on: ubuntu-latest
-    name: 打包ubuntu平台
+    name: release ubuntu
     steps:
       - name: Add tauri dependencies
         run: |
@@ -22,15 +22,15 @@ jobs:
         uses: jaywcjlove/github-action-folder-tree@main
         with:
           path: './src-tauri/target/release/bundle'
-#      - run: |
-#          pwd
-#          ls -al
-#          zip -r dist.zip dist
-#      - if: github.ref_type == 'tag'
-#        name: Release
-#        uses: softprops/action-gh-release@v2
-#        with:
-#          files: dist.zip
-#          draft: true
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          depth: 2
+      - if: github.ref_type == 'tag'
+        name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/rpm/*.rpm
+            ./src-tauri/target/release/bundle/deb/*.deb
+            ./src-tauri/target/release/bundle/appimage/*.AppImage
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
