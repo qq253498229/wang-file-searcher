@@ -1,16 +1,16 @@
-on: [ push ]
+on:
+  push:
+    branches:
+      - master
 
 permissions:
   contents: write
 
 jobs:
-  release_ubuntu:
-    runs-on: ubuntu-latest
-    name: release ubuntu
+  release_windows:
+    runs-on: windows-latest
+    name: release windows
     steps:
-      - name: Add tauri dependencies
-        run: |
-          sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -23,14 +23,13 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-      - if: github.ref_type == 'tag'
-        name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            ./src-tauri/target/release/bundle/rpm/*.rpm
-            ./src-tauri/target/release/bundle/deb/*.deb
-            ./src-tauri/target/release/bundle/appimage/*.AppImage
-          draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          files: |
+#            ./src-tauri/target/release/bundle/rpm/*.rpm
+#            ./src-tauri/target/release/bundle/deb/*.deb
+#            ./src-tauri/target/release/bundle/appimage/*.AppImage
+#          draft: true
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

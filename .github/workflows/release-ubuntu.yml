@@ -1,4 +1,7 @@
-on: [ push ]
+on:
+  push:
+    branches:
+      - master
 
 permissions:
   contents: write
@@ -23,8 +26,7 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-      - if: github.ref_type == 'tag'
-        name: Release
+      - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
