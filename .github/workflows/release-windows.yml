@@ -15,6 +15,7 @@ jobs:
         run: |
           node --version
           rustc -V
+          sudo apt install libwebkit2gtk-4.1-dev libsoup3.0-dev
           npm ci
           npm run tauri-build
       - name: 打印目录文件
