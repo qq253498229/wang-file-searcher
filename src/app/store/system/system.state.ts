@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, input } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
 import { AddOption, ChangeOption, DeleteOption, ReceiveResult, Search, StopSearch } from './system.action';
 import { INCLUDE_OPTIONS, SearchOption, USER_HOME_FOLDER } from '../../shared/location';
@@ -160,7 +160,14 @@ export class SystemState implements NgxsOnInit {
 
   @Action(DeleteOption)
   deleteOption(ctx: StateContext<SystemStateModel>, {type, idx}: DeleteOption) {
-    console.log('deleteOption', type, idx);
+    let option = ctx.getState()[type][idx];
+    // 删除选项
+    let optionIdx = ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === option.input);
+    if (optionIdx !== -1) {
+      ctx.setState(immutable.del(ctx.getState(), [`${type}Options`, optionIdx]));
+    }
+    // 删除位置
+    ctx.setState(immutable.del(ctx.getState(), [type, idx]));
   }
 
 
