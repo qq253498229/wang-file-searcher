@@ -1,30 +1,16 @@
-<nz-table #basicTable [nzData]="result()"
-          [nzFrontPagination]="false">
+<nz-table #basicTable [nzData]="result()" [nzFrontPagination]="false">
   <thead>
   <tr>
-    @for (column of listOfColumn; track column) {
-      <th [nzSortFn]="column.compare"
-          [nzSortPriority]="column.priority"
-          [nzSortOrder]="column.sortOrder"
-      >
-        {{ column.title }}
-      </th>
-    }
-    <th>操作</th>
+    <th [nzSortFn]="comparePath" nzWidth="300px">文件名</th>
+    <th [nzSortFn]="comparePath" nzWidth="100px">类型</th>
+    <th [nzSortFn]="compareUpdateAt">修改时间</th>
   </tr>
   </thead>
   <tbody>
   <tr *ngFor="let data of basicTable.data">
-    <td>{{ data.path }}</td>
-    <td>{{ data.size|fileSize }}</td>
-    <td>{{ data.create_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
+    <td nz-tooltip [nzTooltipTitle]="data.path">{{ data.file_name }}</td>
+    <td>{{ data.extension }}</td>
     <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
-    <td>
-      <button type="button" nz-button nzType="primary" nzSize="small"
-              (click)="localOpen(data)">
-        本地浏览
-      </button>
-    </td>
   </tr>
   </tbody>
 </nz-table>

@@ -41,6 +41,9 @@ pub enum OptionType {
 #[derive(Deserialize, Serialize, Debug, Default, Clone)]
 pub struct SearchResult {
     pub path: PathBuf,
+    pub file_name: Option<String>,
+    pub file_stem: Option<String>,
+    pub extension: Option<String>,
     pub size: u64,
     pub create_at: u128,
     pub update_at: u128,

@@ -16,36 +16,13 @@ export class ResultComponent implements OnInit {
   store = inject(Store);
   result = this.store.selectSignal(SystemSelector.result());
 
-  listOfColumn = [
-    {
-      title: '路径',
-      compare: (a: any, b: any) => a.path.localeCompare(b.path),
-      priority: false,
-      sortDirections: ['descend', 'ascend', null],
-      sortOrder: null,
-    },
-    {
-      title: '大小',
-      compare: (a: any, b: any) => a.size - b.size,
-      priority: false,
-      sortDirections: ['descend', 'ascend', null],
-      sortOrder: null,
-    },
-    {
-      title: '创建时间',
-      compare: (a: any, b: any) => a.create_at - b.create_at,
-      priority: 2,
-      sortDirections: ['descend', 'ascend', null],
-      sortOrder: null,
-    },
-    {
-      title: '更新时间',
-      compare: (a: any, b: any) => a.update_at - b.update_at,
-      priority: 1,
-      sortDirections: ['descend', 'ascend', null],
-      sortOrder: null,
-    },
-  ];
+  comparePath(a: any, b: any) {
+    return a.path.localeCompare(b.path);
+  }
+
+  compareUpdateAt(a: any, b: any) {
+    return a.update_at - b.update_at;
+  }
 
   ngOnInit() {
 

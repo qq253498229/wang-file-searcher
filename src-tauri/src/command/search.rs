@@ -87,8 +87,26 @@ fn search_and_send_event(
     if let Ok(r) = find_string_in_file(&path, search_text) {
         if r {
             let metadata = fs::metadata(&path);
+            let file_name = path
+                .as_path()
+                .file_name()
+                .and_then(|r| r.to_str())
+                .map(|r| r.to_string());
+            let file_stem = path
+                .as_path()
+                .file_stem()
+                .and_then(|r| r.to_str())
+                .map(|r| r.to_string());
+            let extension = path
+                .as_path()
+                .extension()
+                .and_then(|r| r.to_str())
+                .map(|r| r.to_string());
             let mut r = SearchResult {
                 path,
+                file_name,
+                file_stem,
+                extension,
                 size: 0,
                 create_at: 0,
                 update_at: 0,
