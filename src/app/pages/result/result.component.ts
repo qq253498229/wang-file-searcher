@@ -4,7 +4,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { Store } from '@ngxs/store';
 import { SystemSelector } from '../../store/system/system.selector';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { invoke } from '@tauri-apps/api/core';
+import { OperationMenu } from '../../store/system/system.action';
 
 @Component({
   selector: 'wang-result',
@@ -28,7 +28,7 @@ export class ResultComponent implements OnInit {
 
   }
 
-  localOpen(data: any) {
-    invoke('open_folder', {path: data.path}).then();
+  operation(data: any) {
+    this.store.dispatch(new OperationMenu(data));
   }
 }

@@ -1,12 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { AddOption, ChangeOption, DeleteOption, ReceiveResult, Search, StopSearch } from './system.action';
+import {
+  AddOption,
+  ChangeOption,
+  DeleteOption,
+  OperationMenu,
+  ReceiveResult,
+  Search,
+  StopSearch,
+} from './system.action';
 import { SearchOption, USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
 import * as immutable from 'object-path-immutable';
 import { Observable } from 'rxjs';
 import { open } from '@tauri-apps/plugin-dialog';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { Menu } from '@tauri-apps/api/menu/menu';
 
 export interface SystemStateModel {
   /**
@@ -175,5 +184,19 @@ export class SystemState implements NgxsOnInit {
     ctx.setState(immutable.del(ctx.getState(), [type, idx]));
   }
 
+  @Action(OperationMenu)
+  operationMenu(_ctx: StateContext<SystemStateModel>, {data}: OperationMenu) {
+    Menu.new({
+      items: [
+        {
+          id: 'openFolder', text: '打开本地目录', action: () => {
+            invoke('open_folder', {path: data.path}).then();
+          },
+        },
+      ],
+    }).then(menu => {
+      menu.popup().then();
+    });
+  }
 
 }

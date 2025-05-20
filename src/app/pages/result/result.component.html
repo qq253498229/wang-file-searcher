@@ -1,9 +1,10 @@
-<nz-table #basicTable [nzData]="result()" [nzFrontPagination]="false">
+<nz-table #basicTable [nzData]="result()" [nzFrontPagination]="false" nzSize="small">
   <thead>
   <tr>
     <th [nzSortFn]="comparePath" nzWidth="300px">文件名</th>
     <th [nzSortFn]="comparePath" nzWidth="100px">类型</th>
     <th [nzSortFn]="compareUpdateAt">修改时间</th>
+    <th>操作</th>
   </tr>
   </thead>
   <tbody>
@@ -11,6 +12,9 @@
     <td nz-tooltip [nzTooltipTitle]="data.path">{{ data.file_name }}</td>
     <td>{{ data.extension }}</td>
     <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
+    <td>
+      <button type="button" nz-button nzType="primary" nzSize="small" (click)="operation(data)">操作</button>
+    </td>
   </tr>
   </tbody>
 </nz-table>

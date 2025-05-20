@@ -33,3 +33,10 @@ export class DeleteOption {
   constructor(public type: 'includes' | 'excludes', public idx: number) {
   }
 }
+
+export class OperationMenu {
+  static readonly type = `[system] 打开上下文菜单`;
+
+  constructor(public data: any) {
+  }
+}
