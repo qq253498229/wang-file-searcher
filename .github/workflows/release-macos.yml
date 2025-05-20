@@ -17,7 +17,7 @@ jobs:
       - name: build
         run: |
           npm ci
-          npm run tauri-build
+          CI=true npm run tauri-build
       - name: 打印目录文件
         uses: jaywcjlove/github-action-folder-tree@main
         with:
