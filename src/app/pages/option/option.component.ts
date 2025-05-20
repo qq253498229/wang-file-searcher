@@ -20,9 +20,9 @@ export class OptionComponent implements OnInit {
   store = inject(Store);
 
   includes = this.store.selectSignal(SystemSelector.includes());
-  includeOptions = this.store.selectSignal(SystemSelector.includeOptions());
+  includesOptions = this.store.selectSignal(SystemSelector.includesOptions());
   excludes = this.store.selectSignal(SystemSelector.excludes());
-  excludeOptions = this.store.selectSignal(SystemSelector.excludeOptions());
+  excludesOptions = this.store.selectSignal(SystemSelector.excludesOptions());
 
   ngOnInit(): void {
     // let optionForm = this.store.selectSnapshot(SystemSelector.optionForm());
@@ -33,9 +33,9 @@ export class OptionComponent implements OnInit {
 
   test() {
     console.log('test includes', this.includes());
-    console.log('test includeOptions', this.includeOptions());
+    console.log('test includesOptions', this.includesOptions());
     console.log('test excludes', this.excludes());
-    console.log('test excludeOptions', this.excludeOptions());
+    console.log('test excludesOptions', this.excludesOptions());
   }
 
   get hasHomeInclude() {
@@ -43,15 +43,15 @@ export class OptionComponent implements OnInit {
     return includes.findIndex(s => s.flag === 'home') !== -1;
   }
 
-  add(type: string, input: string): void {
+  add(type: 'includes' | 'excludes', input: string): void {
     this.store.dispatch(new AddOption(type, input));
   }
 
-  change(type: string, idx: number, input: string) {
+  change(type: 'includes' | 'excludes', idx: number, input: string) {
     this.store.dispatch(new ChangeOption(type, idx, input));
   }
 
-  delete(type: string, idx: number) {
+  delete(type: 'includes' | 'excludes', idx: number) {
     this.store.dispatch(new DeleteOption(type, idx));
   }
 }

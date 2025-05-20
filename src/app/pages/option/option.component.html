@@ -4,7 +4,7 @@
     <nz-row>
       <div nz-col nzSpan="20">
         <nz-select class="select" [ngModel]="include.input" (ngModelChange)="change('includes',$index,$event)">
-          @for (option of includeOptions(); track $index) {
+          @for (option of includesOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
           <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="include.input === '~'"></nz-option>
@@ -21,7 +21,7 @@
       </div>
       <nz-dropdown-menu #addIncludeMenu="nzDropdownMenu">
         <ul nz-menu>
-          @for (option of includeOptions(); track $index) {
+          @for (option of includesOptions(); track $index) {
             <li nz-menu-item (click)="add('includes',option.input)">{{ option.input }}</li>
           }
           @if (!hasHomeInclude) {
@@ -40,7 +40,7 @@
       </nz-col>
       <div nz-col nzSpan="16">
         <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="change('excludes',$index,$event)">
-          @for (option of excludeOptions(); track $index) {
+          @for (option of excludesOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
           <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>

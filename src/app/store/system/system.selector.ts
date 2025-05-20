@@ -23,9 +23,9 @@ export class SystemSelector {
     );
   }
 
-  static includeOptions() {
+  static includesOptions() {
     return createSelector([SystemState], (state: SystemStateModel) => {
-        return state.includeOptions;
+        return state.includesOptions;
       },
     );
   }
@@ -37,9 +37,9 @@ export class SystemSelector {
     );
   }
 
-  static excludeOptions() {
+  static excludesOptions() {
     return createSelector([SystemState], (state: SystemStateModel) => {
-        return state.excludeOptions;
+        return state.excludesOptions;
       },
     );
   }

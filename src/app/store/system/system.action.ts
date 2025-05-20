@@ -14,22 +14,22 @@ export class ReceiveResult {
 }
 
 export class AddOption {
-  static readonly type = `[system] 改变位置选项`;
+  static readonly type = `[system] 添加搜索位置`;
 
-  constructor(public type: string, public input: string) {
+  constructor(public type: 'includes' | 'excludes', public input: string) {
   }
 }
 
 export class ChangeOption {
-  static readonly type = `[system] 添加位置选项`;
+  static readonly type = `[system] 修改搜索位置`;
 
-  constructor(public type: string, public idx: number, public input: string) {
+  constructor(public type: 'includes' | 'excludes', public idx: number, public input: string) {
   }
 }
 
 export class DeleteOption {
-  static readonly type = `[system] 删除位置选项`;
+  static readonly type = `[system] 删除搜索位置`;
 
-  constructor(public type: string, public idx: number) {
+  constructor(public type: 'includes' | 'excludes', public idx: number) {
   }
 }

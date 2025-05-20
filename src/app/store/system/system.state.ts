@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
 import { AddOption, ChangeOption, DeleteOption, ReceiveResult, Search, StopSearch } from './system.action';
-import { INCLUDE_OPTIONS, USER_HOME_FOLDER } from '../../shared/location';
+import { INCLUDE_OPTIONS, SearchOption, USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
 import * as immutable from 'object-path-immutable';
 import { Observable } from 'rxjs';
@@ -20,13 +20,13 @@ export interface SystemStateModel {
   /**
    * 搜索选项
    */
-  includes: any;
-  includeOptions: any;
+  includes: SearchOption[];
+  includesOptions: SearchOption[];
   /**
    * 排除选项
    */
-  excludes: any;
-  excludeOptions: any;
+  excludes: SearchOption[];
+  excludesOptions: SearchOption[];
   /**
    * 搜索是否结束
    */
@@ -39,9 +39,9 @@ export interface SystemStateModel {
     result: [],
     textForm: {},
     includes: [USER_HOME_FOLDER],
-    includeOptions: [],
+    includesOptions: [],
     excludes: [],
-    excludeOptions: [],
+    excludesOptions: [],
     isStop: true,
   },
 })
@@ -57,9 +57,9 @@ export class SystemState implements NgxsOnInit {
       result: [],
       textForm: state.textForm || {},
       includes: state.includes || [USER_HOME_FOLDER],
-      includeOptions: state.includeOptions || INCLUDE_OPTIONS,
+      includesOptions: state.includesOptions || [],
       excludes: state.excludes || [],
-      excludeOptions: state.excludeOptions || [],
+      excludesOptions: state.excludesOptions || [],
       isStop: state.isStop || true,
     });
   }
@@ -111,24 +111,46 @@ export class SystemState implements NgxsOnInit {
 
   @Action(AddOption)
   addOption(ctx: StateContext<SystemStateModel>, {type, input}: AddOption) {
-    // input:'' 选择
-    // input:'home' 用户HOME目录
-    console.log('addOption', type, input);
-    let findIndex = ctx.getState().includes.findIndex((s: any, idx: number) => true);
+    // input:'' 手动选择本地目录
+    // input:'~' 用户HOME目录
+    // type:'includes'
+    // type:'excludes'
     if (input === '') {
       open({multiple: false, directory: true}).then((r) => {
-        this.addOptionWithCheck(r);
+        if (!r) return;
+        this.addWithCheck(ctx, type, r);
+        this.addOptionWithCheck(ctx, type, r);
       });
       return;
     }
+    this.addWithCheck(ctx, type, input);
+    this.addOptionWithCheck(ctx, type, input);
   }
 
-  addOptionWithCheck(r: string | null) {
+  addWithCheck(ctx: StateContext<SystemStateModel>, type: 'includes' | 'excludes', input: string) {
+    if (ctx.getState()[type].findIndex((s: any) => s.input === input) !== -1) {
+      this.message.info(`路径已经存在`);
+      return;
+    }
+    let option = USER_HOME_FOLDER;
+    if (input !== '~') {
+      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+    }
+    ctx.setState(immutable.push(ctx.getState(), [type], option));
+  }
+
+  addOptionWithCheck(ctx: StateContext<SystemStateModel>, type: 'includes' | 'excludes', input: string) {
     // 如果是空值，说明取消了选择框，那么需要先设置成别的值然后再改回来，否则select值会改变
     // 如果有值，则判断是否合法
+    if (ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === input) !== -1) {
+      return;
+    }
     // 兜底，最后添加选项
-    if (!r) return;
-    console.log('r', r);
+    let option = USER_HOME_FOLDER;
+    if (input !== '~') {
+      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+    }
+    ctx.setState(immutable.push(ctx.getState(), [`${type}Options`], option));
   }
 
   @Action(ChangeOption)
