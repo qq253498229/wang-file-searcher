@@ -11,6 +11,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { FileSizePipe } from './file-size.pipe';
 
 const THIRD_MODULES: any[] = [
   FormsModule,
@@ -30,7 +31,7 @@ const THIRD_MODULES: any[] = [
 ];
 const COMPONENTS: any[] = [];
 const DIRECTIVES: any[] = [];
-const PIPES: any[] = [];
+const PIPES: any[] = [FileSizePipe];
 
 @NgModule({
   declarations: [

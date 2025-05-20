@@ -1,0 +1,25 @@
+<form [formGroup]="textForm" ngxsForm="system.textForm">
+  <div class="search-input">
+    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" [nzSuffix]="inputClearTpl">
+      <input type="text" nz-input formControlName="text"
+             (keyup.enter)="search()" #searchInputRef/>
+    </nz-input-group>
+    <ng-template #suffixIconButton>
+      @if (isStop()) {
+        <button nz-button nzType="primary" type="button" nzSearch (click)="search()">
+          <nz-icon nzType="search"/>
+        </button>
+      } @else {
+        <button nz-button nzType="primary" type="button" nzSearch (click)="stopSearch()" nzDanger>
+          <nz-icon nzType="border"/>
+        </button>
+      }
+    </ng-template>
+    <ng-template #inputClearTpl>
+      @if (searchText) {
+        <nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                 (click)="searchText = ''"/>
+      }
+    </ng-template>
+  </div>
+</form>

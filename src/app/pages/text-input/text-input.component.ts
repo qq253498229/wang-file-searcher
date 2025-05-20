@@ -4,24 +4,26 @@ import { SharedModule } from '../../shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { Store } from '@ngxs/store';
-import { Search } from '../../store/system/system.action';
+import { Search, StopSearch } from '../../store/system/system.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SystemSelector } from '../../store/system/system.selector';
 
 @Component({
-  selector: 'wang-content-input-group',
+  selector: 'wang-text-input',
   imports: [CommonModule, SharedModule],
-  templateUrl: './content-input-group.component.html',
+  templateUrl: './text-input.component.html',
   styles: [],
 })
-export class ContentInputGroupComponent implements OnInit {
+export class TextInputComponent implements OnInit {
   store = inject(Store);
   fb = inject(FormBuilder);
 
   @ViewChild('searchInputRef') searchInputRef!: ElementRef;
 
-  searchTextForm: FormGroup = this.fb.group({
+  textForm: FormGroup = this.fb.group({
     text: ['', Validators.required],
   });
+  isStop = this.store.selectSignal(SystemSelector.isStop());
 
   async ngOnInit() {
     await this.globalRegisterShortcut();
@@ -48,5 +50,17 @@ export class ContentInputGroupComponent implements OnInit {
 
   search() {
     this.store.dispatch(new Search());
+  }
+
+  stopSearch() {
+    this.store.dispatch(new StopSearch());
+  }
+
+  get searchText() {
+    return this.textForm.getRawValue().text;
+  }
+
+  set searchText(value) {
+    this.textForm.patchValue({text: value});
   }
 }
