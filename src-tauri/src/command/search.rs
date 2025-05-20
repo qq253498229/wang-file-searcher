@@ -56,6 +56,16 @@ fn search_and_send_event(
     if check_search_status_is_stop(&app) {
         return Ok(());
     }
+    for include in &param.includes {
+        match include.typee {
+            OptionType::PartPath => {
+                if !path.to_string_lossy().contains(&include.input) {
+                    return Ok(());
+                }
+            }
+            _ => {}
+        }
+    }
     // info!("search_and_send_event:{path:?}");
     for exclude in &param.excludes {
         match exclude.typee {

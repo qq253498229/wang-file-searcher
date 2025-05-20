@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { Store } from '@ngxs/store';
@@ -7,7 +7,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { AddOption, ChangeOption, DeleteOption } from '../../store/system/system.action';
+import { AddOption, ChangeInput, ChangeOption, DeleteOption } from '../../store/system/system.action';
 
 @Component({
   selector: 'wang-option',
@@ -18,6 +18,7 @@ import { AddOption, ChangeOption, DeleteOption } from '../../store/system/system
 })
 export class OptionComponent implements OnInit {
   store = inject(Store);
+  isDevMode = isDevMode();
 
   includes = this.store.selectSignal(SystemSelector.includes());
   includesOptions = this.store.selectSignal(SystemSelector.includesOptions());
@@ -41,5 +42,17 @@ export class OptionComponent implements OnInit {
 
   delete(type: 'includes' | 'excludes', idx: number) {
     this.store.dispatch(new DeleteOption(type, idx));
+  }
+
+  test() {
+    let param = {
+      includes: this.store.selectSignal(SystemSelector.includes())(),
+      excludes: this.store.selectSignal(SystemSelector.excludes())(),
+    };
+    console.log('param', param);
+  }
+
+  changeInput(type: 'includes' | 'excludes', idx: number, input: string) {
+    this.store.dispatch(new ChangeInput(type, idx, input));
   }
 }

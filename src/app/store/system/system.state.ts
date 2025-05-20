@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
 import {
   AddOption,
+  ChangeInput,
   ChangeOption,
   DeleteOption,
   OperationMenu,
@@ -113,6 +114,10 @@ export class SystemState implements NgxsOnInit {
         this.addOptionWithCheck(ctx, type, r);
       });
       return;
+    } else if (input === '') {
+      let option = {label: '', type: 'PartPath', input: '', flag: 'input'};
+      ctx.setState(immutable.set(ctx.getState(), [type, idx], option));
+      return;
     }
     this.changeWithCheck(ctx, type, idx, input);
     this.addOptionWithCheck(ctx, type, input);
@@ -147,6 +152,10 @@ export class SystemState implements NgxsOnInit {
         this.addWithCheck(ctx, type, r);
         this.addOptionWithCheck(ctx, type, r);
       });
+      return;
+    } else if (input === '') {
+      let option = {label: '', type: 'PartPath', input: '', flag: 'input'};
+      ctx.setState(immutable.push(ctx.getState(), [type], option));
       return;
     }
     this.addWithCheck(ctx, type, input);
@@ -197,6 +206,11 @@ export class SystemState implements NgxsOnInit {
     }).then(menu => {
       menu.popup().then();
     });
+  }
+
+  @Action(ChangeInput)
+  changeInput(ctx: StateContext<SystemStateModel>, {type, idx, input}: ChangeInput) {
+    ctx.setState(immutable.set(ctx.getState(), [type, idx, 'input'], input));
   }
 
 }

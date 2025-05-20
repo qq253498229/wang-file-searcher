@@ -27,6 +27,13 @@ export class ChangeOption {
   }
 }
 
+export class ChangeInput {
+  static readonly type = `[system] 手动输入路径`;
+
+  constructor(public type: 'includes' | 'excludes', public idx: number, public input: string) {
+  }
+}
+
 export class DeleteOption {
   static readonly type = `[system] 删除搜索位置`;
 
