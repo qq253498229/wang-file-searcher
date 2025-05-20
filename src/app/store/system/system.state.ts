@@ -67,27 +67,14 @@ export class SystemState implements NgxsOnInit {
   @Action(Search)
   Search(ctx: StateContext<SystemStateModel>) {
     ctx.patchState({isStop: false, result: []});
+    let includes = ctx.getState().includes;
+    let excludes = ctx.getState().excludes;
     let param = {
       text: ctx.getState().textForm.model.text.trim(),
-      // includes: ctx.getState().searchOptionForm.model.includes,
-      includes: [
-        {input: `/Users/wangbin/src/own/wang-file-searcher/wang-file-searcher/src-tauri/tests`, type: 'FullPath'},
-        // {input: `D:\\src\\own\\wang-file-searcher\\src-tauri\\tests`, type: 'FullPath'},
-      ],
-      // includes: [{input: `D:\\src`, type: 'FullPath'}],
-      excludes: [
-        {input: 'target', type: 'PartPath'},
-        {input: 'node_modules', type: 'PartPath'},
-        {input: '.idea', type: 'PartPath'},
-        {input: '.angular', type: 'PartPath'},
-        {input: '.vscode', type: 'PartPath'},
-        {input: 'dist', type: 'PartPath'},
-        // {input: 'yarn.lock', type: 'PartPath'},
-      ],
+      includes,
+      excludes,
     };
-    // console.log('options', options);
     invoke('search', {param}).then();
-    // return ctx.dispatch([new UpdateFormValue({path: 'system.textForm', value: {text: ''}})]);
   }
 
   @Action(ReceiveResult)
