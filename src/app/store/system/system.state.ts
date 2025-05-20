@@ -107,7 +107,7 @@ export class SystemState implements NgxsOnInit {
 
   @Action(ChangeOption)
   changeOption(ctx: StateContext<SystemStateModel>, {type, idx, input}: ChangeOption) {
-    if (input === '') {
+    if (input === '$CUSTOM$') {
       open({multiple: false, directory: true}).then((r) => {
         this.changeWithCheck(ctx, type, idx, r);
         this.addOptionWithCheck(ctx, type, r);
@@ -141,7 +141,7 @@ export class SystemState implements NgxsOnInit {
     // input:'~' 用户HOME目录
     // type:'includes'
     // type:'excludes'
-    if (input === '') {
+    if (input === '$CUSTOM$') {
       open({multiple: false, directory: true}).then((r) => {
         if (!r) return;
         this.addWithCheck(ctx, type, r);

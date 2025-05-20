@@ -8,7 +8,7 @@
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
           <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="hasHomeInclude"></nz-option>
-          <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>
+          <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
         </nz-select>
       </div>
       <div nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':includes().length===1}"
@@ -27,7 +27,7 @@
           @if (!hasHomeInclude) {
             <li nz-menu-item (click)="add('includes','~')">用户HOME目录</li>
           }
-          <li nz-menu-item (click)="add('includes','')">选择路径</li>
+          <li nz-menu-item (click)="add('includes','$CUSTOM$')">手动选择路径</li>
         </ul>
       </nz-dropdown-menu>
     </nz-row>
@@ -43,13 +43,13 @@
           @for (option of excludesOptions(); track $index) {
             <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
           }
-          <nz-option nzValue="" nzLabel="手动选择路径"></nz-option>
+          <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
         </nz-select>
       </div>
       <div nz-col nzSpan="2" class="icon" (click)="delete('excludes',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
       </div>
-      <div nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" (click)="add('excludes','')">
+      <div nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" (click)="add('excludes','$CUSTOM$')">
         <nz-icon nzType="plus-circle" nzTheme="outline"/>
       </div>
     </nz-row>
@@ -57,7 +57,7 @@
   @if (excludes().length === 0) {
     <nz-row>
       <nz-col nzOffset="4">
-        <button nz-button (click)="add('excludes','')">
+        <button nz-button (click)="add('excludes','$CUSTOM$')">
           <nz-icon nzType="plus"/>
           排除路径
         </button>
