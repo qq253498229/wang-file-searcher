@@ -15,7 +15,8 @@ jobs:
         run: |
           node --version
           rustc -V
-          sudo apt sudo apt-get install libglib2.0-dev
+          sudo apt update
+          sudo apt install libglib2.0-dev
           npm ci
           npm run tauri-build
       - name: 打印目录文件
