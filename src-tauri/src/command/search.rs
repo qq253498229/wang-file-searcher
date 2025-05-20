@@ -56,17 +56,6 @@ fn search_and_send_event(
     if check_search_status_is_stop(&app) {
         return Ok(());
     }
-    for include in &param.includes {
-        match include.typee {
-            OptionType::PartPath => {
-                if !path.to_string_lossy().contains(&include.input) {
-                    return Ok(());
-                }
-            }
-            _ => {}
-        }
-    }
-    // info!("search_and_send_event:{path:?}");
     for exclude in &param.excludes {
         match exclude.typee {
             OptionType::FullPath => {
@@ -93,53 +82,76 @@ fn search_and_send_event(
         }
         return Ok(());
     }
-    if let Ok(r) = find_string_in_file(&path, search_text) {
-        if r {
-            let metadata = fs::metadata(&path);
-            let file_name = path
-                .as_path()
-                .file_name()
-                .and_then(|r| r.to_str())
-                .map(|r| r.to_string());
-            let file_stem = path
-                .as_path()
-                .file_stem()
-                .and_then(|r| r.to_str())
-                .map(|r| r.to_string());
-            let extension = path
-                .as_path()
-                .extension()
-                .and_then(|r| r.to_str())
-                .map(|r| r.to_string());
-            let mut r = SearchResult {
-                path,
-                file_name,
-                file_stem,
-                extension,
-                size: 0,
-                create_at: 0,
-                update_at: 0,
-            };
-            if let Ok(metadata) = metadata {
-                r.size = metadata.len();
-                r.update_at = metadata
-                    .modified()?
-                    .duration_since(std::time::SystemTime::UNIX_EPOCH)?
-                    .as_millis();
-                r.create_at = metadata
-                    .created()?
-                    .duration_since(std::time::SystemTime::UNIX_EPOCH)?
-                    .as_millis();
+    for include in &param.includes {
+        match include.typee {
+            OptionType::PartPath => {
+                if !path.to_string_lossy().contains(&include.input) {
+                    return Ok(());
+                }
             }
-            app.emit("search_result", r)?;
+            _ => {}
         }
     }
+    if search_text.trim().len() == 0 {
+        send_file_emit(path, app)?;
+        return Ok(());
+    }
+    if let Ok(r) = find_string_in_file(&path, search_text) {
+        if !r {
+            return Ok(());
+        }
+        send_file_emit(path, app)?;
+    }
+    Ok(())
+}
+
+fn send_file_emit(path: PathBuf, app: &AppHandle) -> anyhow::Result<()> {
+    let metadata = fs::metadata(&path);
+    let file_name = path
+        .as_path()
+        .file_name()
+        .and_then(|r| r.to_str())
+        .map(|r| r.to_string());
+    let file_stem = path
+        .as_path()
+        .file_stem()
+        .and_then(|r| r.to_str())
+        .map(|r| r.to_string());
+    let extension = path
+        .as_path()
+        .extension()
+        .and_then(|r| r.to_str())
+        .map(|r| r.to_string());
+    let mut r = SearchResult {
+        path,
+        file_name,
+        file_stem,
+        extension,
+        size: 0,
+        create_at: 0,
+        update_at: 0,
+    };
+    if let Ok(metadata) = metadata {
+        r.size = metadata.len();
+        r.update_at = metadata
+            .modified()?
+            .duration_since(std::time::SystemTime::UNIX_EPOCH)?
+            .as_millis();
+        r.create_at = metadata
+            .created()?
+            .duration_since(std::time::SystemTime::UNIX_EPOCH)?
+            .as_millis();
+    }
+    app.emit("search_result", r)?;
     Ok(())
 }
 /// 获取所有的搜索路径
 fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
     let mut path_list = vec![];
     for include in param.includes.iter() {
+        if let OptionType::PartPath = include.typee {
+            continue;
+        }
         let path = PathBuf::from(&include.input);
         merge_path(&mut path_list, path)?;
     }
