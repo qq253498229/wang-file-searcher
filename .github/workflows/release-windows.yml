@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     name: 打包ubuntu平台
     steps:
-      - name: Checkout
-        id: checkout
-        uses: actions/checkout@v4
       - name: Add tauri dependencies
         run: |
           sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
       - name: build
         run: |
           npm ci
