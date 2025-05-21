@@ -6,6 +6,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use std::{fs, thread};
 use tauri::{AppHandle, Emitter, Manager};
+use tracing::info;
 use walkdir::WalkDir;
 
 #[tauri::command]
@@ -15,7 +16,8 @@ pub fn search(param: Param, app: AppHandle) -> Result<(), String> {
     let mut state = state.lock().unwrap();
     state.is_stop = false;
     thread::spawn(move || {
-        let _ = search_files(&param, &app);
+        let handler = SearchHandler::new(Some(app));
+        let _ = search_files(&param, &handler);
     });
     Ok(())
 }
@@ -26,86 +28,139 @@ pub fn stop_search(app: AppHandle) -> Result<(), String> {
     state.is_stop = true;
     Ok(())
 }
+struct SearchHandler {
+    app: Option<AppHandle>,
+}
+impl SearchHandler {
+    pub fn new(app: Option<AppHandle>) -> Self {
+        Self { app }
+    }
+
+    fn check_stop(&self) -> bool {
+        if self.app.is_none() {
+            return false;
+        }
+        let app = self.app.as_ref().unwrap();
+        let state = app.state::<Mutex<AppState>>();
+        let state = state.lock().unwrap();
+        state.is_stop
+    }
+    fn done(&self) -> anyhow::Result<()> {
+        if self.app.is_none() {
+            info!("is_done");
+            return Ok(());
+        }
+        self.app
+            .as_ref()
+            .unwrap()
+            .emit("result", json!({"is_done":true}))?;
+        Ok(())
+    }
+    fn send_result(&self, path: SearchResult) -> anyhow::Result<()> {
+        if self.app.is_none() {
+            info!("result:{path:?}");
+            return Ok(());
+        }
+        self.app.as_ref().unwrap().emit("result", path)?;
+        Ok(())
+    }
+    fn send_status(&self, path: &PathBuf) -> anyhow::Result<()> {
+        if self.app.is_none() {
+            // info!("status:{path:?}");
+            return Ok(());
+        }
+        self.app
+            .as_ref()
+            .unwrap()
+            .emit("status", json!({"path":path}))?;
+        Ok(())
+    }
+}
 
 /// 根据选项搜索全部文件
-fn search_files(param: &Param, app: &AppHandle) -> anyhow::Result<()> {
+fn search_files(param: &Param, handle: &SearchHandler) -> anyhow::Result<()> {
     let search_text = param.text.as_ref().unwrap();
     let all_file_path = find_all_path(&param)?;
     for path in all_file_path {
-        if check_search_status_is_stop(&app) {
-            break;
-        }
-        let _ = search_and_send_event(param, path, search_text, app);
+        let _ = search_and_send_event(param, path, search_text, handle);
     }
-    app.emit("search_result", json!({"is_done":true}))?;
+    handle.done()?;
     Ok(())
-}
-/// 检查搜索状态，如果已经停止了则返回true
-fn check_search_status_is_stop(app: &AppHandle) -> bool {
-    let state = app.state::<Mutex<AppState>>();
-    let state = state.lock().unwrap();
-    state.is_stop
 }
 /// 搜索文件，如果搜到了则向前端发送事件
 fn search_and_send_event(
     param: &Param,
     path: PathBuf,
     search_text: &str,
-    app: &AppHandle,
+    handle: &SearchHandler,
 ) -> anyhow::Result<()> {
-    if check_search_status_is_stop(&app) {
-        return Ok(());
-    }
-    for exclude in &param.excludes {
-        match exclude.typee {
-            OptionType::FullPath => {
-                if path.starts_with(&exclude.input) {
-                    return Ok(());
-                }
-            }
-            OptionType::PartPath => {
-                if path.to_string_lossy().contains(&exclude.input) {
-                    return Ok(());
-                }
-            }
+    let walker = WalkDir::new(&path).into_iter().filter_map(|e| e.ok());
+    // 这里walk_dir库会递归遍历全部子文件，所以千万不要自己再重复递归了
+    for entry in walker {
+        if handle.check_stop() {
+            return Ok(());
+        }
+        let path = entry.into_path();
+        handle.send_status(&path)?;
+        if is_exclude(param, &path) || !is_include(param, &path) {
+            continue;
+        }
+        if check_string(&path, search_text) {
+            send_file_emit(path, handle)?;
         }
     }
-
-    if path.is_dir() || !path.is_file() {
-        let walker = WalkDir::new(&path).into_iter();
-        for entry in walker.filter_map(|e| e.ok()) {
-            let new_path = entry.into_path();
-            if new_path == path {
-                continue;
-            }
-            let _ = search_and_send_event(param, new_path, search_text, &app);
-        }
-        return Ok(());
+    Ok(())
+}
+fn check_string(path: &PathBuf, search_text: &str) -> bool {
+    if search_text.trim().len() == 0 {
+        return true;
     }
+    if let Ok(r) = find_string_in_file(&path, search_text) {
+        if r {
+            return true;
+        }
+    }
+    false
+}
+fn is_include(param: &Param, path: &PathBuf) -> bool {
     for include in &param.includes {
         match include.typee {
             OptionType::PartPath => {
-                if !path.to_string_lossy().contains(&include.input) {
-                    return Ok(());
+                if !path
+                    .to_string_lossy()
+                    .to_lowercase()
+                    .contains(&include.input.to_lowercase())
+                {
+                    return false;
                 }
             }
             _ => {}
         }
     }
-    if search_text.trim().len() == 0 {
-        send_file_emit(path, app)?;
-        return Ok(());
-    }
-    if let Ok(r) = find_string_in_file(&path, search_text) {
-        if !r {
-            return Ok(());
-        }
-        send_file_emit(path, app)?;
-    }
-    Ok(())
+    true
 }
-
-fn send_file_emit(path: PathBuf, app: &AppHandle) -> anyhow::Result<()> {
+fn is_exclude(param: &Param, path: &PathBuf) -> bool {
+    for exclude in &param.excludes {
+        match exclude.typee {
+            OptionType::FullPath => {
+                if path.starts_with(&exclude.input) {
+                    return true;
+                }
+            }
+            OptionType::PartPath => {
+                if path
+                    .to_string_lossy()
+                    .to_lowercase()
+                    .contains(&exclude.input.to_lowercase())
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    false
+}
+fn send_file_emit(path: PathBuf, handle: &SearchHandler) -> anyhow::Result<()> {
     let metadata = fs::metadata(&path);
     let file_name = path
         .as_path()
@@ -142,7 +197,7 @@ fn send_file_emit(path: PathBuf, app: &AppHandle) -> anyhow::Result<()> {
             .duration_since(std::time::SystemTime::UNIX_EPOCH)?
             .as_millis();
     }
-    app.emit("search_result", r)?;
+    handle.send_result(r)?;
     Ok(())
 }
 /// 获取所有的搜索路径
@@ -162,6 +217,8 @@ fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
 mod tests {
     use super::*;
     use crate::command::entity::Param;
+    use crate::utils::init_logger;
+    use resolve_path::PathResolveExt;
     use std::path::Path;
 
     #[test]
@@ -212,5 +269,29 @@ mod tests {
         assert_eq!("Dockerfile", path.file_stem().unwrap().to_str().unwrap());
         assert_eq!(None, path.extension());
         assert_eq!("Dockerfile", path.file_name().unwrap().to_str().unwrap());
+    }
+    #[test]
+    fn test_search2() -> anyhow::Result<()> {
+        init_logger();
+        let handler = SearchHandler::new(None);
+        let mut param = Param::default();
+        param.text = Some("test".to_string());
+        param.add_includes("~".to_string());
+        search_files(&param, &handler)?;
+        Ok(())
+    }
+    #[test]
+    fn test_walker() -> anyhow::Result<()> {
+        init_logger();
+        let walker = WalkDir::new(
+            "/Users/wangbin/src/own/wang-file-searcher/wang-file-searcher/src-tauri/tests"
+                .resolve(),
+        )
+        .into_iter();
+        for entry in walker.filter_map(|e| e.ok()) {
+            let new_path = entry.into_path();
+            info!("new_path: {:?}", new_path);
+        }
+        Ok(())
     }
 }
