@@ -1,7 +1,9 @@
 on:
   push:
-    branches:
-      - main
+    tags:
+      - '**'
+
+run-name: Release app in windows
 
 permissions:
   contents: write
@@ -18,7 +20,7 @@ jobs:
         run: |
           npm ci
           npm run tauri-build
-      - name: 打印目录文件
+      - name: Print file tree
         uses: jaywcjlove/github-action-folder-tree@main
         with:
           path: './src-tauri/target/release/bundle'
