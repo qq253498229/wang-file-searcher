@@ -1,5 +1,5 @@
 [package]
-name = "文件搜索工具"
+name = "wang-file-searcher"
 version = "0.0.0"
 description = "A Tauri App"
 authors = ["you"]

@@ -4467,6 +4467,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "wang-file-searcher"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "resolve-path",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-global-shortcut",
+ "tauri-plugin-opener",
+ "tracing",
+ "tracing-subscriber",
+ "walkdir",
+]
+
+[[package]]
 name = "want"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5464,22 +5482,4 @@ dependencies = [
  "static_assertions",
  "syn 2.0.100",
  "winnow 0.7.6",
-]
-
-[[package]]
-name = "文件搜索工具"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "resolve-path",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-global-shortcut",
- "tauri-plugin-opener",
- "tracing",
- "tracing-subscriber",
- "walkdir",
 ]
