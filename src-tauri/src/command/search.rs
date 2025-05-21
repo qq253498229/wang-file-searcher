@@ -1,12 +1,10 @@
-use crate::command::entity::{OptionType, Param, SearchResult};
+use crate::command::entity::{OptionType, Param, SearchHandler, SearchResult};
 use crate::utils::file_utils::{find_string_in_file, merge_path};
 use crate::AppState;
-use serde_json::json;
 use std::path::PathBuf;
 use std::sync::Mutex;
 use std::{fs, thread};
-use tauri::{AppHandle, Emitter, Manager};
-use tracing::info;
+use tauri::{AppHandle, Manager};
 use walkdir::WalkDir;
 
 #[tauri::command]
@@ -27,54 +25,6 @@ pub fn stop_search(app: AppHandle) -> Result<(), String> {
     let mut state = state.lock().unwrap();
     state.is_stop = true;
     Ok(())
-}
-struct SearchHandler {
-    app: Option<AppHandle>,
-}
-impl SearchHandler {
-    pub fn new(app: Option<AppHandle>) -> Self {
-        Self { app }
-    }
-
-    fn check_stop(&self) -> bool {
-        if self.app.is_none() {
-            return false;
-        }
-        let app = self.app.as_ref().unwrap();
-        let state = app.state::<Mutex<AppState>>();
-        let state = state.lock().unwrap();
-        state.is_stop
-    }
-    fn done(&self) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            info!("is_done");
-            return Ok(());
-        }
-        self.app
-            .as_ref()
-            .unwrap()
-            .emit("result", json!({"is_done":true}))?;
-        Ok(())
-    }
-    fn send_result(&self, path: SearchResult) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            info!("result:{path:?}");
-            return Ok(());
-        }
-        self.app.as_ref().unwrap().emit("result", path)?;
-        Ok(())
-    }
-    fn send_status(&self, path: &PathBuf) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            // info!("status:{path:?}");
-            return Ok(());
-        }
-        self.app
-            .as_ref()
-            .unwrap()
-            .emit("status", json!({"path":path}))?;
-        Ok(())
-    }
 }
 
 /// 根据选项搜索全部文件
@@ -216,10 +166,11 @@ fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::command::entity::Param;
+    use crate::command::entity::{Param, SearchHandler};
     use crate::utils::init_logger;
     use resolve_path::PathResolveExt;
     use std::path::Path;
+    use tracing::info;
 
     #[test]
     fn test_search() -> anyhow::Result<()> {
