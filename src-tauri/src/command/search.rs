@@ -51,10 +51,10 @@ fn search_and_send_event(
             return Ok(());
         }
         let path = entry.into_path();
-        handle.send_status(&path)?;
         if is_exclude(param, &path) || !is_include(param, &path) {
             continue;
         }
+        handle.send_status(&path)?;
         if check_string(&path, search_text) {
             send_file_emit(path, handle)?;
         }
