@@ -16,9 +16,5 @@
     <wang-result></wang-result>
   </div>
 </div>
-@if (status()) {
-  <nz-divider class="margin0"></nz-divider>
-  <div class="bottom-status-group">
-    <span nz-typography [nzEllipsis]="true" [nzContent]="status()"></span>
-  </div>
-}
+<wang-status></wang-status>
+

@@ -7,22 +7,19 @@ import { ReceiveResult, ReceiveStatus } from './store/system/system.action';
 import { TextInputComponent } from './pages/text-input/text-input.component';
 import { OptionComponent } from './pages/option/option.component';
 import { ResultComponent } from './pages/result/result.component';
-import { NzDividerComponent } from 'ng-zorro-antd/divider';
-import { SystemSelector } from './store/system/system.selector';
-import { NzTypographyComponent } from 'ng-zorro-antd/typography';
 import { bufferTime, Subject } from 'rxjs';
+import { StatusComponent } from './pages/status/status.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, SharedModule, TextInputComponent, OptionComponent, ResultComponent, NzDividerComponent, NzTypographyComponent],
+    CommonModule, SharedModule, TextInputComponent, OptionComponent, ResultComponent, StatusComponent],
   templateUrl: './app.component.html',
   styles: [],
 })
 export class AppComponent implements OnInit {
   store = inject(Store);
-  status = this.store.selectSignal(SystemSelector.status());
 
   ngOnInit(): void {
     this.listenResult();
