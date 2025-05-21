@@ -4,12 +4,14 @@ import {
   AddOption,
   ChangeInput,
   ChangeOption,
-  DeleteOption, OpenFolder,
+  DeleteOption,
+  OpenFolder,
   OperationMenu,
   ReceiveResult,
   ReceiveStatus,
   Search,
   StopSearch,
+  SwitchSearch,
 } from './system.action';
 import { SearchOption, USER_HOME_FOLDER } from '../../shared/location';
 import { invoke } from '@tauri-apps/api/core';
@@ -242,6 +244,15 @@ export class SystemState implements NgxsOnInit {
       }
       let statusPath = data.payload.path;
       ctx.patchState({statusPath, statusTime});
+    }
+  }
+
+  @Action(SwitchSearch)
+  switchSearch(ctx: StateContext<SystemStateModel>) {
+    if (ctx.getState().isStop) {
+      return ctx.dispatch(new Search());
+    } else {
+      return ctx.dispatch(new StopSearch());
     }
   }
 

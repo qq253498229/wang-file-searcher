@@ -6,6 +6,10 @@ export class StopSearch {
   static readonly type = `[system] 停止搜索`;
 }
 
+export class SwitchSearch {
+  static readonly type = `[system] 切换搜索或者是停止搜索状态`;
+}
+
 export class ReceiveResult {
   static readonly type = `[system] 接受到搜索结果`;
 

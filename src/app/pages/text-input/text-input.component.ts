@@ -4,7 +4,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { Store } from '@ngxs/store';
-import { Search, StopSearch } from '../../store/system/system.action';
+import { Search, StopSearch, SwitchSearch } from '../../store/system/system.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SystemSelector } from '../../store/system/system.selector';
 
@@ -44,6 +44,11 @@ export class TextInputComponent implements OnInit {
     await register('CommandOrControl+/', (e) => {
       if (e.state === 'Released') {
         this.searchInputRef.nativeElement.focus();
+      }
+    });
+    await register('CommandOrControl+enter', (e) => {
+      if (e.state === 'Released') {
+        this.store.dispatch(new SwitchSearch());
       }
     });
   }
