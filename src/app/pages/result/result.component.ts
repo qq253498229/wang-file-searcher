@@ -4,7 +4,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { Store } from '@ngxs/store';
 import { SystemSelector } from '../../store/system/system.selector';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { OperationMenu } from '../../store/system/system.action';
+import { OpenFolder } from '../../store/system/system.action';
 
 @Component({
   selector: 'wang-result',
@@ -28,7 +28,7 @@ export class ResultComponent implements OnInit {
 
   }
 
-  operation(data: any) {
-    this.store.dispatch(new OperationMenu(data));
+  openInLocal(data: any) {
+    this.store.dispatch(new OpenFolder(data.path));
   }
 }

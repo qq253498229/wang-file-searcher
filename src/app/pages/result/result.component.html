@@ -7,7 +7,7 @@
     <th [nzSortFn]="comparePath" nzWidth="360px">文件名</th>
     <th [nzSortFn]="comparePath" nzWidth="60px">类型</th>
     <th [nzSortFn]="compareUpdateAt" nzWidth="170px">修改时间</th>
-    <th nzWidth="50px">操作</th>
+    <th nzWidth="75px">操作</th>
   </tr>
   </thead>
   <tbody>
@@ -18,7 +18,7 @@
     <td>{{ data.extension }}</td>
     <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
     <td>
-      <button type="button" nz-button nzType="primary" nzSize="small" (click)="operation(data)">操作</button>
+      <button type="button" nz-button nzType="primary" nzSize="small" (click)="openInLocal(data)">查看</button>
     </td>
   </tr>
   </tbody>

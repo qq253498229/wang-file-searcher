@@ -4,7 +4,7 @@ import {
   AddOption,
   ChangeInput,
   ChangeOption,
-  DeleteOption,
+  DeleteOption, OpenFolder,
   OperationMenu,
   ReceiveResult,
   ReceiveStatus,
@@ -71,7 +71,7 @@ export class SystemState implements NgxsOnInit {
   ngxsOnInit(ctx: StateContext<any>): void {
     let state = ctx.getState();
     ctx.patchState({
-      result: [],
+      result: state.result || [],
       textForm: state.textForm || {},
       includes: state.includes || [USER_HOME_FOLDER],
       includesOptions: state.includesOptions || [],
@@ -205,18 +205,23 @@ export class SystemState implements NgxsOnInit {
   }
 
   @Action(OperationMenu)
-  operationMenu(_ctx: StateContext<SystemStateModel>, {data}: OperationMenu) {
+  operationMenu(ctx: StateContext<SystemStateModel>, {data}: OperationMenu) {
     Menu.new({
       items: [
         {
           id: 'openFolder', text: '打开本地目录', action: () => {
-            invoke('open_folder', {path: data.path}).then();
+            ctx.dispatch(new OpenFolder(data.path));
           },
         },
       ],
     }).then(menu => {
       menu.popup().then();
     });
+  }
+
+  @Action(OpenFolder)
+  openFolder(_ctx: StateContext<SystemStateModel>, {path}: OpenFolder) {
+    invoke('open_folder', {path}).then();
   }
 
   @Action(ChangeInput)
