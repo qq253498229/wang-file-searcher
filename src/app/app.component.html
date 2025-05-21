@@ -2,6 +2,7 @@
 <div class="top-input-group">
   <wang-text-input></wang-text-input>
 </div>
+<nz-divider class="margin0"></nz-divider>
 <div class="middle-group">
   <div class="left-option-group">
     <!--选择搜索位置-->
@@ -9,9 +10,15 @@
       <wang-option></wang-option>
     </div>
   </div>
+  <nz-divider nzType="vertical" class="full-height"></nz-divider>
   <!--结果列表-->
   <div class="right-result-group">
     <wang-result></wang-result>
   </div>
 </div>
-
+@if (status()) {
+  <nz-divider class="margin0"></nz-divider>
+  <div class="bottom-status-group">
+    <span nz-typography [nzEllipsis]="true" [nzContent]="status()"></span>
+  </div>
+}

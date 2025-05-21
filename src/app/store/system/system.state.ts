@@ -7,6 +7,7 @@ import {
   DeleteOption,
   OperationMenu,
   ReceiveResult,
+  ReceiveStatus,
   Search,
   StopSearch,
 } from './system.action';
@@ -41,6 +42,9 @@ export interface SystemStateModel {
    * 搜索是否结束
    */
   isStop: boolean;
+  statusPath: string;
+  statusTime: number;
+  searchStartTime: number;
 }
 
 @State<SystemStateModel>({
@@ -53,6 +57,9 @@ export interface SystemStateModel {
     excludes: [],
     excludesOptions: [],
     isStop: true,
+    statusPath: ``,
+    statusTime: 0,
+    searchStartTime: 0,
   },
 })
 @Injectable({
@@ -70,13 +77,17 @@ export class SystemState implements NgxsOnInit {
       includesOptions: state.includesOptions || [],
       excludes: state.excludes || [],
       excludesOptions: state.excludesOptions || [],
-      isStop: state.isStop || true,
+      isStop: true,
+      statusPath: ``,
+      statusTime: 0,
+      searchStartTime: 0,
     });
   }
 
   @Action(Search)
   Search(ctx: StateContext<SystemStateModel>) {
-    ctx.patchState({isStop: false, result: []});
+    let searchStartTime = new Date().getTime();
+    ctx.patchState({isStop: false, result: [], searchStartTime});
     let includes = ctx.getState().includes;
     let excludes = ctx.getState().excludes;
     let param = {
@@ -88,16 +99,16 @@ export class SystemState implements NgxsOnInit {
   }
 
   @Action(ReceiveResult)
-  receiveResult(ctx: StateContext<SystemStateModel>, {data}: ReceiveResult): Observable<any> | void {
-    let path = data.payload.path;
-    if (ctx.getState().result.findIndex(s => s.path === path) !== -1) {
-      return;
+  receiveResult(ctx: StateContext<SystemStateModel>, {events}: ReceiveResult): Observable<any> | void {
+    let newState = ctx.getState();
+    for (let e of events) {
+      if (e.payload.is_done) continue;
+      newState = immutable.push(newState, ['result'], e.payload);
     }
+    ctx.setState(newState);
     if (ctx.getState().result.length > 10000) {
       return ctx.dispatch(new StopSearch());
     }
-    let newState = immutable.push(ctx.getState(), ['result'], data.payload);
-    ctx.setState(newState);
   }
 
   @Action(StopSearch)
@@ -211,6 +222,22 @@ export class SystemState implements NgxsOnInit {
   @Action(ChangeInput)
   changeInput(ctx: StateContext<SystemStateModel>, {type, idx, input}: ChangeInput) {
     ctx.setState(immutable.set(ctx.getState(), [type, idx, 'input'], input));
+  }
+
+  @Action(ReceiveStatus)
+  receiveStatus(ctx: StateContext<SystemStateModel>, {data}: ReceiveStatus) {
+    if (data.isDone) {
+      let statusTime = new Date().getTime();
+      ctx.patchState({statusTime});
+    } else if (!!data.payload.path) {
+      let oldTime = ctx.getState().statusTime;
+      let statusTime = new Date().getTime();
+      if ((statusTime - oldTime) < 300) {
+        return;
+      }
+      let statusPath = data.payload.path;
+      ctx.patchState({statusPath, statusTime});
+    }
   }
 
 }

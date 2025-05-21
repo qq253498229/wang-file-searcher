@@ -9,6 +9,13 @@ export class StopSearch {
 export class ReceiveResult {
   static readonly type = `[system] 接受到搜索结果`;
 
+  constructor(public events: any[]) {
+  }
+}
+
+export class ReceiveStatus {
+  static readonly type = `[system] 接受状态`;
+
   constructor(public data: any) {
   }
 }

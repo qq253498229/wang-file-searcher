@@ -10,7 +10,6 @@ app-root {
 
   .top-input-group {
     padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
   }
 
   .middle-group {
@@ -26,7 +25,6 @@ app-root {
       padding: 16px;
       overflow-y: auto;
       position: relative;
-      border-right: 1px solid #e0e0e0;
     }
 
     .right-result-group {
@@ -36,6 +34,18 @@ app-root {
     }
   }
 
+  .bottom-status-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 
+.full-height {
+  height: 100%;
+}
+
+.margin0 {
+  margin: 0;
+}
 
