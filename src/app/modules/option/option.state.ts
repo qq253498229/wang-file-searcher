@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { SearchOption, USER_HOME_FOLDER } from '../../common/entity/option';
+import { DEFAULT_REFINE, SearchOption, USER_HOME_FOLDER } from '../../common/entity/option';
 import { open } from '@tauri-apps/plugin-dialog';
 import * as immutable from 'object-path-immutable';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -17,6 +17,7 @@ export interface OptionStateModel {
    */
   excludes: SearchOption[];
   excludesOptions: SearchOption[];
+  refines: SearchOption[];
 }
 
 @State<OptionStateModel>({
@@ -26,6 +27,7 @@ export interface OptionStateModel {
     includesOptions: [],
     excludes: [],
     excludesOptions: [],
+    refines: [DEFAULT_REFINE],
   },
 })
 @Injectable({
@@ -41,6 +43,7 @@ export class OptionState implements NgxsOnInit {
       includesOptions: state.includesOptions || [],
       excludes: state.excludes || [],
       excludesOptions: state.excludesOptions || [],
+      refines: state.refines || [],
     });
   }
 
@@ -54,7 +57,6 @@ export class OptionState implements NgxsOnInit {
       open({multiple: false, directory: true}).then((r) => {
         if (!r) return;
         this.addWithCheck(ctx, type, r);
-        this.addOptionWithCheck(ctx, type, r);
       });
       return;
     } else if (input === '') {
@@ -63,10 +65,9 @@ export class OptionState implements NgxsOnInit {
       return;
     }
     this.addWithCheck(ctx, type, input);
-    this.addOptionWithCheck(ctx, type, input);
   }
 
-  addWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes', input: string) {
+  addWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', input: string) {
     if (ctx.getState()[type].findIndex((s: any) => s.input === input) !== -1) {
       this.message.info(`路径已经存在`);
       return;
@@ -78,26 +79,11 @@ export class OptionState implements NgxsOnInit {
     ctx.setState(immutable.push(ctx.getState(), [type], option));
   }
 
-  addOptionWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes', input: string | null) {
-    // 如果是空值，说明取消了选择框，那么需要先设置成别的值然后再改回来，否则select值会改变
-    // 如果有值，则判断是否合法
-    if (!input || input === '~' || ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === input) !== -1) {
-      return;
-    }
-    // 兜底，最后添加选项
-    let option = USER_HOME_FOLDER;
-    if (input !== '~') {
-      option = {label: input, type: 'FullPath', input, flag: 'custom'};
-    }
-    ctx.setState(immutable.push(ctx.getState(), [`${type}Options`], option));
-  }
-
   @Action(ChangeOption)
   changeOption(ctx: StateContext<OptionStateModel>, {type, idx, input}: ChangeOption) {
     if (input === '$CUSTOM$') {
       open({multiple: false, directory: true}).then((r) => {
         this.changeWithCheck(ctx, type, idx, r);
-        this.addOptionWithCheck(ctx, type, r);
       });
       return;
     } else if (input === '') {
@@ -106,10 +92,9 @@ export class OptionState implements NgxsOnInit {
       return;
     }
     this.changeWithCheck(ctx, type, idx, input);
-    this.addOptionWithCheck(ctx, type, input);
   }
 
-  changeWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes', idx: number, input: string | null) {
+  changeWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', idx: number, input: string | null) {
     if (!input || ctx.getState()[type].findIndex((s: any, i: number) => s.input === input && i !== idx) !== -1) {
       this.message.info(`路径已经存在`);
       let oldOption = ctx.getState()[type][idx];

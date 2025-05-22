@@ -1,14 +1,14 @@
 <h3>参数</h3>
 <div class="location">
-  @for (refine of refines; track $index) {
+  @for (refine of refines(); track $index) {
     <nz-row>
       <nz-col nzSpan="6">
-        <nz-select class="select" [(ngModel)]="refine.type">
+        <nz-select class="select" [(ngModel)]="refine.flag">
           <nz-option nzLabel="文件名" nzValue="filename"></nz-option>
         </nz-select>
       </nz-col>
       <nz-col nzSpan="5">
-        <nz-select class="select" [(ngModel)]="refine.mode">
+        <nz-select class="select" [(ngModel)]="refine.type">
           <nz-option nzLabel="是" nzValue="is"></nz-option>
           <nz-option nzLabel="不是" nzValue="not"></nz-option>
           <nz-option nzLabel="包含" nzValue="contains"></nz-option>
@@ -17,9 +17,9 @@
         </nz-select>
       </nz-col>
       <nz-col nzSpan="9">
-        <input type="text" [(ngModel)]="refine.input" nz-input>
+        <input type="text" nz-input [ngModel]="refine.input" (ngModelChange)="changeInput('refines',$index,$event)">
       </nz-col>
-      <nz-col nzSpan="2" class="icon">
+      <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}" (click)="delete('refines',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
       </nz-col>
       <nz-col nzSpan="2" class="icon">
@@ -28,6 +28,7 @@
     </nz-row>
   }
 </div>
+<nz-divider></nz-divider>
 <h3>位置</h3>
 <div class="location">
   @for (include of includes(); track $index) {
@@ -121,5 +122,6 @@
 </nz-dropdown-menu>
 
 @if (isDevMode) {
+  <nz-divider></nz-divider>
   <button (click)="test()">test</button>
 }

@@ -31,4 +31,11 @@ export class OptionSelector {
     );
   }
 
+  static refines() {
+    return createSelector([OptionState], (state: OptionStateModel) => {
+        return state.refines;
+      },
+    );
+  }
+
 }

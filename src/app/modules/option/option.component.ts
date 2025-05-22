@@ -7,7 +7,6 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { OptionSelector } from './option.selector';
-import { ResultSelector } from '../result/result.selector';
 import { AddOption, ChangeInput, ChangeOption, DeleteOption } from './option.action';
 
 @Component({
@@ -25,10 +24,7 @@ export class OptionComponent implements OnInit {
   includesOptions = this.store.selectSignal(OptionSelector.includesOptions());
   excludes = this.store.selectSignal(OptionSelector.excludes());
   excludesOptions = this.store.selectSignal(OptionSelector.excludesOptions());
-
-  refines = [
-    {type: 'filename', mode: 'is', input: ''},
-  ];
+  refines = this.store.selectSignal(OptionSelector.refines());
 
   ngOnInit(): void {
   }
@@ -37,24 +33,23 @@ export class OptionComponent implements OnInit {
     return this.includes().findIndex(s => s.input === '~') !== -1;
   }
 
-  add(type: 'includes' | 'excludes', input: string): void {
+  add(type: 'includes' | 'excludes' | 'refines', input: string): void {
     this.store.dispatch(new AddOption(type, input));
   }
 
-  change(type: 'includes' | 'excludes', idx: number, input: string) {
+  change(type: 'includes' | 'excludes' | 'refines', idx: number, input: string) {
     this.store.dispatch(new ChangeOption(type, idx, input));
   }
 
-  delete(type: 'includes' | 'excludes', idx: number) {
+  delete(type: 'includes' | 'excludes' | 'refines', idx: number) {
     this.store.dispatch(new DeleteOption(type, idx));
   }
 
   test() {
-    console.log('refines', this.refines);
-    console.log(this.store.selectSnapshot(ResultSelector.result()));
+    console.log(this.store.selectSnapshot(OptionSelector.refines()));
   }
 
-  changeInput(type: 'includes' | 'excludes', idx: number, input: string) {
+  changeInput(type: 'includes' | 'excludes' | 'refines', idx: number, input: string) {
     this.store.dispatch(new ChangeInput(type, idx, input));
   }
 }

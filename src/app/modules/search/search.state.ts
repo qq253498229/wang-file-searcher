@@ -38,10 +38,10 @@ export class SearchState implements NgxsOnInit {
   Search(ctx: StateContext<SearchStateModel>) {
     let includes = this.store.selectSnapshot(OptionSelector.includes());
     let excludes = this.store.selectSnapshot(OptionSelector.excludes());
+    let refines = this.store.selectSnapshot(OptionSelector.refines());
     let param = {
       text: ctx.getState().textForm.model.text.trim(),
-      includes,
-      excludes,
+      includes, excludes, refines,
     };
     invoke('search', {param}).then();
     return ctx.dispatch([new ClearResult(), new Start()]);
