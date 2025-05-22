@@ -5,9 +5,9 @@ import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { withNgxsFormPlugin } from '@ngxs/form-plugin';
 import { RouterStateSerializer, withNgxsRouterPlugin } from '@ngxs/router-plugin';
 import { CustomRouterStateSerializer } from './router/custom-router-state-serializer';
-import { OptionState } from './option/option.state';
-import { ResultState } from './result/result.state';
-import { SearchState } from './search/search.state';
+import { OptionState } from '../../modules/option/option.state';
+import { ResultState } from '../../modules/result/result.state';
+import { SearchState } from '../../modules/search/search.state';
 
 export const states = [
   SystemState,

@@ -1,12 +1,12 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../../common/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { Store } from '@ngxs/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ResultSelector } from '../../store/result/result.selector';
-import { Search, StopSearch, SwitchSearch } from '../../store/search/search.action';
+import { ResultSelector } from '../result/result.selector';
+import { Search, StopSearch, SwitchSearch } from '../search/search.action';
 
 @Component({
   selector: 'wang-text-input',

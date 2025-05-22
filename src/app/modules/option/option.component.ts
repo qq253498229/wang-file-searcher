@@ -1,14 +1,14 @@
 import { Component, inject, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../../common/shared.module';
 import { Store } from '@ngxs/store';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { OptionSelector } from '../../store/option/option.selector';
-import { ResultSelector } from '../../store/result/result.selector';
-import { AddOption, ChangeInput, ChangeOption, DeleteOption } from '../../store/option/option.action';
+import { OptionSelector } from './option.selector';
+import { ResultSelector } from '../result/result.selector';
+import { AddOption, ChangeInput, ChangeOption, DeleteOption } from './option.action';
 
 @Component({
   selector: 'wang-option',

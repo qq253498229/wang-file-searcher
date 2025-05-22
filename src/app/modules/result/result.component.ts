@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../shared/shared.module';
+import { SharedModule } from '../../common/shared.module';
 import { Store } from '@ngxs/store';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { ResultSelector } from '../../store/result/result.selector';
-import { OpenFolder } from '../../store/system/system.action';
+import { ResultSelector } from './result.selector';
+import { OpenFolder } from '../../common/store/system/system.action';
 
 @Component({
   selector: 'wang-result',

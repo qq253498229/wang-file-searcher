@@ -5,14 +5,11 @@ import { invoke } from '@tauri-apps/api/core';
 import { Menu } from '@tauri-apps/api/menu/menu';
 
 export interface SystemStateModel {
-  testNumber: number;
 }
 
 @State<SystemStateModel>({
   name: 'system',
-  defaults: {
-    testNumber: 0,
-  },
+  defaults: {},
 })
 @Injectable({
   providedIn: 'root',

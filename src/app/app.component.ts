@@ -1,14 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from './shared/shared.module';
+import { SharedModule } from './common/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { Store } from '@ngxs/store';
 import { bufferTime, Subject } from 'rxjs';
-import { TextInputComponent } from './pages/text-input/text-input.component';
-import { ReceiveResult, ReceiveStatus } from './store/result/result.action';
-import { OptionComponent } from './pages/option/option.component';
-import { ResultComponent } from './pages/result/result.component';
-import { StatusComponent } from './pages/status/status.component';
+import { TextInputComponent } from './modules/text-input/text-input.component';
+import { ReceiveResult, ReceiveStatus } from './modules/result/result.action';
+import { OptionComponent } from './modules/option/option.component';
+import { ResultComponent } from './modules/result/result.component';
+import { StatusComponent } from './modules/status/status.component';
 
 @Component({
   selector: 'app-root',

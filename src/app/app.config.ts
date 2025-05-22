@@ -9,7 +9,7 @@ import zh from '@angular/common/locales/zh';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient } from '@angular/common/http';
-import { provideNgxs } from './store';
+import { provideNgxs } from './common/store';
 
 registerLocaleData(zh);
 

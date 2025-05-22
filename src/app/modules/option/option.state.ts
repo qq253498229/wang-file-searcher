@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { SearchOption, USER_HOME_FOLDER } from '../../shared/location';
+import { SearchOption, USER_HOME_FOLDER } from '../../common/entity/option';
 import { open } from '@tauri-apps/plugin-dialog';
 import * as immutable from 'object-path-immutable';
 import { NzMessageService } from 'ng-zorro-antd/message';
