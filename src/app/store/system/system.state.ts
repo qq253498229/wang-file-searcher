@@ -232,11 +232,13 @@ export class SystemState implements NgxsOnInit {
   }
 
   @Action(ReceiveStatus)
-  receiveStatus(ctx: StateContext<SystemStateModel>, {data}: ReceiveStatus) {
-    if (data.isDone) {
+  receiveStatus(ctx: StateContext<SystemStateModel>, {data}: ReceiveStatus): Observable<any> | void {
+    if (!!data.payload && data.payload.is_done) {
       let statusTime = new Date().getTime();
-      ctx.patchState({statusTime});
-    } else if (!!data.payload.path) {
+      ctx.patchState({statusTime, statusPath: '0'});
+      this.message.info(`搜索完成`);
+      return ctx.dispatch(new StopSearch());
+    } else if (!!data.payload && !!data.payload.path) {
       let oldTime = ctx.getState().statusTime;
       let statusTime = new Date().getTime();
       if ((statusTime - oldTime) < 300) {

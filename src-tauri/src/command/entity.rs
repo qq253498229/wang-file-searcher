@@ -79,7 +79,7 @@ impl SearchHandler {
         self.app
             .as_ref()
             .unwrap()
-            .emit("result", json!({"is_done":true}))?;
+            .emit("status", json!({"is_done":true}))?;
         Ok(())
     }
     pub fn send_result(&self, path: SearchResult) -> anyhow::Result<()> {

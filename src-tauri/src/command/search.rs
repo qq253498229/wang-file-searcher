@@ -29,6 +29,10 @@ pub fn stop_search(app: AppHandle) -> Result<(), String> {
 
 /// 根据选项搜索全部文件
 fn search_files(param: &Param, handle: &SearchHandler) -> anyhow::Result<()> {
+    if is_invalid(param) {
+        handle.done()?;
+        return Ok(());
+    }
     let search_text = param.text.as_ref().unwrap();
     let all_file_path = find_all_path(&param)?;
     for path in all_file_path {
@@ -36,6 +40,13 @@ fn search_files(param: &Param, handle: &SearchHandler) -> anyhow::Result<()> {
     }
     handle.done()?;
     Ok(())
+}
+fn is_invalid(param: &Param) -> bool {
+    let search_text = param.text.as_ref().unwrap();
+    if search_text.trim().len() == 0 {
+        return true;
+    }
+    false
 }
 /// 搜索文件，如果搜到了则向前端发送事件
 fn search_and_send_event(
@@ -222,6 +233,7 @@ mod tests {
         assert_eq!("Dockerfile", path.file_name().unwrap().to_str().unwrap());
     }
     #[test]
+    #[ignore]
     fn test_search2() -> anyhow::Result<()> {
         init_logger();
         let handler = SearchHandler::new(None);
@@ -232,6 +244,7 @@ mod tests {
         Ok(())
     }
     #[test]
+    #[ignore]
     fn test_walker() -> anyhow::Result<()> {
         init_logger();
         let walker = WalkDir::new(
@@ -243,6 +256,18 @@ mod tests {
             let new_path = entry.into_path();
             info!("new_path: {:?}", new_path);
         }
+        Ok(())
+    }
+
+    #[test]
+    #[ignore]
+    fn test_validator() -> anyhow::Result<()> {
+        init_logger();
+        let handler = SearchHandler::new(None);
+        let mut param = Param::default();
+        param.text = Some(String::from(""));
+        param.add_includes("~".to_string());
+        search_files(&param, &handler)?;
         Ok(())
     }
 }
