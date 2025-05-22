@@ -1,5 +1,16 @@
-use crate::command::entity::{OptionType, Param, SearchHandler, SearchResult};
-use crate::utils::file_utils::{find_string_in_file, merge_path};
+mod excludes;
+mod find_string;
+mod includes;
+mod result;
+mod validator;
+
+use crate::command::entity::{OptionType, Param, SearchHandler};
+use crate::search::excludes::is_exclude;
+use crate::search::find_string::check_string;
+use crate::search::includes::is_include;
+use crate::search::result::send_file_emit;
+use crate::search::validator::is_invalid;
+use crate::utils::file_utils::merge_path;
 use std::path::PathBuf;
 use walkdir::WalkDir;
 
@@ -17,13 +28,7 @@ pub fn search_files(param: &Param, handle: &SearchHandler) -> anyhow::Result<()>
     handle.done()?;
     Ok(())
 }
-fn is_invalid(param: &Param) -> bool {
-    let search_text = param.text.as_ref().unwrap();
-    if search_text.trim().len() == 0 {
-        return true;
-    }
-    false
-}
+
 /// 搜索文件，如果搜到了则向前端发送事件
 fn search_and_send_event(
     param: &Param,
@@ -48,95 +53,7 @@ fn search_and_send_event(
     }
     Ok(())
 }
-fn check_string(path: &PathBuf, search_text: &str) -> bool {
-    if search_text.trim().len() == 0 {
-        return true;
-    }
-    if let Ok(r) = find_string_in_file(&path, search_text) {
-        if r {
-            return true;
-        }
-    }
-    false
-}
-fn is_include(param: &Param, path: &PathBuf) -> bool {
-    for include in &param.includes {
-        match include.typee {
-            OptionType::PartPath => {
-                if !path
-                    .to_string_lossy()
-                    .to_lowercase()
-                    .contains(&include.input.to_lowercase())
-                {
-                    return false;
-                }
-            }
-            _ => {}
-        }
-    }
-    true
-}
-fn is_exclude(param: &Param, path: &PathBuf) -> bool {
-    for exclude in &param.excludes {
-        match exclude.typee {
-            OptionType::FullPath => {
-                if path.starts_with(&exclude.input) {
-                    return true;
-                }
-            }
-            OptionType::PartPath => {
-                if path
-                    .to_string_lossy()
-                    .to_lowercase()
-                    .contains(&exclude.input.to_lowercase())
-                {
-                    return true;
-                }
-            }
-        }
-    }
-    false
-}
-fn send_file_emit(path: PathBuf, handle: &SearchHandler) -> anyhow::Result<()> {
-    let metadata = std::fs::metadata(&path);
-    let file_name = path
-        .as_path()
-        .file_name()
-        .and_then(|r| r.to_str())
-        .map(|r| r.to_string());
-    let file_stem = path
-        .as_path()
-        .file_stem()
-        .and_then(|r| r.to_str())
-        .map(|r| r.to_string());
-    let extension = path
-        .as_path()
-        .extension()
-        .and_then(|r| r.to_str())
-        .map(|r| r.to_string());
-    let mut r = SearchResult {
-        path,
-        file_name,
-        file_stem,
-        extension,
-        size: 0,
-        create_at: 0,
-        update_at: 0,
-    };
-    if let Ok(metadata) = metadata {
-        r.size = metadata.len();
-        r.update_at = metadata
-            .modified()?
-            .duration_since(std::time::SystemTime::UNIX_EPOCH)?
-            .as_millis();
-        r.create_at = metadata
-            .created()?
-            .duration_since(std::time::SystemTime::UNIX_EPOCH)?
-            .as_millis();
-    }
-    handle.send_result(r)?;
-    Ok(())
-}
+
 /// 获取所有的搜索路径
 fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
     let mut path_list = vec![];
@@ -184,17 +101,7 @@ mod tests {
         search_files(&param, &handler)?;
         Ok(())
     }
-    #[test]
-    #[ignore]
-    fn test_validator() -> anyhow::Result<()> {
-        init_logger();
-        let handler = SearchHandler::new(None);
-        let mut param = Param::default();
-        param.text = Some(String::from(""));
-        param.add_includes("~".to_string());
-        search_files(&param, &handler)?;
-        Ok(())
-    }
+
     #[test]
     fn test_resolve_relate_path() -> anyhow::Result<()> {
         let mut param = Param::default();
