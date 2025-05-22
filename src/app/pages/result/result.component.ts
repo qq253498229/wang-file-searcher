@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { Store } from '@ngxs/store';
-import { SystemSelector } from '../../store/system/system.selector';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { ResultSelector } from '../../store/result/result.selector';
 import { OpenFolder } from '../../store/system/system.action';
 
 @Component({
@@ -14,7 +14,11 @@ import { OpenFolder } from '../../store/system/system.action';
 })
 export class ResultComponent implements OnInit {
   store = inject(Store);
-  result = this.store.selectSignal(SystemSelector.result());
+  result = this.store.selectSignal(ResultSelector.result());
+
+  ngOnInit() {
+
+  }
 
   comparePath(a: any, b: any) {
     return a.path.localeCompare(b.path);
@@ -22,10 +26,6 @@ export class ResultComponent implements OnInit {
 
   compareUpdateAt(a: any, b: any) {
     return a.update_at - b.update_at;
-  }
-
-  ngOnInit() {
-
   }
 
   openInLocal(data: any) {

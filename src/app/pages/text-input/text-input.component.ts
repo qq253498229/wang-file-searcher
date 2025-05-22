@@ -4,9 +4,9 @@ import { SharedModule } from '../../shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
 import { Store } from '@ngxs/store';
-import { Search, StopSearch, SwitchSearch } from '../../store/system/system.action';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { SystemSelector } from '../../store/system/system.selector';
+import { ResultSelector } from '../../store/result/result.selector';
+import { Search, StopSearch, SwitchSearch } from '../../store/search/search.action';
 
 @Component({
   selector: 'wang-text-input',
@@ -23,7 +23,7 @@ export class TextInputComponent implements OnInit {
   textForm: FormGroup = this.fb.group({
     text: ['', Validators.required],
   });
-  isStop = this.store.selectSignal(SystemSelector.isStop());
+  isStop = this.store.selectSignal(ResultSelector.isStop());
 
   async ngOnInit() {
     await this.globalRegisterShortcut();

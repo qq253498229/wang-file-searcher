@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from './shared/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { Store } from '@ngxs/store';
-import { ReceiveResult, ReceiveStatus } from './store/system/system.action';
+import { bufferTime, Subject } from 'rxjs';
 import { TextInputComponent } from './pages/text-input/text-input.component';
+import { ReceiveResult, ReceiveStatus } from './store/result/result.action';
 import { OptionComponent } from './pages/option/option.component';
 import { ResultComponent } from './pages/result/result.component';
-import { bufferTime, Subject } from 'rxjs';
 import { StatusComponent } from './pages/status/status.component';
 
 @Component({

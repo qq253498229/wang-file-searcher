@@ -2,12 +2,13 @@ import { Component, inject, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { Store } from '@ngxs/store';
-import { SystemSelector } from '../../store/system/system.selector';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { AddOption, ChangeInput, ChangeOption, DeleteOption } from '../../store/system/system.action';
+import { OptionSelector } from '../../store/option/option.selector';
+import { ResultSelector } from '../../store/result/result.selector';
+import { AddOption, ChangeInput, ChangeOption, DeleteOption } from '../../store/option/option.action';
 
 @Component({
   selector: 'wang-option',
@@ -20,10 +21,10 @@ export class OptionComponent implements OnInit {
   store = inject(Store);
   isDevMode = isDevMode();
 
-  includes = this.store.selectSignal(SystemSelector.includes());
-  includesOptions = this.store.selectSignal(SystemSelector.includesOptions());
-  excludes = this.store.selectSignal(SystemSelector.excludes());
-  excludesOptions = this.store.selectSignal(SystemSelector.excludesOptions());
+  includes = this.store.selectSignal(OptionSelector.includes());
+  includesOptions = this.store.selectSignal(OptionSelector.includesOptions());
+  excludes = this.store.selectSignal(OptionSelector.excludes());
+  excludesOptions = this.store.selectSignal(OptionSelector.excludesOptions());
 
   refines = [
     {type: 'filename', mode: 'is', input: ''},
@@ -50,7 +51,7 @@ export class OptionComponent implements OnInit {
 
   test() {
     console.log('refines', this.refines);
-    console.log(this.store.selectSnapshot(SystemSelector.result()));
+    console.log(this.store.selectSnapshot(ResultSelector.result()));
   }
 
   changeInput(type: 'includes' | 'excludes', idx: number, input: string) {
