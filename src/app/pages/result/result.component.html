@@ -1,7 +1,7 @@
 <nz-table #basicTable
           [nzData]="result()"
           nzTableLayout="fixed"
-          [nzFrontPagination]="false" nzSize="small">
+          [nzPageSize]="100" nzSize="small">
   <thead>
   <tr>
     <th [nzSortFn]="comparePath" nzWidth="360px">文件名</th>
