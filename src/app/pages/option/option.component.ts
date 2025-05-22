@@ -25,6 +25,10 @@ export class OptionComponent implements OnInit {
   excludes = this.store.selectSignal(SystemSelector.excludes());
   excludesOptions = this.store.selectSignal(SystemSelector.excludesOptions());
 
+  refines = [
+    {type: 'filename', mode: 'is', input: ''},
+  ];
+
   ngOnInit(): void {
   }
 
@@ -45,11 +49,8 @@ export class OptionComponent implements OnInit {
   }
 
   test() {
-    let param = {
-      includes: this.store.selectSignal(SystemSelector.includes())(),
-      excludes: this.store.selectSignal(SystemSelector.excludes())(),
-    };
-    console.log('param', param);
+    console.log('refines', this.refines);
+    console.log(this.store.selectSnapshot(SystemSelector.result()));
   }
 
   changeInput(type: 'includes' | 'excludes', idx: number, input: string) {

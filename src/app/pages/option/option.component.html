@@ -1,4 +1,34 @@
-<h3>搜索位置</h3>
+<h3>参数</h3>
+<div class="location">
+  @for (refine of refines; track $index) {
+    <nz-row>
+      <nz-col nzSpan="6">
+        <nz-select class="select" [(ngModel)]="refine.type">
+          <nz-option nzLabel="文件名" nzValue="filename"></nz-option>
+        </nz-select>
+      </nz-col>
+      <nz-col nzSpan="5">
+        <nz-select class="select" [(ngModel)]="refine.mode">
+          <nz-option nzLabel="是" nzValue="is"></nz-option>
+          <nz-option nzLabel="不是" nzValue="not"></nz-option>
+          <nz-option nzLabel="包含" nzValue="contains"></nz-option>
+          <nz-option nzLabel="开头" nzValue="begin"></nz-option>
+          <nz-option nzLabel="结尾" nzValue="end"></nz-option>
+        </nz-select>
+      </nz-col>
+      <nz-col nzSpan="9">
+        <input type="text" [(ngModel)]="refine.input" nz-input>
+      </nz-col>
+      <nz-col nzSpan="2" class="icon">
+        <nz-icon nzType="minus-circle" nzTheme="outline"/>
+      </nz-col>
+      <nz-col nzSpan="2" class="icon">
+        <nz-icon nzType="plus-circle" nzTheme="outline"/>
+      </nz-col>
+    </nz-row>
+  }
+</div>
+<h3>位置</h3>
 <div class="location">
   @for (include of includes(); track $index) {
     <nz-row>
