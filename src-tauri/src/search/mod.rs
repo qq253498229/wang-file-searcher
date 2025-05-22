@@ -36,8 +36,11 @@ fn search_and_send_event(
     search_text: &str,
     handle: &SearchHandler,
 ) -> anyhow::Result<()> {
-    let walker = WalkDir::new(&path).into_iter().filter_map(|e| e.ok());
-    // 这里walk_dir库会递归遍历全部子文件，所以千万不要自己再重复递归了
+    let walker = WalkDir::new(&path)
+        .min_depth(1)
+        .max_depth(1)
+        .into_iter()
+        .filter_map(|e| e.ok());
     for entry in walker {
         if handle.check_stop() {
             return Ok(());
@@ -47,6 +50,13 @@ fn search_and_send_event(
             continue;
         }
         handle.send_status(&path)?;
+        if path.is_dir() {
+            search_and_send_event(param, path, search_text, handle)?;
+            continue;
+        }
+        if !path.is_file() {
+            continue;
+        }
         if check_string(&path, search_text) {
             send_file_emit(path, handle)?;
         }
