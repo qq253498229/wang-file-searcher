@@ -46,7 +46,11 @@ export class OptionComponent implements OnInit {
   }
 
   test() {
-    console.log(this.store.selectSnapshot(OptionSelector.refines()));
+    console.log('refines', this.store.selectSnapshot(OptionSelector.refines()));
+    console.log('includes', this.store.selectSnapshot(OptionSelector.includes()));
+    console.log('includesOptions', this.store.selectSnapshot(OptionSelector.includesOptions()));
+    console.log('excludes', this.store.selectSnapshot(OptionSelector.excludes()));
+    console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
   }
 
   changeInput(type: 'includes' | 'excludes' | 'refines', idx: number, input: string) {

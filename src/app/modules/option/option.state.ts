@@ -18,6 +18,7 @@ export interface OptionStateModel {
   excludes: SearchOption[];
   excludesOptions: SearchOption[];
   refines: SearchOption[];
+  refinesOptions: SearchOption[];
 }
 
 @State<OptionStateModel>({
@@ -28,6 +29,7 @@ export interface OptionStateModel {
     excludes: [],
     excludesOptions: [],
     refines: [DEFAULT_REFINE],
+    refinesOptions: [],
   },
 })
 @Injectable({
@@ -57,6 +59,7 @@ export class OptionState implements NgxsOnInit {
       open({multiple: false, directory: true}).then((r) => {
         if (!r) return;
         this.addWithCheck(ctx, type, r);
+        this.addOptionWithCheck(ctx, type, r);
       });
       return;
     } else if (input === '') {
@@ -65,6 +68,7 @@ export class OptionState implements NgxsOnInit {
       return;
     }
     this.addWithCheck(ctx, type, input);
+    this.addOptionWithCheck(ctx, type, input);
   }
 
   addWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', input: string) {
@@ -79,11 +83,26 @@ export class OptionState implements NgxsOnInit {
     ctx.setState(immutable.push(ctx.getState(), [type], option));
   }
 
+  addOptionWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', input: string | null) {
+    // 如果是空值，说明取消了选择框，那么需要先设置成别的值然后再改回来，否则select值会改变
+    // 如果有值，则判断是否合法
+    if (!input || input === '~' || ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === input) !== -1) {
+      return;
+    }
+    // 兜底，最后添加选项
+    let option = USER_HOME_FOLDER;
+    if (input !== '~') {
+      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+    }
+    ctx.setState(immutable.push(ctx.getState(), [`${type}Options`], option));
+  }
+
   @Action(ChangeOption)
   changeOption(ctx: StateContext<OptionStateModel>, {type, idx, input}: ChangeOption) {
     if (input === '$CUSTOM$') {
       open({multiple: false, directory: true}).then((r) => {
         this.changeWithCheck(ctx, type, idx, r);
+        this.addOptionWithCheck(ctx, type, r);
       });
       return;
     } else if (input === '') {
@@ -92,6 +111,7 @@ export class OptionState implements NgxsOnInit {
       return;
     }
     this.changeWithCheck(ctx, type, idx, input);
+    this.addOptionWithCheck(ctx, type, input);
   }
 
   changeWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', idx: number, input: string | null) {
@@ -113,7 +133,12 @@ export class OptionState implements NgxsOnInit {
 
   @Action(DeleteOption)
   deleteOption(ctx: StateContext<OptionStateModel>, {type, idx}: DeleteOption) {
-    ctx.setState(immutable.del(ctx.getState(), [type, idx]));
+    let option = ctx.getState()[type][idx];
+    let optionIdx = ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === option.input);
+    let newState = ctx.getState();
+    newState = immutable.del(newState, [type, idx]);
+    newState = immutable.del(newState, [`${type}Options`, optionIdx]);
+    ctx.setState(newState);
   }
 
   @Action(ChangeInput)
