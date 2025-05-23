@@ -1,7 +1,8 @@
-use crate::command::entity::{SearchHandler, SearchResult};
+use crate::command::entity::SearchResult;
+use crate::search::handler::SearchHandler;
 use std::path::PathBuf;
 
-pub fn send_file_emit(path: PathBuf, handle: &SearchHandler) -> anyhow::Result<()> {
+pub fn send_file_emit(path: PathBuf, handle: &mut SearchHandler) -> anyhow::Result<()> {
     let metadata = std::fs::metadata(&path);
     let file_name = path
         .as_path()

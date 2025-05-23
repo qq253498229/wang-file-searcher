@@ -33,12 +33,16 @@ export class OptionComponent implements OnInit {
     return this.includes().findIndex(s => s.input === '~') !== -1;
   }
 
-  add(type: 'includes' | 'excludes' | 'refines', input: string): void {
-    this.store.dispatch(new AddOption(type, input));
+  add(type: 'includes' | 'excludes' | 'refines',
+      field: 'label' | 'type' | 'input' | 'flag',
+      value: string): void {
+    this.store.dispatch(new AddOption(type, field, value));
   }
 
-  change(type: 'includes' | 'excludes' | 'refines', idx: number, input: string) {
-    this.store.dispatch(new ChangeOption(type, idx, input));
+  change(type: 'includes' | 'excludes' | 'refines',
+         field: 'label' | 'type' | 'input' | 'flag',
+         idx: number, value: string) {
+    this.store.dispatch(new ChangeOption(type, field, idx, value));
   }
 
   delete(type: 'includes' | 'excludes' | 'refines', idx: number) {

@@ -50,25 +50,27 @@ export class OptionState implements NgxsOnInit {
   }
 
   @Action(AddOption)
-  addOption(ctx: StateContext<OptionStateModel>, {type, input}: AddOption) {
-    // input:'' 手动选择本地目录
-    // input:'~' 用户HOME目录
-    // type:'includes'
-    // type:'excludes'
-    if (input === '$CUSTOM$') {
-      open({multiple: false, directory: true}).then((r) => {
-        if (!r) return;
-        this.addWithCheck(ctx, type, r);
-        this.addOptionWithCheck(ctx, type, r);
-      });
-      return;
-    } else if (input === '') {
-      let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
+  addOption(ctx: StateContext<OptionStateModel>, {type, field, value}: AddOption) {
+    if (type === 'includes' || type === 'excludes') {
+      if (value === '$CUSTOM$') {
+        open({multiple: false, directory: true}).then((r) => {
+          if (!r) return;
+          this.addWithCheck(ctx, type, r);
+          this.addOptionWithCheck(ctx, type, r);
+        });
+        return;
+      } else if (value === '') {
+        let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
+        ctx.setState(immutable.push(ctx.getState(), [type], option));
+        return;
+      }
+      this.addWithCheck(ctx, type, value);
+      this.addOptionWithCheck(ctx, type, value);
+    } else if (type === 'refines') {
+      let option = {label: '', type: 'Is', input: '', flag: value};
       ctx.setState(immutable.push(ctx.getState(), [type], option));
       return;
     }
-    this.addWithCheck(ctx, type, input);
-    this.addOptionWithCheck(ctx, type, input);
   }
 
   addWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', input: string) {
@@ -99,20 +101,22 @@ export class OptionState implements NgxsOnInit {
   }
 
   @Action(ChangeOption)
-  changeOption(ctx: StateContext<OptionStateModel>, {type, idx, input}: ChangeOption) {
-    if (input === '$CUSTOM$') {
-      open({multiple: false, directory: true}).then((r) => {
-        this.changeWithCheck(ctx, type, idx, r);
-        this.addOptionWithCheck(ctx, type, r);
-      });
-      return;
-    } else if (input === '') {
-      let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
-      ctx.setState(immutable.set(ctx.getState(), [type, idx], option));
-      return;
+  changeOption(ctx: StateContext<OptionStateModel>, {type, idx, field, value}: ChangeOption) {
+    if (type === 'includes' || type === 'excludes') {
+      if (value === '$CUSTOM$') {
+        open({multiple: false, directory: true}).then((r) => {
+          this.changeWithCheck(ctx, type, idx, r);
+          this.addOptionWithCheck(ctx, type, r);
+        });
+        return;
+      } else if (value === '') {
+        let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
+        ctx.setState(immutable.set(ctx.getState(), [type, idx], option));
+        return;
+      }
+      this.changeWithCheck(ctx, type, idx, value);
+      this.addOptionWithCheck(ctx, type, value);
     }
-    this.changeWithCheck(ctx, type, idx, input);
-    this.addOptionWithCheck(ctx, type, input);
   }
 
   changeWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', idx: number, input: string | null) {

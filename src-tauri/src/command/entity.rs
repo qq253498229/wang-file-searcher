@@ -1,23 +1,48 @@
-use crate::AppState;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::path::PathBuf;
-use std::sync::Mutex;
-use tauri::{AppHandle, Emitter, Manager};
-use tracing::info;
 
 /// 命令参数
-#[derive(Deserialize, Serialize, Debug, Default)]
+#[derive(Deserialize, Serialize, Debug)]
 pub struct Param {
-    pub text: Option<String>,
+    pub text: String,
     pub includes: Vec<SearchOption>,
     pub excludes: Vec<SearchOption>,
     pub refines: Vec<SearchOption>,
+}
+impl Default for Param {
+    fn default() -> Self {
+        Self {
+            text: "".to_string(),
+            includes: vec![],
+            excludes: vec![],
+            refines: vec![],
+        }
+    }
 }
 impl Param {
     pub fn add_includes(&mut self, path: String) {
         let search_path = SearchOption::from(&path);
         self.includes.push(search_path);
+    }
+    pub fn set_file_type_is_folder(&mut self) {
+        let mut refine = SearchOption::default();
+        refine.flag = OptionFlag::FileType;
+        refine.typee = OptionType::Folder;
+        self.refines.push(refine);
+    }
+    pub fn set_filename_contains(&mut self, filename: &str) {
+        let mut refine = SearchOption::default();
+        refine.flag = OptionFlag::Filename;
+        refine.typee = OptionType::Contains;
+        refine.input = filename.to_string();
+        self.refines.push(refine);
+    }
+    pub fn set_filename_not_contains(&mut self, filename: &str) {
+        let mut refine = SearchOption::default();
+        refine.flag = OptionFlag::Filename;
+        refine.typee = OptionType::NotContains;
+        refine.input = filename.to_string();
+        self.refines.push(refine);
     }
 }
 /// 搜索选项
@@ -27,13 +52,6 @@ pub struct SearchOption {
     #[serde(rename = "type")]
     pub typee: OptionType,
     pub flag: OptionFlag,
-}
-impl SearchOption {
-    pub fn from(name: &str) -> Self {
-        let mut r = Self::default();
-        r.input = String::from(name);
-        r
-    }
 }
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub enum OptionFlag {
@@ -46,6 +64,8 @@ pub enum OptionFlag {
     Input,
     /// 文件名
     Filename,
+    /// 文件类型
+    FileType,
 }
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub enum OptionType {
@@ -66,6 +86,8 @@ pub enum OptionType {
     Begin,
     /// 结尾
     End,
+    /// 文件夹
+    Folder,
 }
 /// 搜索结果
 #[derive(Deserialize, Serialize, Debug, Default, Clone)]
@@ -78,52 +100,10 @@ pub struct SearchResult {
     pub create_at: u128,
     pub update_at: u128,
 }
-/// 为tauri的API提供的struct，主要为了方便测试
-pub struct SearchHandler {
-    app: Option<AppHandle>,
-}
-impl SearchHandler {
-    pub fn new(app: Option<AppHandle>) -> Self {
-        Self { app }
-    }
-
-    pub fn check_stop(&self) -> bool {
-        if self.app.is_none() {
-            return false;
-        }
-        let app = self.app.as_ref().unwrap();
-        let state = app.state::<Mutex<AppState>>();
-        let state = state.lock().unwrap();
-        state.is_stop
-    }
-    pub fn done(&self) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            info!("is_done");
-            return Ok(());
-        }
-        self.app
-            .as_ref()
-            .unwrap()
-            .emit("status", json!({"is_done":true}))?;
-        Ok(())
-    }
-    pub fn send_result(&self, path: SearchResult) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            info!("result:{path:?}");
-            return Ok(());
-        }
-        self.app.as_ref().unwrap().emit("result", path)?;
-        Ok(())
-    }
-    pub fn send_status(&self, path: &PathBuf) -> anyhow::Result<()> {
-        if self.app.is_none() {
-            // info!("status:{path:?}");
-            return Ok(());
-        }
-        self.app
-            .as_ref()
-            .unwrap()
-            .emit("status", json!({"path":path}))?;
-        Ok(())
+impl SearchOption {
+    pub fn from(name: &str) -> Self {
+        let mut r = Self::default();
+        r.input = String::from(name);
+        r
     }
 }

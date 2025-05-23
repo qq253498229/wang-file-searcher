@@ -1,15 +1,17 @@
 mod excludes;
 mod find_string;
+pub mod handler;
 mod includes;
 mod refines;
 mod result;
 mod validator;
 
-use crate::command::entity::{OptionType, Param, SearchHandler};
+use crate::command::entity::{OptionType, Param};
 use crate::search::excludes::check_exclude;
 use crate::search::find_string::check_string;
+use crate::search::handler::SearchHandler;
 use crate::search::includes::check_include;
-use crate::search::refines::check_refine;
+use crate::search::refines::{check_refine, match_folder};
 use crate::search::result::send_file_emit;
 use crate::search::validator::is_invalid;
 use crate::utils::file_utils::merge_path;
@@ -17,12 +19,12 @@ use std::path::PathBuf;
 use walkdir::WalkDir;
 
 /// 根据选项搜索全部文件
-pub fn search_files(param: &Param, handle: &SearchHandler) -> anyhow::Result<()> {
+pub fn search_files(param: &Param, handle: &mut SearchHandler) -> anyhow::Result<()> {
     if is_invalid(param) {
         handle.done()?;
         return Ok(());
     }
-    let search_text = param.text.as_ref().unwrap();
+    let search_text = &param.text;
     let all_file_path = find_all_path(&param)?;
     for path in all_file_path {
         let _ = search_and_send_event(param, path, search_text, handle);
@@ -36,7 +38,7 @@ fn search_and_send_event(
     param: &Param,
     path: PathBuf,
     search_text: &str,
-    handle: &SearchHandler,
+    handle: &mut SearchHandler,
 ) -> anyhow::Result<()> {
     let walker = WalkDir::new(&path)
         .min_depth(1)
@@ -52,6 +54,10 @@ fn search_and_send_event(
             continue;
         }
         handle.send_status(&path)?;
+        // 如果搜索的是文件夹
+        if match_folder(param, &path) && check_refine(param, &path) {
+            send_file_emit(path.clone(), handle)?;
+        }
         if path.is_dir() {
             // 这里会遍历子目录
             search_and_send_event(param, path, search_text, handle)?;
@@ -85,11 +91,12 @@ fn find_all_path(param: &Param) -> anyhow::Result<Vec<PathBuf>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::search::handler::SearchHandler;
     use crate::utils::init_logger;
     #[test]
     fn test_search() -> anyhow::Result<()> {
         let mut param = Param::default();
-        param.text = Some("test".to_string());
+        param.text = "test".to_string();
         param.add_includes("tests/txt".to_string());
         param.add_includes("tests/txt/sub-folder-1-1".to_string());
         let result = find_all_path(&param)?;
@@ -99,7 +106,7 @@ mod tests {
     #[test]
     fn test_search1() -> anyhow::Result<()> {
         let mut param = Param::default();
-        param.text = Some("test2".to_string());
+        param.text = "test2".to_string();
         param.add_includes("tests/txt".to_string());
         param.add_includes("tests/txt/sub-folder-1-1".to_string());
         let result = find_all_path(&param)?;
@@ -110,18 +117,18 @@ mod tests {
     #[ignore]
     fn test_search2() -> anyhow::Result<()> {
         init_logger();
-        let handler = SearchHandler::new(None);
+        let mut handler = SearchHandler::new(None);
         let mut param = Param::default();
-        param.text = Some("test".to_string());
+        param.text = "test".to_string();
         param.add_includes("~".to_string());
-        search_files(&param, &handler)?;
+        search_files(&param, &mut handler)?;
         Ok(())
     }
 
     #[test]
     fn test_resolve_relate_path() -> anyhow::Result<()> {
         let mut param = Param::default();
-        param.text = Some("test2".to_string());
+        param.text = "test2".to_string();
         param.add_includes("tests/txt".to_string());
         param.add_includes("tests/txt/sub-folder-1-1".to_string());
         let result = find_all_path(&param)?;

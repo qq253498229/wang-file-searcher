@@ -6,32 +6,53 @@
         <nz-select class="select" [ngModel]="refine.flag"
                    (ngModelChange)="changeValue('refines','flag',$index,$event)">
           <nz-option nzLabel="文件名" nzValue="Filename"></nz-option>
+          <nz-option nzLabel="类型" nzValue="FileType"></nz-option>
         </nz-select>
       </nz-col>
-      <nz-col nzSpan="6">
-        <nz-select class="select" [ngModel]="refine.type"
-                   (ngModelChange)="changeValue('refines','type',$index,$event)">
-          <nz-option nzLabel="是" nzValue="Is"></nz-option>
-          <nz-option nzLabel="不是" nzValue="Not"></nz-option>
-          <nz-option nzLabel="包含" nzValue="Contains"></nz-option>
-          <nz-option nzLabel="不包含" nzValue="NotContains"></nz-option>
-          <nz-option nzLabel="开头" nzValue="Begin"></nz-option>
-          <nz-option nzLabel="结尾" nzValue="End"></nz-option>
-        </nz-select>
-      </nz-col>
-      <nz-col nzSpan="8">
-        <input type="text" nz-input [ngModel]="refine.input"
-               (ngModelChange)="changeValue('refines','input',$index,$event)">
-      </nz-col>
-      <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}" (click)="delete('refines',$index)">
+      @if (refine.flag === 'Filename') {
+        <nz-col nzSpan="6">
+          <nz-select class="select" [ngModel]="refine.type"
+                     (ngModelChange)="changeValue('refines','type',$index,$event)">
+            <nz-option nzLabel="是" nzValue="Is"></nz-option>
+            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
+            <nz-option nzLabel="包含" nzValue="Contains"></nz-option>
+            <nz-option nzLabel="不包含" nzValue="NotContains"></nz-option>
+            <nz-option nzLabel="开头" nzValue="Begin"></nz-option>
+            <nz-option nzLabel="结尾" nzValue="End"></nz-option>
+          </nz-select>
+        </nz-col>
+      } @else if (refine.flag === 'FileType') {
+        <nz-col [nzSpan]="refine.type !== 'Folder'?6:14">
+          <nz-select class="select" [ngModel]="refine.type"
+                     (ngModelChange)="changeValue('refines','type',$index,$event)">
+            <nz-option nzLabel="是" nzValue="Is"></nz-option>
+            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
+            <nz-option nzLabel="是文件夹" nzValue="Folder"></nz-option>
+          </nz-select>
+        </nz-col>
+      }
+      @if (refine.flag !== 'FileType' || (refine.flag === 'FileType' && refine.type !== 'Folder')) {
+        <nz-col nzSpan="8">
+          <input type="text" nz-input [ngModel]="refine.input"
+                 (ngModelChange)="changeValue('refines','input',$index,$event)">
+        </nz-col>
+      }
+      <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}"
+              (click)="delete('refines',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
       </nz-col>
-      <nz-col nzSpan="2" class="icon">
+      <nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" [nzDropdownMenu]="addRefineMenu">
         <nz-icon nzType="plus-circle" nzTheme="outline"/>
       </nz-col>
     </nz-row>
   }
 </div>
+<nz-dropdown-menu #addRefineMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="add('refines','flag','Filename')">文件名</li>
+    <li nz-menu-item (click)="add('refines','flag','FileType')">类型</li>
+  </ul>
+</nz-dropdown-menu>
 <nz-divider></nz-divider>
 <h3>位置</h3>
 <div class="location">
@@ -42,7 +63,8 @@
           <input type="text" nz-input [ngModel]="include.input"
                  (ngModelChange)="changeValue('includes','input',$index,$event)">
         } @else {
-          <nz-select class="select" [ngModel]="include.input" (ngModelChange)="change('includes',$index,$event)">
+          <nz-select class="select" [ngModel]="include.input"
+                     (ngModelChange)="change('includes','input',$index,$event)">
             @for (option of includesOptions(); track $index) {
               <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
             }
@@ -73,7 +95,8 @@
           <input type="text" nz-input [ngModel]="exclude.input"
                  (ngModelChange)="changeValue('excludes','input',$index,$event)">
         } @else {
-          <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="change('excludes',$index,$event)">
+          <nz-select class="select" [ngModel]="exclude.input"
+                     (ngModelChange)="change('excludes','input',$index,$event)">
             @for (option of excludesOptions(); track $index) {
               <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
             }
@@ -106,22 +129,22 @@
 <nz-dropdown-menu #addIncludeMenu="nzDropdownMenu">
   <ul nz-menu>
     @for (option of includesOptions(); track $index) {
-      <li nz-menu-item (click)="add('includes',option.input)">{{ option.input }}</li>
+      <li nz-menu-item (click)="add('includes','input',option.input)">{{ option.input }}</li>
     }
     @if (!hasHomeInclude) {
-      <li nz-menu-item (click)="add('includes','~')">用户HOME目录</li>
+      <li nz-menu-item (click)="add('includes','input','~')">用户HOME目录</li>
     }
-    <li nz-menu-item (click)="add('includes','')">输入路径</li>
-    <li nz-menu-item (click)="add('includes','$CUSTOM$')">手动选择路径</li>
+    <li nz-menu-item (click)="add('includes','input','')">输入路径</li>
+    <li nz-menu-item (click)="add('includes','input','$CUSTOM$')">手动选择路径</li>
   </ul>
 </nz-dropdown-menu>
 <nz-dropdown-menu #addExcludeMenu="nzDropdownMenu">
   <ul nz-menu>
     @for (option of excludesOptions(); track $index) {
-      <li nz-menu-item (click)="add('excludes',option.input)">{{ option.input }}</li>
+      <li nz-menu-item (click)="add('excludes','input',option.input)">{{ option.input }}</li>
     }
-    <li nz-menu-item (click)="add('excludes','')">输入路径</li>
-    <li nz-menu-item (click)="add('excludes','$CUSTOM$')">手动选择路径</li>
+    <li nz-menu-item (click)="add('excludes','input','')">输入路径</li>
+    <li nz-menu-item (click)="add('excludes','input','$CUSTOM$')">手动选择路径</li>
   </ul>
 </nz-dropdown-menu>
 

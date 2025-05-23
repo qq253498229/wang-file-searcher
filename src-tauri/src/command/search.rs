@@ -1,4 +1,5 @@
-use crate::command::entity::{Param, SearchHandler};
+use crate::command::entity::Param;
+use crate::search::handler::SearchHandler;
 use crate::search::search_files;
 use crate::AppState;
 use std::sync::Mutex;
@@ -11,8 +12,8 @@ pub fn search(param: Param, app: AppHandle) -> Result<(), String> {
     let mut state = state.lock().unwrap();
     state.is_stop = false;
     std::thread::spawn(move || {
-        let handler = SearchHandler::new(Some(app));
-        let _ = search_files(&param, &handler);
+        let mut handler = SearchHandler::new(Some(app));
+        let _ = search_files(&param, &mut handler);
     });
     Ok(())
 }

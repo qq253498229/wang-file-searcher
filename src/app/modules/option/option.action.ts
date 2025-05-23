@@ -1,14 +1,14 @@
 export class AddOption {
   static readonly type = `[option] 添加搜索位置`;
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public input: string) {
+  constructor(public type: 'includes' | 'excludes' | 'refines', public field: 'label' | 'type' | 'input' | 'flag', public value: string) {
   }
 }
 
 export class ChangeOption {
   static readonly type = `[option] 修改搜索位置`;
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public idx: number, public input: string) {
+  constructor(public type: 'includes' | 'excludes' | 'refines', public field: 'label' | 'type' | 'input' | 'flag', public idx: number, public value: string) {
   }
 }
 
