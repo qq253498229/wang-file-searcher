@@ -22,16 +22,17 @@
           </nz-select>
         </nz-col>
       } @else if (refine.flag === 'FileType') {
-        <nz-col [nzSpan]="refine.type !== 'Folder'?6:14">
+        <nz-col [nzSpan]="(refine.type !== 'IsFolder'&&refine.type !== 'NotFolder')?6:14">
           <nz-select class="select" [ngModel]="refine.type"
                      (ngModelChange)="changeValue('refines','type',$index,$event)">
             <nz-option nzLabel="是" nzValue="Is"></nz-option>
             <nz-option nzLabel="不是" nzValue="Not"></nz-option>
-            <nz-option nzLabel="是文件夹" nzValue="Folder"></nz-option>
+            <nz-option nzLabel="是文件夹" nzValue="IsFolder"></nz-option>
+            <nz-option nzLabel="非文件夹" nzValue="NotFolder"></nz-option>
           </nz-select>
         </nz-col>
       }
-      @if (refine.flag !== 'FileType' || (refine.flag === 'FileType' && refine.type !== 'Folder')) {
+      @if (refine.flag !== 'FileType' || (refine.flag === 'FileType' && refine.type !== 'IsFolder' && refine.type !== 'NotFolder')) {
         <nz-col nzSpan="8">
           <input type="text" nz-input [ngModel]="refine.input"
                  (ngModelChange)="changeValue('refines','input',$index,$event)">

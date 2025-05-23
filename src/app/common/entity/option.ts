@@ -9,7 +9,7 @@ export interface SearchOption {
 }
 
 export type SearchType = 'FullPath' | 'PartPath'
-  | 'Is' | 'Not' | 'Contains' | 'NotContains' | 'Begin' | 'End' | 'Folder';
+  | 'Is' | 'Not' | 'Contains' | 'NotContains' | 'Begin' | 'End' | 'IsFolder' | 'NotFolder';
 /**
  * <ul>
  *   <li>Home：用户HOME目录</li>

@@ -11,7 +11,7 @@ use crate::search::excludes::check_exclude;
 use crate::search::find_string::check_string;
 use crate::search::handler::SearchHandler;
 use crate::search::includes::check_include;
-use crate::search::refines::{check_refine, match_folder};
+use crate::search::refines::check_refine;
 use crate::search::result::send_file_emit;
 use crate::search::validator::is_invalid;
 use crate::utils::file_utils::merge_path;
@@ -54,8 +54,7 @@ fn search_and_send_event(
             continue;
         }
         handle.send_status(&path)?;
-        // 如果搜索的是文件夹
-        if match_folder(param, &path) && check_refine(param, &path) {
+        if check_refine(param, &path) {
             send_file_emit(path.clone(), handle)?;
         }
         if path.is_dir() {

@@ -27,7 +27,13 @@ impl Param {
     pub fn set_file_type_is_folder(&mut self) {
         let mut refine = SearchOption::default();
         refine.flag = OptionFlag::FileType;
-        refine.typee = OptionType::Folder;
+        refine.typee = OptionType::IsFolder;
+        self.refines.push(refine);
+    }
+    pub fn set_file_type_not_folder(&mut self) {
+        let mut refine = SearchOption::default();
+        refine.flag = OptionFlag::FileType;
+        refine.typee = OptionType::NotFolder;
         self.refines.push(refine);
     }
     pub fn set_filename_contains(&mut self, filename: &str) {
@@ -86,8 +92,10 @@ pub enum OptionType {
     Begin,
     /// 结尾
     End,
-    /// 文件夹
-    Folder,
+    /// 是文件夹
+    IsFolder,
+    /// 不是文件夹
+    NotFolder,
 }
 /// 搜索结果
 #[derive(Deserialize, Serialize, Debug, Default, Clone)]

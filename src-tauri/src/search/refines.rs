@@ -11,19 +11,6 @@ pub fn check_refine(param: &Param, path: &PathBuf) -> bool {
     }
     true
 }
-pub fn match_folder(param: &Param, path: &PathBuf) -> bool {
-    for refine in &param.refines {
-        if let OptionFlag::FileType = refine.flag {
-            if let OptionType::Folder = refine.typee {
-                if path.is_dir() {
-                    return true;
-                }
-            }
-        }
-    }
-    false
-}
-
 fn check_type_type(param: &Param, path: &PathBuf) -> bool {
     for refine in &param.refines {
         if let OptionFlag::FileType = refine.flag {
@@ -48,8 +35,13 @@ fn check_type_type(param: &Param, path: &PathBuf) -> bool {
                         return false;
                     }
                 }
-                OptionType::Folder => {
+                OptionType::IsFolder => {
                     if !path.is_dir() {
+                        return false;
+                    }
+                }
+                OptionType::NotFolder => {
+                    if path.is_dir() {
                         return false;
                     }
                 }
