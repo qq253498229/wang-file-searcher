@@ -3,21 +3,25 @@
   @for (refine of refines(); track $index) {
     <nz-row>
       <nz-col nzSpan="6">
-        <nz-select class="select" [(ngModel)]="refine.flag">
-          <nz-option nzLabel="文件名" nzValue="filename"></nz-option>
+        <nz-select class="select" [ngModel]="refine.flag"
+                   (ngModelChange)="changeValue('refines','flag',$index,$event)">
+          <nz-option nzLabel="文件名" nzValue="Filename"></nz-option>
         </nz-select>
       </nz-col>
-      <nz-col nzSpan="5">
-        <nz-select class="select" [(ngModel)]="refine.type">
-          <nz-option nzLabel="是" nzValue="is"></nz-option>
-          <nz-option nzLabel="不是" nzValue="not"></nz-option>
-          <nz-option nzLabel="包含" nzValue="contains"></nz-option>
-          <nz-option nzLabel="开头" nzValue="begin"></nz-option>
-          <nz-option nzLabel="结尾" nzValue="end"></nz-option>
+      <nz-col nzSpan="6">
+        <nz-select class="select" [ngModel]="refine.type"
+                   (ngModelChange)="changeValue('refines','type',$index,$event)">
+          <nz-option nzLabel="是" nzValue="Is"></nz-option>
+          <nz-option nzLabel="不是" nzValue="Not"></nz-option>
+          <nz-option nzLabel="包含" nzValue="Contains"></nz-option>
+          <nz-option nzLabel="不包含" nzValue="NotContains"></nz-option>
+          <nz-option nzLabel="开头" nzValue="Begin"></nz-option>
+          <nz-option nzLabel="结尾" nzValue="End"></nz-option>
         </nz-select>
       </nz-col>
-      <nz-col nzSpan="9">
-        <input type="text" nz-input [ngModel]="refine.input" (ngModelChange)="changeInput('refines',$index,$event)">
+      <nz-col nzSpan="8">
+        <input type="text" nz-input [ngModel]="refine.input"
+               (ngModelChange)="changeValue('refines','input',$index,$event)">
       </nz-col>
       <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}" (click)="delete('refines',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
@@ -33,10 +37,10 @@
 <div class="location">
   @for (include of includes(); track $index) {
     <nz-row>
-      <div nz-col nzSpan="20">
-        @if (include.flag === 'input') {
+      <nz-col nzSpan="20">
+        @if (include.flag === 'Input') {
           <input type="text" nz-input [ngModel]="include.input"
-                 (ngModelChange)="changeInput('includes',$index,$event)">
+                 (ngModelChange)="changeValue('includes','input',$index,$event)">
         } @else {
           <nz-select class="select" [ngModel]="include.input" (ngModelChange)="change('includes',$index,$event)">
             @for (option of includesOptions(); track $index) {
@@ -47,15 +51,15 @@
             <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
           </nz-select>
         }
-      </div>
-      <div nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':includes().length===1}"
-           (click)="delete('includes',$index)">
+      </nz-col>
+      <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':includes().length===1}"
+              (click)="delete('includes',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
-      </div>
-      <div nz-col nzSpan="2" class="icon"
-           nz-dropdown nzTrigger="click" [nzDropdownMenu]="addIncludeMenu">
+      </nz-col>
+      <nz-col nzSpan="2" class="icon"
+              nz-dropdown nzTrigger="click" [nzDropdownMenu]="addIncludeMenu">
         <nz-icon nzType="plus-circle" nzTheme="outline"/>
-      </div>
+      </nz-col>
     </nz-row>
   }
 
@@ -64,10 +68,10 @@
       <nz-col nzSpan="3" class="exclude-span">
         <span>排除:</span>
       </nz-col>
-      <div nz-col nzSpan="17">
-        @if (exclude.flag === 'input') {
+      <nz-col nzSpan="17">
+        @if (exclude.flag === 'Input') {
           <input type="text" nz-input [ngModel]="exclude.input"
-                 (ngModelChange)="changeInput('excludes',$index,$event)">
+                 (ngModelChange)="changeValue('excludes','input',$index,$event)">
         } @else {
           <nz-select class="select" [ngModel]="exclude.input" (ngModelChange)="change('excludes',$index,$event)">
             @for (option of excludesOptions(); track $index) {
@@ -77,13 +81,13 @@
             <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
           </nz-select>
         }
-      </div>
-      <div nz-col nzSpan="2" class="icon" (click)="delete('excludes',$index)">
+      </nz-col>
+      <nz-col nzSpan="2" class="icon" (click)="delete('excludes',$index)">
         <nz-icon nzType="minus-circle" nzTheme="outline"/>
-      </div>
-      <div nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" [nzDropdownMenu]="addExcludeMenu">
+      </nz-col>
+      <nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" [nzDropdownMenu]="addExcludeMenu">
         <nz-icon nzType="plus-circle" nzTheme="outline"/>
-      </div>
+      </nz-col>
     </nz-row>
   }
 

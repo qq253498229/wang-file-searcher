@@ -1,13 +1,15 @@
 mod excludes;
 mod find_string;
 mod includes;
+mod refines;
 mod result;
 mod validator;
 
 use crate::command::entity::{OptionType, Param, SearchHandler};
-use crate::search::excludes::is_exclude;
+use crate::search::excludes::check_exclude;
 use crate::search::find_string::check_string;
-use crate::search::includes::is_include;
+use crate::search::includes::check_include;
+use crate::search::refines::check_refine;
 use crate::search::result::send_file_emit;
 use crate::search::validator::is_invalid;
 use crate::utils::file_utils::merge_path;
@@ -46,15 +48,19 @@ fn search_and_send_event(
             return Ok(());
         }
         let path = entry.into_path();
-        if is_exclude(param, &path) || !is_include(param, &path) {
+        if !check_include(param, &path) || check_exclude(param, &path) {
             continue;
         }
         handle.send_status(&path)?;
         if path.is_dir() {
+            // 这里会遍历子目录
             search_and_send_event(param, path, search_text, handle)?;
             continue;
         }
         if !path.is_file() {
+            continue;
+        }
+        if !check_refine(param, &path) {
             continue;
         }
         if check_string(&path, search_text) {

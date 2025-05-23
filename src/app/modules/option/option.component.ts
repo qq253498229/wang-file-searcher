@@ -7,7 +7,7 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { OptionSelector } from './option.selector';
-import { AddOption, ChangeInput, ChangeOption, DeleteOption } from './option.action';
+import { AddOption, ChangeOption, ChangeValue, DeleteOption } from './option.action';
 
 @Component({
   selector: 'wang-option',
@@ -53,7 +53,8 @@ export class OptionComponent implements OnInit {
     console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
   }
 
-  changeInput(type: 'includes' | 'excludes' | 'refines', idx: number, input: string) {
-    this.store.dispatch(new ChangeInput(type, idx, input));
+  changeValue(type: 'includes' | 'excludes' | 'refines',
+              field: 'label' | 'type' | 'input' | 'flag', idx: number, value: any) {
+    this.store.dispatch(new ChangeValue(type, field, idx, value));
   }
 }

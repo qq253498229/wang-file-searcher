@@ -1,7 +1,8 @@
 use crate::command::entity::{OptionType, Param};
 use std::path::PathBuf;
 
-pub fn is_exclude(param: &Param, path: &PathBuf) -> bool {
+/// 检查是否在排除位置中
+pub fn check_exclude(param: &Param, path: &PathBuf) -> bool {
     for exclude in &param.excludes {
         match exclude.typee {
             OptionType::FullPath => {
@@ -18,6 +19,7 @@ pub fn is_exclude(param: &Param, path: &PathBuf) -> bool {
                     return true;
                 }
             }
+            _ => {}
         }
     }
     false

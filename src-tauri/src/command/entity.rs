@@ -12,6 +12,7 @@ pub struct Param {
     pub text: Option<String>,
     pub includes: Vec<SearchOption>,
     pub excludes: Vec<SearchOption>,
+    pub refines: Vec<SearchOption>,
 }
 impl Param {
     pub fn add_includes(&mut self, path: String) {
@@ -25,6 +26,7 @@ pub struct SearchOption {
     pub input: String,
     #[serde(rename = "type")]
     pub typee: OptionType,
+    pub flag: OptionFlag,
 }
 impl SearchOption {
     pub fn from(name: &str) -> Self {
@@ -33,7 +35,18 @@ impl SearchOption {
         r
     }
 }
-/// 选项类型
+#[derive(Deserialize, Serialize, Debug, Default)]
+pub enum OptionFlag {
+    /// 用户HOME目录
+    #[default]
+    Home,
+    /// 自定义精确目录
+    Custom,
+    /// 手动输入
+    Input,
+    /// 文件名
+    Filename,
+}
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub enum OptionType {
     /// 完整路径，可以是绝对路径也可以是相对路径
@@ -41,6 +54,18 @@ pub enum OptionType {
     FullPath,
     /// 部分路径，路径中包含的片段
     PartPath,
+    /// 是
+    Is,
+    /// 不是
+    Not,
+    /// 包含
+    Contains,
+    /// 不包含
+    NotContains,
+    /// 开头
+    Begin,
+    /// 结尾
+    End,
 }
 /// 搜索结果
 #[derive(Deserialize, Serialize, Debug, Default, Clone)]

@@ -19,9 +19,15 @@ export class DeleteOption {
   }
 }
 
-export class ChangeInput {
-  static readonly type = `[option] 手动输入路径`;
+export class ClearOptions {
+  static readonly type = `[option] 清理候选项`;
+}
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public idx: number, public input: string) {
+export class ChangeValue {
+  static readonly type = `[option] 修改选项值`;
+
+  constructor(public type: 'includes' | 'excludes' | 'refines',
+              public field: 'label' | 'type' | 'input' | 'flag',
+              public idx: number, public input: string) {
   }
 }

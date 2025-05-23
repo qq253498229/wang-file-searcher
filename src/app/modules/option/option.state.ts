@@ -4,7 +4,7 @@ import { DEFAULT_REFINE, SearchOption, USER_HOME_FOLDER } from '../../common/ent
 import { open } from '@tauri-apps/plugin-dialog';
 import * as immutable from 'object-path-immutable';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { AddOption, ChangeInput, ChangeOption, DeleteOption } from './option.action';
+import { AddOption, ChangeOption, ChangeValue, ClearOptions, DeleteOption } from './option.action';
 
 export interface OptionStateModel {
   /**
@@ -63,7 +63,7 @@ export class OptionState implements NgxsOnInit {
       });
       return;
     } else if (input === '') {
-      let option = {label: '', type: 'PartPath', input: '', flag: 'input'};
+      let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
       ctx.setState(immutable.push(ctx.getState(), [type], option));
       return;
     }
@@ -78,7 +78,7 @@ export class OptionState implements NgxsOnInit {
     }
     let option = USER_HOME_FOLDER;
     if (input !== '~') {
-      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+      option = {label: input, type: 'FullPath', input, flag: 'Custom'};
     }
     ctx.setState(immutable.push(ctx.getState(), [type], option));
   }
@@ -87,14 +87,15 @@ export class OptionState implements NgxsOnInit {
     // 如果是空值，说明取消了选择框，那么需要先设置成别的值然后再改回来，否则select值会改变
     // 如果有值，则判断是否合法
     if (!input || input === '~' || ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === input) !== -1) {
-      return;
+      return ctx.dispatch(new ClearOptions());
     }
     // 兜底，最后添加选项
     let option = USER_HOME_FOLDER;
     if (input !== '~') {
-      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+      option = {label: input, type: 'FullPath', input, flag: 'Custom'};
     }
     ctx.setState(immutable.push(ctx.getState(), [`${type}Options`], option));
+    return ctx.dispatch(new ClearOptions());
   }
 
   @Action(ChangeOption)
@@ -106,7 +107,7 @@ export class OptionState implements NgxsOnInit {
       });
       return;
     } else if (input === '') {
-      let option = {label: '', type: 'PartPath', input: '', flag: 'input'};
+      let option = {label: '', type: 'PartPath', input: '', flag: 'Input'};
       ctx.setState(immutable.set(ctx.getState(), [type, idx], option));
       return;
     }
@@ -118,7 +119,7 @@ export class OptionState implements NgxsOnInit {
     if (!input || ctx.getState()[type].findIndex((s: any, i: number) => s.input === input && i !== idx) !== -1) {
       this.message.info(`路径已经存在`);
       let oldOption = ctx.getState()[type][idx];
-      ctx.setState(immutable.set(ctx.getState(), [type, idx], {label: '', type, input: '', flag: 'custom'}));
+      ctx.setState(immutable.set(ctx.getState(), [type, idx], {label: '', type, input: '', flag: 'Custom'}));
       setTimeout(() => {
         ctx.setState(immutable.set(ctx.getState(), [type, idx], oldOption));
       });
@@ -126,23 +127,41 @@ export class OptionState implements NgxsOnInit {
     }
     let option = USER_HOME_FOLDER;
     if (input !== '~') {
-      option = {label: input, type: 'FullPath', input, flag: 'custom'};
+      option = {label: input, type: 'FullPath', input, flag: 'Custom'};
     }
     ctx.setState(immutable.set(ctx.getState(), [type, idx], option));
   }
 
   @Action(DeleteOption)
   deleteOption(ctx: StateContext<OptionStateModel>, {type, idx}: DeleteOption) {
-    let option = ctx.getState()[type][idx];
-    let optionIdx = ctx.getState()[`${type}Options`].findIndex((s: any) => s.input === option.input);
     let newState = ctx.getState();
     newState = immutable.del(newState, [type, idx]);
-    newState = immutable.del(newState, [`${type}Options`, optionIdx]);
     ctx.setState(newState);
+    return ctx.dispatch(new ClearOptions());
   }
 
-  @Action(ChangeInput)
-  changeInput(ctx: StateContext<OptionStateModel>, {type, idx, input}: ChangeInput) {
-    ctx.setState(immutable.set(ctx.getState(), [type, idx, 'input'], input));
+  @Action(ChangeValue)
+  changeValue(ctx: StateContext<OptionStateModel>, {type, idx, input, field}: ChangeValue) {
+    ctx.setState(immutable.set(ctx.getState(), [type, idx, field], input));
+    ctx.dispatch(new ClearOptions());
+  }
+
+  @Action(ClearOptions)
+  clearOptions(ctx: StateContext<OptionStateModel>) {
+    let types: ('includes' | 'excludes' | 'refines')[] = ['includes', 'excludes', 'refines'];
+    let newState = ctx.getState();
+    let flag = false;
+    for (let type of types) {
+      let options = newState[type];
+      let newOptions = newState[`${type}Options`]
+        .filter(s => options.findIndex(a => a.input === s.input) !== -1);
+      if (newOptions.length !== options.length) {
+        flag = true;
+        newState = immutable.set(newState, [`${type}Options`], newOptions);
+      }
+    }
+    if (flag) {
+      ctx.setState(newState);
+    }
   }
 }
