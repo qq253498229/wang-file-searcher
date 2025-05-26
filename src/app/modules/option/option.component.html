@@ -1,6 +1,15 @@
 <wang-option-refines></wang-option-refines>
 <nz-divider></nz-divider>
 <wang-option-locations></wang-option-locations>
+<nz-divider></nz-divider>
+<nz-row>
+  <nz-col nzOffset="4">
+    <button type="button" nz-button routerLink="/config">
+      <nz-icon nzType="setting"/>
+      管理配置
+    </button>
+  </nz-col>
+</nz-row>
 @if (isDevMode) {
   <nz-divider></nz-divider>
   <button (click)="test()">test</button>

@@ -4,17 +4,13 @@ import { SharedModule } from './common/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { Store } from '@ngxs/store';
 import { bufferTime, Subject } from 'rxjs';
-import { TextInputComponent } from './modules/text-input/text-input.component';
 import { ReceiveResult, ReceiveStatus } from './modules/result/result.action';
-import { OptionComponent } from './modules/option/option.component';
-import { ResultComponent } from './modules/result/result.component';
-import { StatusComponent } from './modules/status/status.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule, SharedModule, TextInputComponent, OptionComponent, ResultComponent, StatusComponent],
+  imports: [CommonModule, SharedModule, RouterOutlet],
   templateUrl: './app.component.html',
   styles: [],
 })
