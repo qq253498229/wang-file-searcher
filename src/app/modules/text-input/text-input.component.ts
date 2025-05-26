@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, isDevMode, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../common/shared.module';
 import { listen } from '@tauri-apps/api/event';
@@ -26,7 +26,9 @@ export class TextInputComponent implements OnInit {
   isStop = this.store.selectSignal(ResultSelector.isStop());
 
   async ngOnInit() {
-    await this.globalRegisterShortcut();
+    if (!isDevMode()) {
+      await this.globalRegisterShortcut();
+    }
   }
 
   async globalRegisterShortcut() {
