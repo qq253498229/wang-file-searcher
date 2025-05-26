@@ -1,3 +1,4 @@
+pub mod config;
 pub mod entity;
 pub mod open_folder;
 pub mod search;
@@ -9,5 +10,6 @@ pub fn register_all_commands(builder: Builder<Wry>) -> Builder<Wry> {
         search::search,
         search::stop_search,
         open_folder::open_folder,
+        config::init_config,
     ])
 }
