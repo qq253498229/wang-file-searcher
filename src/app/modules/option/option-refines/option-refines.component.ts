@@ -16,13 +16,13 @@ export class OptionRefinesComponent {
   refines = this.store.selectSignal(OptionSelector.refines());
 
   add(type: 'includes' | 'excludes' | 'refines',
-      field: 'label' | 'type' | 'input' | 'flag',
+      field: 'label' | 'type' | 'input' | 'flag' | 'flag1',
       value: string): void {
     this.store.dispatch(new AddOption(type, field, value));
   }
 
   changeValue(type: 'includes' | 'excludes' | 'refines',
-              field: 'label' | 'type' | 'input' | 'flag', idx: number, value: any) {
+              field: 'label' | 'type' | 'input' | 'flag' | 'flag1', idx: number, value: any) {
     this.store.dispatch(new ChangeValue(type, field, idx, value));
   }
 

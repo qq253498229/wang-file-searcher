@@ -54,8 +54,10 @@ fn search_and_send_event(
             continue;
         }
         handle.send_status(&path)?;
-        if check_refine(param, &path) {
+        let mut already_send = false;
+        if check_refine(param, &path)? && !already_send {
             send_file_emit(path.clone(), handle)?;
+            already_send = true;
         }
         if path.is_dir() {
             // 这里会遍历子目录
@@ -65,11 +67,12 @@ fn search_and_send_event(
         if !path.is_file() {
             continue;
         }
-        if !check_refine(param, &path) {
+        if !check_refine(param, &path)? {
             continue;
         }
-        if check_string(&path, search_text) {
+        if check_string(&path, search_text) && !already_send {
             send_file_emit(path, handle)?;
+            // already_send = true;
         }
     }
     Ok(())

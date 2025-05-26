@@ -7,6 +7,7 @@
                    (ngModelChange)="changeValue('refines','flag',$index,$event)">
           <nz-option nzLabel="文件名" nzValue="Filename"></nz-option>
           <nz-option nzLabel="类型" nzValue="FileType"></nz-option>
+          <nz-option nzLabel="大小" nzValue="FileSize"></nz-option>
         </nz-select>
       </nz-col>
       @if (refine.flag === 'Filename') {
@@ -21,6 +22,10 @@
             <nz-option nzLabel="结尾" nzValue="End"></nz-option>
           </nz-select>
         </nz-col>
+        <nz-col nzSpan="8">
+          <input type="text" nz-input [ngModel]="refine.input"
+                 (ngModelChange)="changeValue('refines','input',$index,$event)">
+        </nz-col>
       } @else if (refine.flag === 'FileType') {
         <nz-col [nzSpan]="(refine.type !== 'IsFolder'&&refine.type !== 'NotFolder')?6:14">
           <nz-select class="select" [ngModel]="refine.type"
@@ -31,11 +36,31 @@
             <nz-option nzLabel="非文件夹" nzValue="NotFolder"></nz-option>
           </nz-select>
         </nz-col>
-      }
-      @if (refine.flag !== 'FileType' || (refine.flag === 'FileType' && refine.type !== 'IsFolder' && refine.type !== 'NotFolder')) {
-        <nz-col nzSpan="8">
+        @if (refine.type !== 'IsFolder' && refine.type !== 'NotFolder') {
+          <nz-col nzSpan="8">
+            <input type="text" nz-input [ngModel]="refine.input"
+                   (ngModelChange)="changeValue('refines','input',$index,$event)">
+          </nz-col>
+        }
+      } @else if (refine.flag === 'FileSize') {
+        <nz-col nzSpan="5">
+          <nz-select class="select" [ngModel]="refine.type"
+                     (ngModelChange)="changeValue('refines','type',$index,$event)">
+            <nz-option nzLabel="大于" nzValue="GreaterThan"></nz-option>
+            <nz-option nzLabel="小于" nzValue="LessThan"></nz-option>
+          </nz-select>
+        </nz-col>
+        <nz-col nzSpan="4">
           <input type="text" nz-input [ngModel]="refine.input"
                  (ngModelChange)="changeValue('refines','input',$index,$event)">
+        </nz-col>
+        <nz-col nzSpan="5">
+          <nz-select class="select" [ngModel]="refine.flag1"
+                     (ngModelChange)="changeValue('refines','flag1',$index,$event)">
+            <nz-option nzLabel="KB" nzValue="KB"></nz-option>
+            <nz-option nzLabel="MB" nzValue="MB"></nz-option>
+            <nz-option nzLabel="GB" nzValue="GB"></nz-option>
+          </nz-select>
         </nz-col>
       }
       <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}"
@@ -52,5 +77,6 @@
   <ul nz-menu>
     <li nz-menu-item (click)="add('refines','flag','Filename')">文件名</li>
     <li nz-menu-item (click)="add('refines','flag','FileType')">类型</li>
+    <li nz-menu-item (click)="add('refines','flag','FileSize')">大小</li>
   </ul>
 </nz-dropdown-menu>

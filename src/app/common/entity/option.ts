@@ -6,6 +6,7 @@ export interface SearchOption {
   type: SearchType;
   input: string;
   flag: SearchFlag;
+  flag1?: string;
 }
 
 export type SearchType = 'FullPath' | 'PartPath'
@@ -18,6 +19,7 @@ export type SearchType = 'FullPath' | 'PartPath'
  *   <li>Input：手动输入</li>
  *   <li>Filename：文件名</li>
  *   <li>FileType：文件类型</li>
+ *   <li>FileSize：文件大小</li>
  * </ul>
  */
 export type SearchFlag = 'Home' | 'Custom' | 'Input' | 'Filename' | 'FileType' | 'FileSize';

@@ -50,7 +50,7 @@ export class OptionState implements NgxsOnInit {
   }
 
   @Action(AddOption)
-  addOption(ctx: StateContext<OptionStateModel>, {type, field, value}: AddOption) {
+  addOption(ctx: StateContext<OptionStateModel>, {type, value}: AddOption) {
     if (type === 'includes' || type === 'excludes') {
       if (value === '$CUSTOM$') {
         open({multiple: false, directory: true}).then((r) => {
@@ -67,7 +67,10 @@ export class OptionState implements NgxsOnInit {
       this.addWithCheck(ctx, type, value);
       this.addOptionWithCheck(ctx, type, value);
     } else if (type === 'refines') {
-      let option = {label: '', type: 'Is', input: '', flag: value};
+      let option = {label: '', type: 'Is', input: '', flag: value, flag1: ''};
+      if (value === 'FileSize') {
+        option = {label: '文件类型', type: 'GreaterThan', input: '', flag: value, flag1: 'KB'};
+      }
       ctx.setState(immutable.push(ctx.getState(), [type], option));
       return;
     }
@@ -101,7 +104,7 @@ export class OptionState implements NgxsOnInit {
   }
 
   @Action(ChangeOption)
-  changeOption(ctx: StateContext<OptionStateModel>, {type, idx, field, value}: ChangeOption) {
+  changeOption(ctx: StateContext<OptionStateModel>, {type, idx, value}: ChangeOption) {
     if (type === 'includes' || type === 'excludes') {
       if (value === '$CUSTOM$') {
         open({multiple: false, directory: true}).then((r) => {

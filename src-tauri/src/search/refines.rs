@@ -1,17 +1,57 @@
 use crate::command::entity::{OptionFlag, OptionType, Param};
+use std::fs;
+use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
 
 /// 检查是否匹配参数
-pub fn check_refine(param: &Param, path: &PathBuf) -> bool {
+pub fn check_refine(param: &Param, path: &PathBuf) -> anyhow::Result<bool> {
     if !check_filename(param, path) {
-        return false;
+        return Ok(false);
     }
-    if !check_type_type(param, path) {
-        return false;
+    if !check_file_type(param, path) {
+        return Ok(false);
     }
-    true
+    if !check_file_size(param, path)? {
+        return Ok(false);
+    }
+    Ok(true)
 }
-fn check_type_type(param: &Param, path: &PathBuf) -> bool {
+fn check_file_size(param: &Param, path: &PathBuf) -> anyhow::Result<bool> {
+    for refine in &param.refines {
+        if let OptionFlag::FileSize = refine.flag {
+            let mut input_size = if let Ok(input_size) = refine.input.parse::<u64>() {
+                input_size
+            } else {
+                continue;
+            };
+            let real_size = fs::metadata(path)?.size();
+            if let Some(flag1) = refine.flag1.as_ref() {
+                if flag1 == "KB" {
+                    input_size *= 1024;
+                } else if flag1 == "MB" {
+                    input_size *= 1024 * 1024;
+                } else if flag1 == "GB" {
+                    input_size *= 1024 * 1024 * 1024;
+                }
+            }
+            match refine.typee {
+                OptionType::GreaterThan => {
+                    if input_size >= real_size {
+                        return Ok(false);
+                    }
+                }
+                OptionType::LessThan => {
+                    if input_size <= real_size {
+                        return Ok(false);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    Ok(true)
+}
+fn check_file_type(param: &Param, path: &PathBuf) -> bool {
     for refine in &param.refines {
         if let OptionFlag::FileType = refine.flag {
             match refine.typee {
@@ -106,6 +146,11 @@ pub fn is_refines_valid(param: &Param) -> bool {
                 return true;
             }
         }
+        if let OptionFlag::FileSize = option.flag {
+            if option.input.trim().len() > 0 {
+                return true;
+            }
+        }
     }
     false
 }
@@ -172,6 +217,15 @@ mod tests {
         let result = result.lock().unwrap();
         assert_eq!(result.len(), 1);
         assert_eq!(result[0].file_name, Some("txt".to_string()));
+        Ok(())
+    }
+    #[test]
+    fn test4() -> anyhow::Result<()> {
+        let value: String = "30".to_string();
+        let size: u64 = 30;
+        let value = value.parse::<u64>()?;
+        // let value = u64::from(value);
+        assert_eq!(value, size);
         Ok(())
     }
 }

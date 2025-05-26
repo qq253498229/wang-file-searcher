@@ -1,21 +1,26 @@
 export class AddOption {
   static readonly type = `[option] 添加搜索位置`;
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public field: 'label' | 'type' | 'input' | 'flag', public value: string) {
+  constructor(public type: 'includes' | 'excludes' | 'refines',
+              public field: 'label' | 'type' | 'input' | 'flag' | 'flag1',
+              public value: string) {
   }
 }
 
 export class ChangeOption {
   static readonly type = `[option] 修改搜索位置`;
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public field: 'label' | 'type' | 'input' | 'flag', public idx: number, public value: string) {
+  constructor(public type: 'includes' | 'excludes' | 'refines',
+              public field: 'label' | 'type' | 'input' | 'flag' | 'flag1',
+              public idx: number, public value: string) {
   }
 }
 
 export class DeleteOption {
   static readonly type = `[option] 删除搜索位置`;
 
-  constructor(public type: 'includes' | 'excludes' | 'refines', public idx: number) {
+  constructor(public type: 'includes' | 'excludes' | 'refines',
+              public idx: number) {
   }
 }
 
@@ -27,7 +32,7 @@ export class ChangeValue {
   static readonly type = `[option] 修改选项值`;
 
   constructor(public type: 'includes' | 'excludes' | 'refines',
-              public field: 'label' | 'type' | 'input' | 'flag',
+              public field: 'label' | 'type' | 'input' | 'flag' | 'flag1',
               public idx: number, public input: string) {
   }
 }

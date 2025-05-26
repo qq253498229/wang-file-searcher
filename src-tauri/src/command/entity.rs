@@ -58,6 +58,7 @@ pub struct SearchOption {
     #[serde(rename = "type")]
     pub typee: OptionType,
     pub flag: OptionFlag,
+    pub flag1: Option<String>,
 }
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub enum OptionFlag {
@@ -72,6 +73,8 @@ pub enum OptionFlag {
     Filename,
     /// 文件类型
     FileType,
+    /// 文件大小
+    FileSize,
 }
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub enum OptionType {
@@ -96,6 +99,10 @@ pub enum OptionType {
     IsFolder,
     /// 不是文件夹
     NotFolder,
+    /// 大于
+    GreaterThan,
+    /// 小于
+    LessThan,
 }
 /// 搜索结果
 #[derive(Deserialize, Serialize, Debug, Default, Clone)]
