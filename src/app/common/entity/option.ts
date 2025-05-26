@@ -9,7 +9,8 @@ export interface SearchOption {
 }
 
 export type SearchType = 'FullPath' | 'PartPath'
-  | 'Is' | 'Not' | 'Contains' | 'NotContains' | 'Begin' | 'End' | 'IsFolder' | 'NotFolder';
+  | 'Is' | 'Not' | 'Contains' | 'NotContains' | 'Begin' | 'End' | 'IsFolder' | 'NotFolder'
+  | 'GreaterThan' | 'LessThan';
 /**
  * <ul>
  *   <li>Home：用户HOME目录</li>
@@ -19,7 +20,7 @@ export type SearchType = 'FullPath' | 'PartPath'
  *   <li>FileType：文件类型</li>
  * </ul>
  */
-export type SearchFlag = 'Home' | 'Custom' | 'Input' | 'Filename' | 'FileType';
+export type SearchFlag = 'Home' | 'Custom' | 'Input' | 'Filename' | 'FileType' | 'FileSize';
 
 export const USER_HOME_FOLDER: SearchOption =
   {label: '用户HOME目录', type: 'FullPath', input: `~`, flag: `Home`};

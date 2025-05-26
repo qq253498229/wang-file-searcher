@@ -14,6 +14,8 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 const THIRD_MODULES: any[] = [
   FormsModule,
@@ -32,6 +34,8 @@ const THIRD_MODULES: any[] = [
   NzInputModule,
   NzDividerModule,
   NzTypographyModule,
+  NzDropDownModule,
+  NzSelectModule,
 ];
 const COMPONENTS: any[] = [];
 const DIRECTIVES: any[] = [];

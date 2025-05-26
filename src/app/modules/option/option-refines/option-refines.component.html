@@ -1,0 +1,56 @@
+<h3>参数</h3>
+<div class="location">
+  @for (refine of refines(); track $index) {
+    <nz-row>
+      <nz-col nzSpan="6">
+        <nz-select class="select" [ngModel]="refine.flag"
+                   (ngModelChange)="changeValue('refines','flag',$index,$event)">
+          <nz-option nzLabel="文件名" nzValue="Filename"></nz-option>
+          <nz-option nzLabel="类型" nzValue="FileType"></nz-option>
+        </nz-select>
+      </nz-col>
+      @if (refine.flag === 'Filename') {
+        <nz-col nzSpan="6">
+          <nz-select class="select" [ngModel]="refine.type"
+                     (ngModelChange)="changeValue('refines','type',$index,$event)">
+            <nz-option nzLabel="是" nzValue="Is"></nz-option>
+            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
+            <nz-option nzLabel="包含" nzValue="Contains"></nz-option>
+            <nz-option nzLabel="不包含" nzValue="NotContains"></nz-option>
+            <nz-option nzLabel="开头" nzValue="Begin"></nz-option>
+            <nz-option nzLabel="结尾" nzValue="End"></nz-option>
+          </nz-select>
+        </nz-col>
+      } @else if (refine.flag === 'FileType') {
+        <nz-col [nzSpan]="(refine.type !== 'IsFolder'&&refine.type !== 'NotFolder')?6:14">
+          <nz-select class="select" [ngModel]="refine.type"
+                     (ngModelChange)="changeValue('refines','type',$index,$event)">
+            <nz-option nzLabel="是" nzValue="Is"></nz-option>
+            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
+            <nz-option nzLabel="是文件夹" nzValue="IsFolder"></nz-option>
+            <nz-option nzLabel="非文件夹" nzValue="NotFolder"></nz-option>
+          </nz-select>
+        </nz-col>
+      }
+      @if (refine.flag !== 'FileType' || (refine.flag === 'FileType' && refine.type !== 'IsFolder' && refine.type !== 'NotFolder')) {
+        <nz-col nzSpan="8">
+          <input type="text" nz-input [ngModel]="refine.input"
+                 (ngModelChange)="changeValue('refines','input',$index,$event)">
+        </nz-col>
+      }
+      <nz-col nzSpan="2" class="icon" [ngClass]="{'disabled':refines().length===1}"
+              (click)="delete('refines',$index)">
+        <nz-icon nzType="minus-circle" nzTheme="outline"/>
+      </nz-col>
+      <nz-col nzSpan="2" class="icon" nz-dropdown nzTrigger="click" [nzDropdownMenu]="addRefineMenu">
+        <nz-icon nzType="plus-circle" nzTheme="outline"/>
+      </nz-col>
+    </nz-row>
+  }
+</div>
+<nz-dropdown-menu #addRefineMenu="nzDropdownMenu">
+  <ul nz-menu>
+    <li nz-menu-item (click)="add('refines','flag','Filename')">文件名</li>
+    <li nz-menu-item (click)="add('refines','flag','FileType')">类型</li>
+  </ul>
+</nz-dropdown-menu>

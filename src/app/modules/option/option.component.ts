@@ -2,51 +2,21 @@ import { Component, inject, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../common/shared.module';
 import { Store } from '@ngxs/store';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzTypographyModule } from 'ng-zorro-antd/typography';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzSelectModule } from 'ng-zorro-antd/select';
 import { OptionSelector } from './option.selector';
-import { AddOption, ChangeOption, ChangeValue, DeleteOption } from './option.action';
+import { OptionRefinesComponent } from './option-refines/option-refines.component';
+import { OptionLocationsComponent } from './option-locations/option-locations.component';
 
 @Component({
   selector: 'wang-option',
-  imports: [CommonModule, SharedModule,
-    NzDropDownModule, NzTypographyModule, NzSelectModule, NzDividerModule],
+  imports: [CommonModule, SharedModule, OptionRefinesComponent, OptionLocationsComponent],
   templateUrl: './option.component.html',
-  styleUrls: ['./option.component.scss'],
+  styles:``
 })
 export class OptionComponent implements OnInit {
   store = inject(Store);
   isDevMode = isDevMode();
 
-  includes = this.store.selectSignal(OptionSelector.includes());
-  includesOptions = this.store.selectSignal(OptionSelector.includesOptions());
-  excludes = this.store.selectSignal(OptionSelector.excludes());
-  excludesOptions = this.store.selectSignal(OptionSelector.excludesOptions());
-  refines = this.store.selectSignal(OptionSelector.refines());
-
   ngOnInit(): void {
-  }
-
-  get hasHomeInclude() {
-    return this.includes().findIndex(s => s.input === '~') !== -1;
-  }
-
-  add(type: 'includes' | 'excludes' | 'refines',
-      field: 'label' | 'type' | 'input' | 'flag',
-      value: string): void {
-    this.store.dispatch(new AddOption(type, field, value));
-  }
-
-  change(type: 'includes' | 'excludes' | 'refines',
-         field: 'label' | 'type' | 'input' | 'flag',
-         idx: number, value: string) {
-    this.store.dispatch(new ChangeOption(type, field, idx, value));
-  }
-
-  delete(type: 'includes' | 'excludes' | 'refines', idx: number) {
-    this.store.dispatch(new DeleteOption(type, idx));
   }
 
   test() {
@@ -57,8 +27,4 @@ export class OptionComponent implements OnInit {
     console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
   }
 
-  changeValue(type: 'includes' | 'excludes' | 'refines',
-              field: 'label' | 'type' | 'input' | 'flag', idx: number, value: any) {
-    this.store.dispatch(new ChangeValue(type, field, idx, value));
-  }
 }
