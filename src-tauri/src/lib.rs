@@ -4,6 +4,7 @@ use std::sync::Mutex;
 use tauri::Manager;
 
 pub mod command;
+pub mod config;
 pub mod search;
 pub mod utils;
 

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../common/shared.module';
 import { listen } from '@tauri-apps/api/event';
 import { register, unregisterAll } from '@tauri-apps/plugin-global-shortcut';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ResultSelector } from '../result/result.selector';
 import { Search, StopSearch, SwitchSearch } from '../search/search.action';
@@ -23,7 +23,7 @@ export class TextInputComponent implements OnInit {
   textForm: FormGroup = this.fb.group({
     text: ['', Validators.required],
   });
-  isStop = this.store.selectSignal(ResultSelector.isStop());
+  isStop = select(ResultSelector.isStop());
 
   async ngOnInit() {
     if (!isDevMode()) {

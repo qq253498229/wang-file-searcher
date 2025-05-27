@@ -1,0 +1,78 @@
+<nz-row>
+  <nz-page-header (nzBack)="onBack()" nzBackIcon nzTitle="管理配置"></nz-page-header>
+</nz-row>
+
+<nz-row>
+  <nz-col nzOffset="1">
+    <button type="button" nz-button nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle="要将配置保存到本地吗？"
+            (nzOnConfirm)="saveCurrentConfig()">
+      保存当前配置
+    </button>
+  </nz-col>
+
+  <nz-divider nzType="vertical"></nz-divider>
+
+  <nz-col>
+    <button type="button" nz-button nzType="primary" (click)="openInLocal()">打开本地目录</button>
+  </nz-col>
+
+  @if (isDevMode) {
+    <nz-divider nzType="vertical"></nz-divider>
+    <nz-col>
+      <button type="button" nz-button nzType="primary" (click)="test()">test</button>
+    </nz-col>
+  }
+
+</nz-row>
+
+<nz-divider></nz-divider>
+
+<nz-row>
+  <nz-col nzSpan="22" nzOffset="1">
+    <nz-table #basicTable [nzData]="configs()">
+      <thead>
+      <tr>
+        <th nzWidth="150px">ID</th>
+        <th nzWidth="300px">名称</th>
+        <th>详细信息</th>
+        <th nzWidth="140px">操作</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        @if (data.edit) {
+          <td>{{ data.id }}</td>
+          <td>
+            <input type="text" nz-input [ngModel]="data.name"
+                   (ngModelChange)="changeConfigValue('name',$event)">
+          </td>
+          <td>
+            <input type="text" nz-input [ngModel]="data.details"
+                   (ngModelChange)="changeConfigValue('details',$event)">
+          </td>
+          <td>
+            <button type="button" nz-button nzType="primary" nzSize="small" (click)="cancel(data)">
+              取消
+            </button>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button type="button" nz-button nzType="primary" nzSize="small" (click)="save()">
+              保存
+            </button>
+          </td>
+        } @else {
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.details }}</td>
+          <td>
+            <button type="button" nz-button nzType="primary" nzSize="small" (click)="edit(data)">
+              编辑
+            </button>
+          </td>
+        }
+      </tr>
+      </tbody>
+    </nz-table>
+  </nz-col>
+</nz-row>

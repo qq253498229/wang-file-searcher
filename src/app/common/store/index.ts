@@ -8,12 +8,14 @@ import { CustomRouterStateSerializer } from './router/custom-router-state-serial
 import { OptionState } from '../../modules/option/option.state';
 import { ResultState } from '../../modules/result/result.state';
 import { SearchState } from '../../modules/search/search.state';
+import { ConfigState } from '../../modules/config/config.state';
 
 export const states = [
   SystemState,
   OptionState,
   ResultState,
   SearchState,
+  ConfigState,
 ];
 export const ngxsConfig: NgxsModuleOptions = {
   developmentMode: isDevMode(),

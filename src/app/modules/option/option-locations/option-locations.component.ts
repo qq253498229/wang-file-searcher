@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../common/shared.module';
 import { OptionSelector } from '../option.selector';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 import { AddOption, ChangeOption, ChangeValue, DeleteOption } from '../option.action';
 
 @Component({
@@ -14,10 +14,10 @@ import { AddOption, ChangeOption, ChangeValue, DeleteOption } from '../option.ac
 export class OptionLocationsComponent {
   store = inject(Store);
 
-  includes = this.store.selectSignal(OptionSelector.includes());
-  includesOptions = this.store.selectSignal(OptionSelector.includesOptions());
-  excludes = this.store.selectSignal(OptionSelector.excludes());
-  excludesOptions = this.store.selectSignal(OptionSelector.excludesOptions());
+  includes = select(OptionSelector.includes());
+  includesOptions = select(OptionSelector.includesOptions());
+  excludes = select(OptionSelector.excludes());
+  excludesOptions = select(OptionSelector.excludesOptions());
 
   add(type: 'includes' | 'excludes' | 'refines',
       field: 'label' | 'type' | 'input' | 'flag',

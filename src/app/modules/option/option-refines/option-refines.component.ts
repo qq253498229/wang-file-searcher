@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../../common/shared.module';
 import { OptionSelector } from '../option.selector';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 import { AddOption, ChangeValue, DeleteOption } from '../option.action';
 
 @Component({
@@ -13,7 +13,7 @@ import { AddOption, ChangeValue, DeleteOption } from '../option.action';
 })
 export class OptionRefinesComponent {
   store = inject(Store);
-  refines = this.store.selectSignal(OptionSelector.refines());
+  refines = select(OptionSelector.refines());
 
   add(type: 'includes' | 'excludes' | 'refines',
       field: 'label' | 'type' | 'input' | 'flag' | 'flag1',

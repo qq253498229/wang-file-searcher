@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../common/shared.module';
-import { Store } from '@ngxs/store';
+import { select, Store } from '@ngxs/store';
 import { ResultSelector } from '../result/result.selector';
 
 @Component({
@@ -12,5 +12,5 @@ import { ResultSelector } from '../result/result.selector';
 })
 export class StatusComponent {
   store = inject(Store);
-  status = this.store.selectSignal(ResultSelector.status());
+  status = select(ResultSelector.status());
 }

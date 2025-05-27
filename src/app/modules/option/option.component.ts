@@ -4,7 +4,6 @@ import { SharedModule } from '../../common/shared.module';
 import { Store } from '@ngxs/store';
 import { OptionRefinesComponent } from './option-refines/option-refines.component';
 import { OptionLocationsComponent } from './option-locations/option-locations.component';
-import { invoke } from '@tauri-apps/api/core';
 
 @Component({
   selector: 'wang-option',
@@ -25,9 +24,6 @@ export class OptionComponent implements OnInit {
     // console.log('includesOptions', this.store.selectSnapshot(OptionSelector.includesOptions()));
     // console.log('excludes', this.store.selectSnapshot(OptionSelector.excludes()));
     // console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
-    invoke('init_config').then(r => {
-      console.log('init_config', r);
-    });
   }
 
 }
