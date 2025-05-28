@@ -4,7 +4,7 @@ import { DEFAULT_REFINE, SearchOption, USER_HOME_FOLDER } from '../../common/ent
 import { open } from '@tauri-apps/plugin-dialog';
 import * as immutable from 'object-path-immutable';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { AddOption, ChangeOption, ChangeValue, ClearOptions, DeleteOption } from './option.action';
+import { AddOption, ChangeOption, ChangeValue, ClearOptions, DeleteOption, InitOptions } from './option.action';
 
 export interface OptionStateModel {
   /**
@@ -170,5 +170,14 @@ export class OptionState implements NgxsOnInit {
     if (flag) {
       ctx.setState(newState);
     }
+  }
+
+  @Action(InitOptions)
+  initOptions(ctx: StateContext<OptionStateModel>, {data}: InitOptions) {
+    ctx.patchState({
+      includes: data.includes,
+      excludes: data.excludes,
+      refines: data.refines,
+    });
   }
 }

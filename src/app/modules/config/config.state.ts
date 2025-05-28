@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
-import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig } from './config.action';
+import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig, UseConfig } from './config.action';
 import { OptionSelector } from '../option/option.selector';
 import { SearchSelector } from '../search/search.selector';
 import { invoke } from '@tauri-apps/api/core';
 import { generateUid } from '../../common/utils';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
+import { InitOptions } from '../option/option.action';
+import { UpdateFormValue } from '@ngxs/form-plugin';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -76,6 +78,14 @@ export class ConfigState implements NgxsOnInit {
       this.message.success(`保存成功`);
       ctx.dispatch(new InitConfig());
     });
+  }
+
+  @Action(UseConfig)
+  useConfig(ctx: StateContext<ConfigStateModel>, {data}: UseConfig) {
+    return ctx.dispatch([
+      new InitOptions(data.param),
+      new UpdateFormValue({path: 'search.textForm', value: {text: data.param.text}}),
+    ]);
   }
 
 }

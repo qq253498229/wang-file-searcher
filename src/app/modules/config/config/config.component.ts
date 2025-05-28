@@ -7,7 +7,7 @@ import { Navigate } from '@ngxs/router-plugin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { appLocalDataDir } from '@tauri-apps/api/path';
-import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig } from '../config.action';
+import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig, UseConfig } from '../config.action';
 import { OpenFolder } from '../../../common/store/system/system.action';
 import { ConfigSelector } from '../config.selector';
 import * as immutable from 'object-path-immutable';
@@ -58,6 +58,10 @@ export class ConfigComponent implements OnInit {
 
   changeConfigValue(field: string, $event: any) {
     this.tempData = immutable.set(this.tempData, [field], $event);
+  }
+
+  useConfig(data: any) {
+    this.store.dispatch(new UseConfig(data));
   }
 
   test() {

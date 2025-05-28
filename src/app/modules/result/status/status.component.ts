@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from '../../common/shared.module';
+import { SharedModule } from '../../../common/shared.module';
 import { select, Store } from '@ngxs/store';
-import { ResultSelector } from '../result/result.selector';
+import { ResultSelector } from '../result.selector';
 
 @Component({
   selector: 'wang-status',

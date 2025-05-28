@@ -19,3 +19,10 @@ export class SaveConfig {
   constructor(public data: any) {
   }
 }
+
+export class UseConfig {
+  static readonly type = `[config] 使用配置覆盖当前搜索选项`;
+
+  constructor(public data: any) {
+  }
+}

@@ -36,3 +36,10 @@ export class ChangeValue {
               public idx: number, public input: string) {
   }
 }
+
+export class InitOptions {
+  static readonly type = `[option] 初始化参数选项`;
+
+  constructor(public data: any) {
+  }
+}
