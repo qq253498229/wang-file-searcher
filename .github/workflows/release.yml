@@ -1,0 +1,93 @@
+name: 发布
+
+on:
+  push:
+    branches:
+      - test-release
+
+env:
+  IS_CI: true
+
+permissions:
+  contents: write
+
+jobs:
+  MacOS:
+    name: 发布macOS平台
+    runs-on: macos-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          CI=true npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/dmg/一搜_0.1.0_aarch64.dmg
+            ./src-tauri/target/release/bundle/macos/一搜.app
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Ubuntu:
+    name: 发布Ubuntu平台
+    runs-on: ubuntu-latest
+    steps:
+      - name: 添加tauri依赖
+        run: |
+          sudo apt update
+          sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm
+            ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb
+            ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Windows:
+    name: 发布Windows平台
+    runs-on: windows-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/msi/一搜_0.1.0_x64_zh-CN.msi
+            ./src-tauri/target/release/bundle/nsis/一搜_0.1.0_x64-setup.exe
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

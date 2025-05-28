@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "搜搜王",
+  "productName": "一搜",
   "version": "0.1.0",
-  "identifier": "com.wang-file-searcher.app",
+  "identifier": "1sou",
   "build": {
     "beforeDevCommand": "npm run start",
     "devUrl": "http://localhost:14200",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "搜搜王",
+        "title": "一搜",
         "width": 1200,
         "height": 800,
         "minWidth": 900,
