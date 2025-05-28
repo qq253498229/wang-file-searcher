@@ -1,0 +1,67 @@
+name: 发布
+
+on:
+  push:
+    branches:
+      - test-release
+
+env:
+  IS_CI: true
+
+permissions:
+  contents: write
+
+jobs:
+  MacOS:
+    name: 发布macOS平台
+    runs-on: macos-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          CI=true npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+
+  Ubuntu:
+    name: 发布Ubuntu平台
+    runs-on: ubuntu-latest
+    steps:
+      - name: 添加tauri依赖
+        run: |
+          sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+
+  Windows:
+    name: 发布Windows平台
+    runs-on: windows-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+
+
+
