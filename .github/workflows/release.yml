@@ -12,21 +12,30 @@ permissions:
   contents: write
 
 jobs:
-#  MacOS:
-#    name: 发布macOS平台
-#    runs-on: macos-latest
-#    steps:
-#      - name: 拉取代码
-#        uses: actions/checkout@v4
-#      - name: 打包
-#        run: |
-#          npm ci
-#          CI=true npm run tauri-build
-#      - name: 打印文件树
-#        uses: jaywcjlove/github-action-folder-tree@main
-#        with:
-#          path: './src-tauri/target/release/bundle'
-#          depth: 2
+  MacOS:
+    name: 发布macOS平台
+    runs-on: macos-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+      - name: 打包
+        run: |
+          npm ci
+          CI=true npm run tauri-build
+      - name: 打印文件树
+        uses: jaywcjlove/github-action-folder-tree@main
+        with:
+          path: './src-tauri/target/release/bundle'
+          depth: 2
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/dmg/*.dmg
+            ./src-tauri/target/release/bundle/macos/*.app
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   Ubuntu:
     name: 发布Ubuntu平台
@@ -46,6 +55,16 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/rpm/*.rpm
+            ./src-tauri/target/release/bundle/deb/*.deb
+            ./src-tauri/target/release/bundle/appimage/*.AppImage
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   Windows:
     name: 发布Windows平台
@@ -62,6 +81,12 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-
-
-
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ./src-tauri/target/release/bundle/msi/*.msi
+            ./src-tauri/target/release/bundle/nsis/*.exe
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
