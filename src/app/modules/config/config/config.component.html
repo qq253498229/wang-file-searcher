@@ -15,7 +15,7 @@
   <nz-divider nzType="vertical"></nz-divider>
 
   <nz-col>
-    <button type="button" nz-button nzType="primary" (click)="openInLocal()">打开本地目录</button>
+    <button type="button" nz-button nzType="primary" (click)="openConfigFolder()">打开本地目录</button>
   </nz-col>
 
   @if (isDevMode) {
@@ -37,7 +37,7 @@
         <th nzWidth="150px">ID</th>
         <th nzWidth="300px">名称</th>
         <th>详细信息</th>
-        <th nzWidth="140px">操作</th>
+        <th nzWidth="200px">操作</th>
       </tr>
       </thead>
       <tbody>
@@ -72,6 +72,14 @@
             <nz-divider nzType="vertical"></nz-divider>
             <button type="button" nz-button nzType="primary" nzSize="small" (click)="useConfig(data)">
               使用
+            </button>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button type="button" nz-button nzType="primary" nzSize="small"
+                    nzDanger
+                    nz-popconfirm
+                    nzPopconfirmTitle="确定要删除吗？"
+                    (nzOnConfirm)="deleteConfig(data)">
+              删除
             </button>
           </td>
         }

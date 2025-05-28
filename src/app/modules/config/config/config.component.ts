@@ -6,9 +6,15 @@ import { select, Store } from '@ngxs/store';
 import { Navigate } from '@ngxs/router-plugin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
-import { appLocalDataDir } from '@tauri-apps/api/path';
-import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig, UseConfig } from '../config.action';
-import { OpenFolder } from '../../../common/store/system/system.action';
+import {
+  DeleteConfig,
+  EditConfigRow,
+  InitConfig,
+  OpenConfigFolder,
+  SaveConfig,
+  SaveCurrentConfig,
+  UseConfig,
+} from '../config.action';
 import { ConfigSelector } from '../config.selector';
 import * as immutable from 'object-path-immutable';
 
@@ -37,10 +43,8 @@ export class ConfigComponent implements OnInit {
     this.store.dispatch(new SaveCurrentConfig());
   }
 
-  openInLocal() {
-    appLocalDataDir().then(data => {
-      this.store.dispatch(new OpenFolder(data));
-    });
+  openConfigFolder() {
+    this.store.dispatch(new OpenConfigFolder());
   }
 
   edit(data: any) {
@@ -68,4 +72,7 @@ export class ConfigComponent implements OnInit {
     this.store.dispatch(new InitConfig());
   }
 
+  deleteConfig(data: any) {
+    this.store.dispatch(new DeleteConfig(data));
+  }
 }

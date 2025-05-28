@@ -1,6 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
-import { EditConfigRow, InitConfig, SaveConfig, SaveCurrentConfig, UseConfig } from './config.action';
+import {
+  DeleteConfig,
+  EditConfigRow,
+  InitConfig,
+  OpenConfigFolder,
+  SaveConfig,
+  SaveCurrentConfig,
+  UseConfig,
+} from './config.action';
 import { OptionSelector } from '../option/option.selector';
 import { SearchSelector } from '../search/search.selector';
 import { invoke } from '@tauri-apps/api/core';
@@ -9,6 +17,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
 import { InitOptions } from '../option/option.action';
 import { UpdateFormValue } from '@ngxs/form-plugin';
+import { tap } from 'rxjs';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -32,7 +41,7 @@ export class ConfigState implements NgxsOnInit {
   message = inject(NzMessageService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
-    ctx.patchState({});
+    ctx.patchState({configs: []});
   }
 
   @Action(SaveCurrentConfig)
@@ -85,7 +94,22 @@ export class ConfigState implements NgxsOnInit {
     return ctx.dispatch([
       new InitOptions(data.param),
       new UpdateFormValue({path: 'search.textForm', value: {text: data.param.text}}),
-    ]);
+    ]).pipe(tap(() => {
+      this.message.success(`配置使用成功`);
+    }));
+  }
+
+  @Action(DeleteConfig)
+  deleteConfig(ctx: StateContext<ConfigStateModel>, {data}: DeleteConfig) {
+    invoke('delete_config', {config: data}).then(() => {
+      this.message.success(`删除成功`);
+      ctx.dispatch(new InitConfig());
+    });
+  }
+
+  @Action(OpenConfigFolder)
+  openConfigFolder(_ctx: StateContext<ConfigStateModel>) {
+    invoke('open_config_folder').then();
   }
 
 }

@@ -12,5 +12,7 @@ pub fn register_all_commands(builder: Builder<Wry>) -> Builder<Wry> {
         open_folder::open_folder,
         config::init_config,
         config::save_config,
+        config::delete_config,
+        config::open_config_folder,
     ])
 }

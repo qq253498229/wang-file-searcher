@@ -26,3 +26,14 @@ export class UseConfig {
   constructor(public data: any) {
   }
 }
+
+export class DeleteConfig {
+  static readonly type = `[config] 删除配置`;
+
+  constructor(public data: any) {
+  }
+}
+
+export class OpenConfigFolder {
+  static readonly type = `[config] 打开配置目录`;
+}
