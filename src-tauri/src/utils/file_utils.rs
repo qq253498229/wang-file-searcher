@@ -196,4 +196,12 @@ mod tests {
         }
         Ok(())
     }
+    #[test]
+    fn test_file_size() -> anyhow::Result<()> {
+        let path = Path::new("tests/txt/sub-folder-1-1/文件搜索工具");
+        let metadata = fs::metadata(path)?;
+        let len = metadata.len();
+        println!("len:{len}");
+        Ok(())
+    }
 }

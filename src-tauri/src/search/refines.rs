@@ -1,6 +1,5 @@
 use crate::command::entity::{OptionFlag, OptionType, Param};
 use std::fs;
-use std::os::unix::fs::MetadataExt;
 use std::path::PathBuf;
 
 /// 检查是否匹配参数
@@ -24,7 +23,7 @@ fn check_file_size(param: &Param, path: &PathBuf) -> anyhow::Result<bool> {
             } else {
                 continue;
             };
-            let real_size = fs::metadata(path)?.size();
+            let real_size = fs::metadata(path)?.len();
             if let Some(flag1) = refine.flag1.as_ref() {
                 if flag1 == "KB" {
                     input_size *= 1024;
