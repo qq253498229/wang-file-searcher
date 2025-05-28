@@ -12,21 +12,21 @@ permissions:
   contents: write
 
 jobs:
-  MacOS:
-    name: 发布macOS平台
-    runs-on: macos-latest
-    steps:
-      - name: 拉取代码
-        uses: actions/checkout@v4
-      - name: 打包
-        run: |
-          npm ci
-          CI=true npm run tauri-build
-      - name: 打印文件树
-        uses: jaywcjlove/github-action-folder-tree@main
-        with:
-          path: './src-tauri/target/release/bundle'
-          depth: 2
+#  MacOS:
+#    name: 发布macOS平台
+#    runs-on: macos-latest
+#    steps:
+#      - name: 拉取代码
+#        uses: actions/checkout@v4
+#      - name: 打包
+#        run: |
+#          npm ci
+#          CI=true npm run tauri-build
+#      - name: 打印文件树
+#        uses: jaywcjlove/github-action-folder-tree@main
+#        with:
+#          path: './src-tauri/target/release/bundle'
+#          depth: 2
 
   Ubuntu:
     name: 发布Ubuntu平台
