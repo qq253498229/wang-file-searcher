@@ -27,14 +27,18 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-      - run: cd ./src-tauri/target/release/bundle/dmg/ && zip -r 1so.app.zip 一搜.app
-      - run: cd ./src-tauri/target/release/bundle/macos/ && zip 1so.dmg.zip 一搜_0.1.0_aarch64.dmg
+      - name: 压缩文件
+        uses: qq253498229/github-action-zip@v1
+        with:
+          files: |
+            1so.dmg.zip -> ./src-tauri/target/release/bundle/dmg/一搜_0.1.0_aarch64.dmg
+            1so.app.zip -> ./src-tauri/target/release/bundle/macos/一搜.app
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./src-tauri/target/release/bundle/dmg/1so.dmg.zip
-            ./src-tauri/target/release/bundle/macos/1so.app.zip
+            ./1so.dmg.zip
+            ./1so.app.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,16 +62,20 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-      - run: cd ./src-tauri/target/release/bundle/rpm/ && zip 1so.rpm.zip 一搜-0.1.0-1.x86_64.rpm
-      - run: cd ./src-tauri/target/release/bundle/deb/ && zip 1so.deb.zip 一搜_0.1.0_amd64.deb
-      - run: cd ./src-tauri/target/release/bundle/appimage/ && zip 1so.AppImage.zip 一搜_0.1.0_amd64.AppImage
+      - name: 压缩文件
+        uses: qq253498229/github-action-zip@v1
+        with:
+          files: |
+            1so.rpm.zip -> ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm
+            1so.deb.zip -> ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb
+            1so.appimage.zip -> ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./src-tauri/target/release/bundle/rpm/1so.rpm.zip
-            ./src-tauri/target/release/bundle/deb/1so.deb.zip
-            ./src-tauri/target/release/bundle/appimage/1so.AppImage.zip
+            ./1so.rpm.zip
+            ./1so.deb.zip
+            ./1so.AppImage.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -87,14 +95,18 @@ jobs:
         with:
           path: './src-tauri/target/release/bundle'
           depth: 2
-      - run: cd ./src-tauri/target/release/bundle/msi/ && zip 1so.msi.zip 一搜_0.1.0_x64_zh-CN.msi
-      - run: cd ./src-tauri/target/release/bundle/nsis/ && zip 1so.nsis.zip 一搜_0.1.0_x64-setup.exe
+      - name: 压缩文件
+        uses: qq253498229/github-action-zip@v1
+        with:
+          files: |
+            1so.msi.zip -> ./src-tauri/target/release/bundle/msi/一搜_0.1.0_x64_zh-CN.msi
+            1so.nsis.zip -> ./src-tauri/target/release/bundle/nsis/一搜_0.1.0_x64-setup.exe
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./src-tauri/target/release/bundle/msi/1so.msi.zip
-            ./src-tauri/target/release/bundle/nsis/1so.nsis.zip
+            ./1so.msi.zip
+            ./1so.nsis.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
