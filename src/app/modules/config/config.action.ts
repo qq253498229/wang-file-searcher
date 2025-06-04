@@ -34,6 +34,13 @@ export class DeleteConfig {
   }
 }
 
+export class OverrideConfig {
+  static readonly type = `[config] 覆盖配置`;
+
+  constructor(public data: any) {
+  }
+}
+
 export class ChangeCurrent {
   static readonly type = `[config] 修改当前配置`;
 

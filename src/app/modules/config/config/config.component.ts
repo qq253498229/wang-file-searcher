@@ -11,6 +11,7 @@ import {
   EditConfigRow,
   InitConfig,
   OpenConfigFolder,
+  OverrideConfig,
   SaveConfig,
   SaveCurrentConfig,
   UseConfig,
@@ -74,5 +75,9 @@ export class ConfigComponent implements OnInit {
 
   deleteConfig(data: any) {
     this.store.dispatch(new DeleteConfig(data));
+  }
+
+  overrideConfig(data: any) {
+    this.store.dispatch(new OverrideConfig(data));
   }
 }

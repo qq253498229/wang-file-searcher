@@ -6,6 +6,7 @@ import {
   EditConfigRow,
   InitConfig,
   OpenConfigFolder,
+  OverrideConfig,
   SaveConfig,
   SaveCurrentConfig,
   UseConfig,
@@ -128,6 +129,23 @@ export class ConfigState implements NgxsOnInit {
   changeCurrentConfig(ctx: StateContext<ConfigStateModel>, {id}: ChangeCurrent) {
     let current = ctx.getState().configs.find(s => s.id === id);
     ctx.patchState({current});
+  }
+
+  @Action(OverrideConfig)
+  overrideConfig(ctx: StateContext<ConfigStateModel>, {data}: OverrideConfig) {
+    let idx = ctx.getState().configs.findIndex(s => s.id === data.id);
+    let text = this.store.selectSnapshot(SearchSelector.text());
+    let includes = this.store.selectSnapshot(OptionSelector.includes());
+    let excludes = this.store.selectSnapshot(OptionSelector.excludes());
+    let refines = this.store.selectSnapshot(OptionSelector.refines());
+    let param = {text, includes, excludes, refines};
+    let newState = immutable.set(ctx.getState(), ['configs', idx, 'param'], param);
+    ctx.setState(newState);
+    let config = ctx.getState().configs[idx];
+    invoke('save_config', {config}).then(() => {
+      this.message.success(`保存成功`);
+      ctx.dispatch(new InitConfig());
+    });
   }
 
 }

@@ -37,7 +37,7 @@
         <th nzWidth="150px">ID</th>
         <th nzWidth="300px">名称</th>
         <th>详细信息</th>
-        <th nzWidth="200px">操作</th>
+        <th nzWidth="270px">操作</th>
       </tr>
       </thead>
       <tbody>
@@ -79,6 +79,14 @@
                 使用
               </button>
             }
+            <nz-divider nzType="vertical"></nz-divider>
+            <button type="button" nz-button nzType="primary" nzSize="small"
+                    nzDanger
+                    nz-popconfirm
+                    nzPopconfirmTitle="确定要覆盖吗？"
+                    (nzOnConfirm)="overrideConfig(data)">
+              覆盖
+            </button>
             <nz-divider nzType="vertical"></nz-divider>
             <button type="button" nz-button nzType="primary" nzSize="small"
                     nzDanger
