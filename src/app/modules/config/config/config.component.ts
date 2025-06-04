@@ -28,11 +28,11 @@ import * as immutable from 'object-path-immutable';
 export class ConfigComponent implements OnInit {
   store = inject(Store);
   configs = select(ConfigSelector.configs());
+  current = select(ConfigSelector.current());
   tempData: any = undefined;
   isDevMode = isDevMode();
 
   ngOnInit(): void {
-    this.store.dispatch(new InitConfig());
   }
 
   onBack() {

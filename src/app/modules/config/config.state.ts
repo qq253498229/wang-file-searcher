@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
 import {
+  ChangeCurrent,
   DeleteConfig,
   EditConfigRow,
   InitConfig,
@@ -23,6 +24,7 @@ export interface ConfigStateModel {
   testNumber: number;
   editForm: any;
   configs: any[];
+  current: any;
 }
 
 @State<ConfigStateModel>({
@@ -31,6 +33,7 @@ export interface ConfigStateModel {
     testNumber: 0,
     editForm: {},
     configs: [],
+    current: {},
   },
 })
 @Injectable({
@@ -41,7 +44,11 @@ export class ConfigState implements NgxsOnInit {
   message = inject(NzMessageService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
-    ctx.patchState({configs: []});
+    let state = ctx.getState();
+    ctx.patchState({
+      configs: state.configs || [],
+      current: state.current || {},
+    });
   }
 
   @Action(SaveCurrentConfig)
@@ -91,9 +98,14 @@ export class ConfigState implements NgxsOnInit {
 
   @Action(UseConfig)
   useConfig(ctx: StateContext<ConfigStateModel>, {data}: UseConfig) {
+    let config = data;
+    if (typeof (data) === 'string') {
+      config = ctx.getState().configs.find(s => s.id === data);
+    }
     return ctx.dispatch([
-      new InitOptions(data.param),
-      new UpdateFormValue({path: 'search.textForm', value: {text: data.param.text}}),
+      new InitOptions(config.param),
+      new UpdateFormValue({path: 'search.textForm', value: {text: config.param.text}}),
+      new ChangeCurrent(config.id),
     ]).pipe(tap(() => {
       this.message.success(`配置使用成功`);
     }));
@@ -110,6 +122,12 @@ export class ConfigState implements NgxsOnInit {
   @Action(OpenConfigFolder)
   openConfigFolder(_ctx: StateContext<ConfigStateModel>) {
     invoke('open_config_folder').then();
+  }
+
+  @Action(ChangeCurrent)
+  changeCurrentConfig(ctx: StateContext<ConfigStateModel>, {id}: ChangeCurrent) {
+    let current = ctx.getState().configs.find(s => s.id === id);
+    ctx.patchState({current});
   }
 
 }

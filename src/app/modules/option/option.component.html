@@ -3,7 +3,20 @@
 <wang-option-locations></wang-option-locations>
 <nz-divider></nz-divider>
 <nz-row>
-  <nz-col nzOffset="4">
+  <nz-col nzOffset="1" nzSpan="13">
+    <nz-select class="select" [ngModel]="current()?.id||''"
+               (ngModelChange)="changeCurrent($event)">
+      <nz-option nzValue="" nzLabel="无"></nz-option>
+      @for (config of configs(); track $index) {
+        @if (config.name) {
+          <nz-option [nzValue]="config.id" [nzLabel]="config.name"></nz-option>
+        } @else {
+          <nz-option [nzValue]="config.id" [nzLabel]="config.id"></nz-option>
+        }
+      }
+    </nz-select>
+  </nz-col>
+  <nz-col nzOffset="1">
     <button type="button" nz-button routerLink="/config">
       <nz-icon nzType="setting"/>
       管理配置

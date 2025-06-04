@@ -34,6 +34,13 @@ export class DeleteConfig {
   }
 }
 
+export class ChangeCurrent {
+  static readonly type = `[config] 修改当前配置`;
+
+  constructor(public id: string) {
+  }
+}
+
 export class OpenConfigFolder {
   static readonly type = `[config] 打开配置目录`;
 }

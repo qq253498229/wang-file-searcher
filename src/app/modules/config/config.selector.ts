@@ -7,4 +7,10 @@ export class ConfigSelector {
       return state.configs;
     }));
   }
+
+  static current() {
+    return createSelector([ConfigState], ((state: ConfigStateModel) => {
+      return state.current;
+    }));
+  }
 }

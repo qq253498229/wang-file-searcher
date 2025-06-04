@@ -6,6 +6,7 @@ import { Store } from '@ngxs/store';
 import { bufferTime, Subject } from 'rxjs';
 import { ReceiveResult, ReceiveStatus } from './modules/result/result.action';
 import { RouterOutlet } from '@angular/router';
+import { InitConfig } from './modules/config/config.action';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
   store = inject(Store);
 
   ngOnInit(): void {
+    this.store.dispatch(new InitConfig());
     this.listenResult();
     this.listenStatus();
   }
