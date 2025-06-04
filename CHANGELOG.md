@@ -2,6 +2,8 @@
 
 该日志由wang-changelog生成，详情见 https://gitee.com/consolelog/wang-changelog
 
+## v0.1.3 (2025-06-04)
+
 ## v0.1.2 (2025-06-04)
 
 ## v0.1.1 (2025-06-04)
