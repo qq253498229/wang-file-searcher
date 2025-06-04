@@ -31,8 +31,8 @@ jobs:
         uses: qq253498229/github-action-zip@v1
         with:
           files: |
-            1so.dmg.zip -> ./src-tauri/target/release/bundle/dmg/一搜_0.1.0_aarch64.dmg
-            1so.app.zip -> ./src-tauri/target/release/bundle/macos/一搜.app
+            1so.macos_dmg.zip -> ./src-tauri/target/release/bundle/dmg/一搜_0.1.0_aarch64.dmg
+            1so.macos_app.zip -> ./src-tauri/target/release/bundle/macos/一搜.app
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -66,9 +66,9 @@ jobs:
         uses: qq253498229/github-action-zip@v1
         with:
           files: |
-            1so.rpm.zip -> ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm,./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64
-            1so.deb.zip -> ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb,./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64
-            1so.appimage.zip -> ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage,./src-tauri/target/release/bundle/appimage/一搜.AppDir
+            1so.linux_rpm.zip -> ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm,./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64
+            1so.linux_deb.zip -> ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb,./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64
+            1so.linux_appimage.zip -> ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage,./src-tauri/target/release/bundle/appimage/一搜.AppDir
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -99,8 +99,8 @@ jobs:
         uses: qq253498229/github-action-zip@v1
         with:
           files: |
-            1so.msi.zip -> ./src-tauri/target/release/bundle/msi/一搜_0.1.0_x64_zh-CN.msi
-            1so.nsis.zip -> ./src-tauri/target/release/bundle/nsis/一搜_0.1.0_x64-setup.exe
+            1so.windows_msi.zip -> ./src-tauri/target/release/bundle/msi/一搜_0.1.0_x64_zh-CN.msi
+            1so.windows_nsis.zip -> ./src-tauri/target/release/bundle/nsis/一搜_0.1.0_x64-setup.exe
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
