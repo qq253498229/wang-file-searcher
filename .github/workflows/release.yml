@@ -2,8 +2,8 @@ name: 发布
 
 on:
   push:
-    branches:
-      - test-release
+    tags:
+      - '**'
 
 env:
   IS_CI: true
@@ -66,9 +66,9 @@ jobs:
         uses: qq253498229/github-action-zip@v1
         with:
           files: |
-            1so.rpm.zip -> ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm
-            1so.deb.zip -> ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb
-            1so.appimage.zip -> ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage
+            1so.rpm.zip -> ./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64.rpm,./src-tauri/target/release/bundle/rpm/一搜-0.1.0-1.x86_64
+            1so.deb.zip -> ./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64.deb,./src-tauri/target/release/bundle/deb/一搜_0.1.0_amd64
+            1so.appimage.zip -> ./src-tauri/target/release/bundle/appimage/一搜_0.1.0_amd64.AppImage,./src-tauri/target/release/bundle/appimage/一搜.AppDir
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
