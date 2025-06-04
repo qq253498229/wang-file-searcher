@@ -37,8 +37,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./1so.dmg.zip
-            ./1so.app.zip
+            ./1so.macos_dmg.zip
+            ./1so.macos_app.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,9 +73,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./1so.rpm.zip
-            ./1so.deb.zip
-            ./1so.AppImage.zip
+            ./1so.linux_rpm.zip
+            ./1so.linux_deb.zip
+            ./1so.linux_appimage.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,8 +105,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./1so.msi.zip
-            ./1so.nsis.zip
+            ./1so.windows_msi.zip
+            ./1so.windows_nsis.zip
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
