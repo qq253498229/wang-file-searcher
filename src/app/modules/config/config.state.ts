@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
+import {inject, Injectable} from '@angular/core';
+import {Action, NgxsOnInit, State, StateContext, Store} from '@ngxs/store';
 import {
   ChangeCurrent,
   DeleteConfig,
@@ -11,16 +11,16 @@ import {
   SaveCurrentConfig,
   UseConfig,
 } from './config.action';
-import { OptionSelector } from '../option/option.selector';
-import { SearchSelector } from '../search/search.selector';
-import { invoke } from '@tauri-apps/api/core';
-import { generateUid } from '../../common/utils';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import {OptionSelector} from '../option/option.selector';
+import {SearchSelector} from '../search/search.selector';
+import {invoke} from '@tauri-apps/api/core';
+import {generateUid} from '../../common/utils';
+import {NzMessageService} from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
-import { InitOptions, ResetOptions } from '../option/option.action';
-import { UpdateFormValue } from '@ngxs/form-plugin';
-import { tap } from 'rxjs';
-import { ClearResult } from '../result/result.action';
+import {InitOptions, ResetOptions} from '../option/option.action';
+import {UpdateFormValue} from '@ngxs/form-plugin';
+import {tap} from 'rxjs';
+import {ClearResult} from '../result/result.action';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -55,11 +55,8 @@ export class ConfigState implements NgxsOnInit {
 
   @Action(SaveCurrentConfig)
   saveCurrentConfig(ctx: StateContext<ConfigStateModel>) {
-    let text = this.store.selectSnapshot(SearchSelector.text());
-    let includes = this.store.selectSnapshot(OptionSelector.includes());
-    let excludes = this.store.selectSnapshot(OptionSelector.excludes());
-    let refines = this.store.selectSnapshot(OptionSelector.refines());
-    let param = {text, includes, excludes, refines};
+    let param = this.store.selectSnapshot(OptionSelector.param());
+    param.text = this.store.selectSnapshot(SearchSelector.text());
     let config = {param, id: generateUid()};
     invoke('save_config', {config}).then(() => {
       this.message.success(`保存成功`);
@@ -142,11 +139,8 @@ export class ConfigState implements NgxsOnInit {
   @Action(OverrideConfig)
   overrideConfig(ctx: StateContext<ConfigStateModel>, {data}: OverrideConfig) {
     let idx = ctx.getState().configs.findIndex(s => s.id === data.id);
-    let text = this.store.selectSnapshot(SearchSelector.text());
-    let includes = this.store.selectSnapshot(OptionSelector.includes());
-    let excludes = this.store.selectSnapshot(OptionSelector.excludes());
-    let refines = this.store.selectSnapshot(OptionSelector.refines());
-    let param = {text, includes, excludes, refines};
+    let param = this.store.selectSnapshot(OptionSelector.param());
+    param.text = this.store.selectSnapshot(SearchSelector.text());
     let newState = immutable.set(ctx.getState(), ['configs', idx, 'param'], param);
     ctx.setState(newState);
     let config = ctx.getState().configs[idx];

@@ -8,6 +8,12 @@ pub struct Param {
     pub includes: Vec<SearchOption>,
     pub excludes: Vec<SearchOption>,
     pub refines: Vec<SearchOption>,
+    #[serde(rename = "includesOptions")]
+    pub includes_options: Vec<SearchOption>,
+    #[serde(rename = "excludesOptions")]
+    pub excludes_options: Vec<SearchOption>,
+    #[serde(rename = "refinesOptions")]
+    pub refines_options: Vec<SearchOption>,
 }
 impl Default for Param {
     fn default() -> Self {
@@ -16,6 +22,9 @@ impl Default for Param {
             includes: vec![],
             excludes: vec![],
             refines: vec![],
+            includes_options: vec![],
+            excludes_options: vec![],
+            refines_options: vec![],
         }
     }
 }
@@ -54,6 +63,7 @@ impl Param {
 /// 搜索选项
 #[derive(Deserialize, Serialize, Debug, Default)]
 pub struct SearchOption {
+    pub label: String,
     pub input: String,
     #[serde(rename = "type")]
     pub typee: OptionType,
