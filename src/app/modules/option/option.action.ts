@@ -43,3 +43,7 @@ export class InitOptions {
   constructor(public data: any) {
   }
 }
+
+export class ResetOptions {
+  static readonly type = `[option] 重置全部选项`;
+}

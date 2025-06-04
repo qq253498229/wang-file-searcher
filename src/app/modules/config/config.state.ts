@@ -17,9 +17,10 @@ import { invoke } from '@tauri-apps/api/core';
 import { generateUid } from '../../common/utils';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
-import { InitOptions } from '../option/option.action';
+import { InitOptions, ResetOptions } from '../option/option.action';
 import { UpdateFormValue } from '@ngxs/form-plugin';
 import { tap } from 'rxjs';
+import { ClearResult } from '../result/result.action';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -99,6 +100,13 @@ export class ConfigState implements NgxsOnInit {
 
   @Action(UseConfig)
   useConfig(ctx: StateContext<ConfigStateModel>, {data}: UseConfig) {
+    if ('' === data) {
+      return ctx.dispatch([
+        new ResetOptions(),
+        new ClearResult(),
+        new UpdateFormValue({path: 'search.textForm', value: {text: ''}}),
+      ]);
+    }
     let config = data;
     if (typeof (data) === 'string') {
       config = ctx.getState().configs.find(s => s.id === data);
