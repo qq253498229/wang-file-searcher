@@ -1,9 +1,9 @@
-import {inject, Injectable} from '@angular/core';
-import {Action, NgxsOnInit, State, StateContext} from '@ngxs/store';
-import {DEFAULT_REFINE, SearchOption, USER_HOME_FOLDER} from '../../common/entity/option';
-import {open} from '@tauri-apps/plugin-dialog';
+import { inject, Injectable } from '@angular/core';
+import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
+import { DEFAULT_REFINE, SearchOption, USER_HOME_FOLDER } from '../../common/entity/option';
+import { open } from '@tauri-apps/plugin-dialog';
 import * as immutable from 'object-path-immutable';
-import {NzMessageService} from 'ng-zorro-antd/message';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import {
   AddOption,
   ChangeOption,
@@ -158,7 +158,7 @@ export class OptionState implements NgxsOnInit {
   @Action(ChangeValue)
   changeValue(ctx: StateContext<OptionStateModel>, {type, idx, input, field}: ChangeValue) {
     ctx.setState(immutable.set(ctx.getState(), [type, idx, field], input));
-    ctx.dispatch(new ClearOptions());
+    return ctx.dispatch(new ClearOptions());
   }
 
   @Action(ClearOptions)

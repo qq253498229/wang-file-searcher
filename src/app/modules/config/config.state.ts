@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {Action, NgxsOnInit, State, StateContext, Store} from '@ngxs/store';
+import { inject, Injectable } from '@angular/core';
+import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
 import {
   ChangeCurrent,
   DeleteConfig,
@@ -11,16 +11,16 @@ import {
   SaveCurrentConfig,
   UseConfig,
 } from './config.action';
-import {OptionSelector} from '../option/option.selector';
-import {SearchSelector} from '../search/search.selector';
-import {invoke} from '@tauri-apps/api/core';
-import {generateUid} from '../../common/utils';
-import {NzMessageService} from 'ng-zorro-antd/message';
+import { OptionSelector } from '../option/option.selector';
+import { SearchSelector } from '../search/search.selector';
+import { invoke } from '@tauri-apps/api/core';
+import { generateUid } from '../../common/utils';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
-import {InitOptions, ResetOptions} from '../option/option.action';
-import {UpdateFormValue} from '@ngxs/form-plugin';
-import {tap} from 'rxjs';
-import {ClearResult} from '../result/result.action';
+import { InitOptions, ResetOptions } from '../option/option.action';
+import { UpdateFormValue } from '@ngxs/form-plugin';
+import { concatMap, from, tap } from 'rxjs';
+import { ClearResult } from '../result/result.action';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -57,18 +57,20 @@ export class ConfigState implements NgxsOnInit {
   saveCurrentConfig(ctx: StateContext<ConfigStateModel>) {
     let param = this.store.selectSnapshot(OptionSelector.param());
     param.text = this.store.selectSnapshot(SearchSelector.text());
-    let config = {param, id: generateUid()};
-    invoke('save_config', {config}).then(() => {
-      this.message.success(`保存成功`);
-      ctx.dispatch(new InitConfig());
-    });
+    let id = generateUid();
+    let config = {param, id};
+    return from(invoke('save_config', {config})).pipe(
+      tap(() => this.message.success(`保存成功`)),
+      concatMap(() => ctx.dispatch(new InitConfig())),
+      concatMap(() => ctx.dispatch(new UseConfig(id))),
+    );
   }
 
   @Action(InitConfig)
   initConfig(ctx: StateContext<ConfigStateModel>) {
-    invoke('init_config').then((r: any) => {
-      ctx.patchState({configs: r});
-    });
+    return from(invoke('init_config')).pipe(
+      tap((r: any) => ctx.patchState({configs: r})),
+    );
   }
 
   @Action(EditConfigRow)
@@ -89,10 +91,10 @@ export class ConfigState implements NgxsOnInit {
   @Action(SaveConfig)
   saveConfig(ctx: StateContext<ConfigStateModel>, {data}: SaveConfig) {
     let config = data;
-    invoke('save_config', {config}).then(() => {
-      this.message.success(`保存成功`);
-      ctx.dispatch(new InitConfig());
-    });
+    return from(invoke('save_config', {config})).pipe(
+      tap(() => this.message.success(`保存成功`)),
+      concatMap(() => ctx.dispatch(new InitConfig())),
+    );
   }
 
   @Action(UseConfig)
@@ -119,15 +121,15 @@ export class ConfigState implements NgxsOnInit {
 
   @Action(DeleteConfig)
   deleteConfig(ctx: StateContext<ConfigStateModel>, {data}: DeleteConfig) {
-    invoke('delete_config', {config: data}).then(() => {
-      this.message.success(`删除成功`);
-      ctx.dispatch(new InitConfig());
-    });
+    return from(invoke('delete_config', {config: data})).pipe(
+      tap(() => this.message.success(`删除成功`)),
+      concatMap(() => ctx.dispatch(new InitConfig())),
+    );
   }
 
   @Action(OpenConfigFolder)
   openConfigFolder(_ctx: StateContext<ConfigStateModel>) {
-    invoke('open_config_folder').then();
+    return from(invoke('open_config_folder'));
   }
 
   @Action(ChangeCurrent)
@@ -144,10 +146,10 @@ export class ConfigState implements NgxsOnInit {
     let newState = immutable.set(ctx.getState(), ['configs', idx, 'param'], param);
     ctx.setState(newState);
     let config = ctx.getState().configs[idx];
-    invoke('save_config', {config}).then(() => {
-      this.message.success(`保存成功`);
-      ctx.dispatch(new InitConfig());
-    });
+    return from(invoke('save_config', {config})).pipe(
+      tap(() => this.message.success(`保存成功`)),
+      concatMap(() => ctx.dispatch(new InitConfig())),
+    );
   }
 
 }

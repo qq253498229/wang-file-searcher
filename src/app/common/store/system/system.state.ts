@@ -3,6 +3,7 @@ import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
 import { OpenFolder, OperationMenu } from './system.action';
 import { invoke } from '@tauri-apps/api/core';
 import { Menu } from '@tauri-apps/api/menu/menu';
+import { from } from 'rxjs';
 
 export interface SystemStateModel {
 }
@@ -37,7 +38,7 @@ export class SystemState implements NgxsOnInit {
 
   @Action(OpenFolder)
   openFolder(_ctx: StateContext<SystemStateModel>, {path}: OpenFolder) {
-    invoke('open_folder', {path}).then();
+    return from(invoke('open_folder', {path}));
   }
 
 }

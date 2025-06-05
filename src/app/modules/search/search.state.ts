@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { ResultSelector } from '../result/result.selector';
 import { OptionSelector } from '../option/option.selector';
 import { ClearResult, Start, Stop } from '../result/result.action';
+import { concatMap, from } from 'rxjs';
 
 export interface SearchStateModel {
   /**
@@ -36,21 +37,18 @@ export class SearchState implements NgxsOnInit {
 
   @Action(Search)
   Search(ctx: StateContext<SearchStateModel>) {
-    let includes = this.store.selectSnapshot(OptionSelector.includes());
-    let excludes = this.store.selectSnapshot(OptionSelector.excludes());
-    let refines = this.store.selectSnapshot(OptionSelector.refines());
-    let param = {
-      text: ctx.getState().textForm.model.text.trim(),
-      includes, excludes, refines,
-    };
-    invoke('search', {param}).then();
-    return ctx.dispatch([new ClearResult(), new Start()]);
+    let param = this.store.selectSnapshot(OptionSelector.param());
+    param.text = ctx.getState().textForm.model.text.trim();
+    return from(invoke('search', {param})).pipe(
+      concatMap(() => ctx.dispatch([new ClearResult(), new Start()])),
+    );
   }
 
   @Action(StopSearch)
-  async stopSearch(ctx: StateContext<SearchStateModel>) {
-    await invoke('stop_search');
-    return ctx.dispatch([new Stop()]);
+  stopSearch(ctx: StateContext<SearchStateModel>) {
+    return from(invoke('stop_search')).pipe(
+      concatMap(() => ctx.dispatch([new Stop()])),
+    );
   }
 
   @Action(SwitchSearch)
