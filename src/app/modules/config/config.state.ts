@@ -5,6 +5,7 @@ import {
   CopyConfig,
   DeleteConfig,
   EditConfigRow,
+  ImportConfigFromClipboard,
   InitConfig,
   OpenConfigFolder,
   OverrideConfig,
@@ -20,9 +21,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import * as immutable from 'object-path-immutable';
 import { InitOptions, ResetOptions } from '../option/option.action';
 import { UpdateFormValue } from '@ngxs/form-plugin';
-import { concatMap, from, tap } from 'rxjs';
+import { concatMap, from, map, tap } from 'rxjs';
 import { ClearResult } from '../result/result.action';
-import { CopyToClipboard } from '../../common/store/system/system.action';
+import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -157,7 +158,25 @@ export class ConfigState implements NgxsOnInit {
   @Action(CopyConfig)
   copyConfig(_ctx: StateContext<ConfigStateModel>, {data}: CopyConfig) {
     let json = JSON.stringify(data, null, 2);
-    return this.store.dispatch(new CopyToClipboard(json));
+    return from(writeText(json)).pipe(
+      tap(() => this.message.success(`复制成功`)),
+    );
+  }
+
+  @Action(ImportConfigFromClipboard)
+  importConfigFromClipboard(ctx: StateContext<ConfigStateModel>) {
+    return from(readText()).pipe(
+      map((text) => {
+        try {
+          //这里要处理后返回新的对象
+          return JSON.parse(text);
+        } catch (e) {
+          this.message.error(`配置读取失败，不是合法json`);
+          throw new Error(`配置读取失败，不是合法json`);
+        }
+      }),
+      tap(config => ctx.dispatch(new SaveConfig(config))),
+    );
   }
 
 }

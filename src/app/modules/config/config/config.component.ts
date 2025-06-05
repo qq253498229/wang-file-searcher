@@ -10,6 +10,7 @@ import {
   CopyConfig,
   DeleteConfig,
   EditConfigRow,
+  ImportConfigFromClipboard,
   InitConfig,
   OpenConfigFolder,
   OverrideConfig,
@@ -84,5 +85,9 @@ export class ConfigComponent implements OnInit {
 
   copyConfig(data: any) {
     this.store.dispatch(new CopyConfig(data));
+  }
+
+  importFromClipboard() {
+    this.store.dispatch(new ImportConfigFromClipboard());
   }
 }

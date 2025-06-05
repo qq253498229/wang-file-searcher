@@ -18,6 +18,12 @@
     <button type="button" nz-button nzType="primary" (click)="openConfigFolder()">打开本地目录</button>
   </nz-col>
 
+  <nz-divider nzType="vertical"></nz-divider>
+
+  <nz-col>
+    <button type="button" nz-button nzType="primary" (click)="importFromClipboard()">从剪贴板导入</button>
+  </nz-col>
+
   @if (isDevMode) {
     <nz-divider nzType="vertical"></nz-divider>
     <nz-col>

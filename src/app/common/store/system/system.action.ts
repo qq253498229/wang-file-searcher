@@ -11,10 +11,3 @@ export class OpenFolder {
   constructor(public path: string) {
   }
 }
-
-export class CopyToClipboard {
-  static readonly type = `[system] 复制到剪贴板`;
-
-  constructor(public text: string) {
-  }
-}

@@ -58,3 +58,7 @@ export class CopyConfig {
 export class OpenConfigFolder {
   static readonly type = `[config] 打开配置目录`;
 }
+
+export class ImportConfigFromClipboard {
+  static readonly type = `[config] 从剪贴板导入配置`;
+}
