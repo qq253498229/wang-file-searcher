@@ -59,8 +59,15 @@ fn check_file_type(param: &Param, path: &PathBuf) -> bool {
                     if refine_name.trim().len() == 0 {
                         continue;
                     }
-                    let extension = path.extension().unwrap().to_str().unwrap().to_lowercase();
-                    if extension != refine_name {
+                    if let Some(extension) = path.extension() {
+                        if let Some(extension) = extension.to_str() {
+                            if extension != refine_name {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    } else {
                         return false;
                     }
                 }
@@ -69,9 +76,12 @@ fn check_file_type(param: &Param, path: &PathBuf) -> bool {
                     if refine_name.trim().len() == 0 {
                         continue;
                     }
-                    let extension = path.extension().unwrap().to_str().unwrap().to_lowercase();
-                    if extension == refine_name {
-                        return false;
+                    if let Some(extension) = path.extension() {
+                        if let Some(extension) = extension.to_str() {
+                            if extension == refine_name {
+                                return false;
+                            }
+                        }
                     }
                 }
                 OptionType::IsFolder => {
@@ -235,6 +245,28 @@ mod tests {
         let mut param = Param::default();
         param.add_includes(path);
         param.set_file_type_not_folder();
+        param.set_text("test1.txt");
+
+        let result = Arc::new(Mutex::new(vec![]));
+        let result_clone = Arc::clone(&result);
+        let mut handler = SearchHandler::test(move |r| {
+            let mut result = result_clone.lock().unwrap();
+            result.push(r);
+            Ok(())
+        });
+        search_files(&param, &mut handler)?;
+        let result = result.lock().unwrap();
+        assert_eq!(result.len(), 1);
+        Ok(())
+    }
+    #[test]
+    fn test6() -> anyhow::Result<()> {
+        let path = PathBuf::from("tests");
+        let path = path.resolve().to_str().unwrap().to_string();
+        let mut param = Param::default();
+        param.add_includes(path);
+        param.set_file_type_not_folder();
+        param.set_file_type_is("txt");
         param.set_text("test1.txt");
 
         let result = Arc::new(Mutex::new(vec![]));
