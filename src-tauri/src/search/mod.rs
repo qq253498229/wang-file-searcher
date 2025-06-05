@@ -8,7 +8,7 @@ mod validator;
 
 use crate::command::entity::{OptionType, Param};
 use crate::search::excludes::check_exclude;
-use crate::search::find_string::check_string;
+use crate::search::find_string::{check_string, input_text_empty};
 use crate::search::handler::SearchHandler;
 use crate::search::includes::check_include;
 use crate::search::refines::check_refine;
@@ -55,7 +55,7 @@ fn search_and_send_event(
         }
         handle.send_status(&path)?;
         let mut already_send = false;
-        if check_refine(param, &path)? && !already_send {
+        if input_text_empty(search_text) && check_refine(param, &path)? && !already_send {
             send_file_emit(path.clone(), handle)?;
             already_send = true;
         }

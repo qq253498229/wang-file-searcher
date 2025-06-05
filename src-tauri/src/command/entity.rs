@@ -29,6 +29,9 @@ impl Default for Param {
     }
 }
 impl Param {
+    pub fn set_text(&mut self, text: &str) {
+        self.text = text.to_string();
+    }
     pub fn add_includes(&mut self, path: String) {
         let search_path = SearchOption::from(&path);
         self.includes.push(search_path);
@@ -43,6 +46,13 @@ impl Param {
         let mut refine = SearchOption::default();
         refine.flag = OptionFlag::FileType;
         refine.typee = OptionType::NotFolder;
+        self.refines.push(refine);
+    }
+    pub fn set_file_type_is(&mut self, input: &str) {
+        let mut refine = SearchOption::default();
+        refine.flag = OptionFlag::FileType;
+        refine.typee = OptionType::Is;
+        refine.input = input.to_string();
         self.refines.push(refine);
     }
     pub fn set_filename_contains(&mut self, filename: &str) {

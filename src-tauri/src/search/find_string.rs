@@ -12,3 +12,6 @@ pub fn check_string(path: &PathBuf, search_text: &str) -> bool {
     }
     false
 }
+pub fn input_text_empty(search_text: &str) -> bool {
+    search_text.is_empty() || search_text.trim().is_empty()
+}
