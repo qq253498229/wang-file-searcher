@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext, Store } from '@ngxs/store';
 import {
   ChangeCurrent,
+  CopyConfig,
   DeleteConfig,
   EditConfigRow,
   InitConfig,
@@ -21,6 +22,7 @@ import { InitOptions, ResetOptions } from '../option/option.action';
 import { UpdateFormValue } from '@ngxs/form-plugin';
 import { concatMap, from, tap } from 'rxjs';
 import { ClearResult } from '../result/result.action';
+import { CopyToClipboard } from '../../common/store/system/system.action';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -150,6 +152,12 @@ export class ConfigState implements NgxsOnInit {
       tap(() => this.message.success(`保存成功`)),
       concatMap(() => ctx.dispatch(new InitConfig())),
     );
+  }
+
+  @Action(CopyConfig)
+  copyConfig(_ctx: StateContext<ConfigStateModel>, {data}: CopyConfig) {
+    let json = JSON.stringify(data, null, 2);
+    return this.store.dispatch(new CopyToClipboard(json));
   }
 
 }

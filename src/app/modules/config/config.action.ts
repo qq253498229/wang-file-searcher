@@ -48,6 +48,13 @@ export class ChangeCurrent {
   }
 }
 
+export class CopyConfig {
+  static readonly type = `[config] 复制配置`;
+
+  constructor(public data: any) {
+  }
+}
+
 export class OpenConfigFolder {
   static readonly type = `[config] 打开配置目录`;
 }

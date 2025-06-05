@@ -1,9 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { OpenFolder, OperationMenu } from './system.action';
+import { CopyToClipboard, OpenFolder, OperationMenu } from './system.action';
 import { invoke } from '@tauri-apps/api/core';
 import { Menu } from '@tauri-apps/api/menu/menu';
 import { from } from 'rxjs';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 export interface SystemStateModel {
 }
@@ -16,6 +18,8 @@ export interface SystemStateModel {
   providedIn: 'root',
 })
 export class SystemState implements NgxsOnInit {
+  clipboard = inject(Clipboard);
+  message = inject(NzMessageService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
     ctx.patchState({});
@@ -39,6 +43,12 @@ export class SystemState implements NgxsOnInit {
   @Action(OpenFolder)
   openFolder(_ctx: StateContext<SystemStateModel>, {path}: OpenFolder) {
     return from(invoke('open_folder', {path}));
+  }
+
+  @Action(CopyToClipboard)
+  copyToClipboard(_ctx: StateContext<SystemStateModel>, {text}: CopyToClipboard) {
+    this.clipboard.copy(text);
+    this.message.success(`复制成功`);
   }
 
 }

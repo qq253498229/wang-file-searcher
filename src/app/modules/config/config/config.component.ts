@@ -7,6 +7,7 @@ import { Navigate } from '@ngxs/router-plugin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import {
+  CopyConfig,
   DeleteConfig,
   EditConfigRow,
   InitConfig,
@@ -79,5 +80,9 @@ export class ConfigComponent implements OnInit {
 
   overrideConfig(data: any) {
     this.store.dispatch(new OverrideConfig(data));
+  }
+
+  copyConfig(data: any) {
+    this.store.dispatch(new CopyConfig(data));
   }
 }

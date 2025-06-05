@@ -36,7 +36,7 @@
       <tr>
         <th nzWidth="150px">ID</th>
         <th>名称</th>
-        <th nzWidth="270px">操作</th>
+        <th nzWidth="330px">操作</th>
       </tr>
       </thead>
       <tbody>
@@ -73,6 +73,10 @@
                 使用
               </button>
             }
+            <nz-divider nzType="vertical"></nz-divider>
+            <button type="button" nz-button nzType="primary" nzSize="small" (click)="copyConfig(data)">
+              复制
+            </button>
             <nz-divider nzType="vertical"></nz-divider>
             <button type="button" nz-button nzType="primary" nzSize="small"
                     nzDanger
