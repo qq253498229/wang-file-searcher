@@ -7,6 +7,7 @@ import { bufferTime, Subject } from 'rxjs';
 import { ReceiveResult, ReceiveStatus } from './modules/result/result.action';
 import { RouterOutlet } from '@angular/router';
 import { InitConfig } from './modules/config/config.action';
+import { InitLanguage } from './common/store/system/system.action';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(new InitConfig());
     this.listenResult();
     this.listenStatus();
+    this.store.dispatch(new InitLanguage());
   }
 
   /**

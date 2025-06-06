@@ -4,10 +4,10 @@
           [nzPageSize]="100" nzSize="small">
   <thead>
   <tr>
-    <th [nzSortFn]="comparePath" nzWidth="360px">文件名</th>
-    <th [nzSortFn]="comparePath" nzWidth="60px">类型</th>
-    <th [nzSortFn]="compareUpdateAt" nzWidth="170px">修改时间</th>
-    <th nzWidth="75px">操作</th>
+    <th [nzSortFn]="comparePath" nzWidth="360px">{{ 'result.name'|translate }}</th>
+    <th [nzSortFn]="comparePath" nzWidth="60px">{{ 'result.kind'|translate }}</th>
+    <th [nzSortFn]="compareUpdateAt" nzWidth="170px">{{ 'result.modified'|translate }}</th>
+    <th nzWidth="75px">{{ 'result.operation'|translate }}</th>
   </tr>
   </thead>
   <tbody>
@@ -18,7 +18,10 @@
     <td>{{ data.extension }}</td>
     <td>{{ data.update_at|date:'yyyy-MM-dd HH:mm:ss' }}</td>
     <td>
-      <button type="button" nz-button nzType="primary" nzSize="small" (click)="openInLocal(data)">查看</button>
+      <button type="button" nz-button nzType="primary" nzSize="small"
+              (click)="openInLocal(data)">
+        {{ 'result.show'|translate }}
+      </button>
     </td>
   </tr>
   </tbody>

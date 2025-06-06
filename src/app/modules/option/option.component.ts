@@ -6,6 +6,8 @@ import { OptionRefinesComponent } from './option-refines/option-refines.componen
 import { OptionLocationsComponent } from './option-locations/option-locations.component';
 import { ConfigSelector } from '../config/config.selector';
 import { UseConfig } from '../config/config.action';
+import { SystemSelector } from '../../common/store/system/system.selector';
+import { ChangeLanguage } from '../../common/store/system/system.action';
 
 @Component({
   selector: 'wang-option',
@@ -23,15 +25,23 @@ export class OptionComponent implements OnInit {
   }
 
   test() {
-    console.log('configs', this.store.selectSnapshot(ConfigSelector.configs()));
-    console.log('current', this.store.selectSnapshot(ConfigSelector.current()));
+    // console.log('configs', this.store.selectSnapshot(ConfigSelector.configs()));
+    // console.log('current', this.store.selectSnapshot(ConfigSelector.current()));
 
     // console.log('refines', this.store.selectSnapshot(OptionSelector.refines()));
     // console.log('includes', this.store.selectSnapshot(OptionSelector.includes()));
     // console.log('includesOptions', this.store.selectSnapshot(OptionSelector.includesOptions()));
     // console.log('excludes', this.store.selectSnapshot(OptionSelector.excludes()));
     // console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
-
+    let language = this.store.selectSnapshot(SystemSelector.language());
+    console.log('language', language);
+    if ('zh-CN' === language) {
+      this.store.dispatch(new ChangeLanguage('en-US'));
+    } else {
+      this.store.dispatch(new ChangeLanguage('zh-CN'));
+    }
+    let language1 = this.store.selectSnapshot(SystemSelector.language());
+    console.log('language1', language1);
   }
 
   changeCurrent($event: any) {

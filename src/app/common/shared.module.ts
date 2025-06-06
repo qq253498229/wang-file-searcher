@@ -16,10 +16,12 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { TranslateModule } from '@ngx-translate/core';
 
 const THIRD_MODULES: any[] = [
   FormsModule,
   ReactiveFormsModule,
+  TranslateModule,
   AsyncPipe,
   JsonPipe,
   NgxsFormDirective,
