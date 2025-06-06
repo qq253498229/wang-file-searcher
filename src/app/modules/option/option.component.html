@@ -3,6 +3,12 @@
 <wang-option-locations></wang-option-locations>
 <nz-divider></nz-divider>
 <nz-row>
+  <nz-col nzOffset="1" nzSpan="8">
+    <button type="button" nz-button routerLink="/config">
+      <nz-icon nzType="setting"/>
+      管理配置
+    </button>
+  </nz-col>
   <nz-col nzOffset="1" nzSpan="13">
     <nz-select class="select" [ngModel]="current()?.id||''"
                (ngModelChange)="changeCurrent($event)">
@@ -16,11 +22,19 @@
       }
     </nz-select>
   </nz-col>
-  <nz-col nzOffset="1">
-    <button type="button" nz-button routerLink="/config">
-      <nz-icon nzType="setting"/>
-      管理配置
+</nz-row>
+<nz-divider></nz-divider>
+<nz-row>
+  <nz-col nzOffset="1" nzSpan="8">
+    <button type="button" nz-button>
+      Language
     </button>
+  </nz-col>
+  <nz-col nzOffset="1" nzSpan="13">
+    <nz-select class="select" [ngModel]="language()" (ngModelChange)="changeLanguage($event)">
+      <nz-option nzValue="en-US" nzLabel="English-US"></nz-option>
+      <nz-option nzValue="zh-CN" nzLabel="简体中文"></nz-option>
+    </nz-select>
   </nz-col>
 </nz-row>
 @if (isDevMode) {

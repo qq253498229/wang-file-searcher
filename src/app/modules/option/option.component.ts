@@ -20,6 +20,7 @@ export class OptionComponent implements OnInit {
   isDevMode = isDevMode();
   configs = select(ConfigSelector.configs());
   current = select(ConfigSelector.current());
+  language = select(SystemSelector.language());
 
   ngOnInit(): void {
   }
@@ -35,16 +36,13 @@ export class OptionComponent implements OnInit {
     // console.log('excludesOptions', this.store.selectSnapshot(OptionSelector.excludesOptions()));
     let language = this.store.selectSnapshot(SystemSelector.language());
     console.log('language', language);
-    if ('zh-CN' === language) {
-      this.store.dispatch(new ChangeLanguage('en-US'));
-    } else {
-      this.store.dispatch(new ChangeLanguage('zh-CN'));
-    }
-    let language1 = this.store.selectSnapshot(SystemSelector.language());
-    console.log('language1', language1);
   }
 
   changeCurrent($event: any) {
     this.store.dispatch(new UseConfig($event));
+  }
+
+  changeLanguage($event: any) {
+    this.store.dispatch(new ChangeLanguage($event));
   }
 }
