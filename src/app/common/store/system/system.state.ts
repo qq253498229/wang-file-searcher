@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
-import { ChangeLanguage, InitLanguage, OpenFolder, OperationMenu } from './system.action';
+import { ChangeLanguage, InitLanguage, OpenFolder } from './system.action';
 import { invoke } from '@tauri-apps/api/core';
-import { Menu } from '@tauri-apps/api/menu/menu';
 import { from } from 'rxjs';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { TranslateService } from '@ngx-translate/core';
 import translateEnUs from '../../../../assets/i18n/en-US.json';
 import translateZhCn from '../../../../assets/i18n/zh-CN.json';
+import { en_US, NzI18nService, zh_CN } from 'ng-zorro-antd/i18n';
 
 export interface SystemStateModel {
   language?: string;
@@ -23,24 +23,10 @@ export interface SystemStateModel {
 export class SystemState implements NgxsOnInit {
   clipboard = inject(Clipboard);
   translate = inject(TranslateService);
+  i18n = inject(NzI18nService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
     ctx.patchState({});
-  }
-
-  @Action(OperationMenu)
-  operationMenu(ctx: StateContext<SystemStateModel>, {data}: OperationMenu) {
-    Menu.new({
-      items: [
-        {
-          id: 'openFolder', text: '打开本地目录', action: () => {
-            ctx.dispatch(new OpenFolder(data.path));
-          },
-        },
-      ],
-    }).then(menu => {
-      menu.popup().then();
-    });
   }
 
   @Action(OpenFolder)
@@ -58,8 +44,14 @@ export class SystemState implements NgxsOnInit {
       defaultLanguage = 'en-US';
     }
     this.translate.addLangs(['en-US', 'zh-CN']);
-    this.translate.setDefaultLang('zh-CN');
-    this.translate.use(ctx.getState().language || defaultLanguage);
+    this.translate.setDefaultLang('en-US');
+    let useLang = ctx.getState().language || defaultLanguage;
+    this.translate.use(useLang);
+    if ('zh-CN' === useLang) {
+      this.i18n.setLocale(zh_CN);
+    } else {
+      this.i18n.setLocale(en_US);
+    }
     this.translate.setTranslation('en-US', translateEnUs);
     this.translate.setTranslation('zh-CN', translateZhCn);
     ctx.patchState({language: this.translate.currentLang});
@@ -67,6 +59,11 @@ export class SystemState implements NgxsOnInit {
 
   @Action(ChangeLanguage)
   changeLanguage(ctx: StateContext<SystemStateModel>, {language}: ChangeLanguage) {
+    if ('zh-CN' === language) {
+      this.i18n.setLocale(zh_CN);
+    } else {
+      this.i18n.setLocale(en_US);
+    }
     this.translate.use(language);
     ctx.patchState({language});
   }
