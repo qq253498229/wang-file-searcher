@@ -1,4 +1,4 @@
-<h3>位置</h3>
+<h3>{{ 'option.location'|translate }}</h3>
 <div class="location">
   @for (include of includes(); track $index) {
     <nz-row>
@@ -12,9 +12,10 @@
             @for (option of includesOptions(); track $index) {
               <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
             }
-            <nz-option nzValue="~" nzLabel="用户HOME目录" [nzDisabled]="hasHomeInclude"></nz-option>
-            <nz-option nzValue="" nzLabel="输入路径"></nz-option>
-            <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
+            <nz-option nzValue="~" nzLabel="{{'option.homeFolder'|translate}}"
+                       [nzDisabled]="hasHomeInclude"></nz-option>
+            <nz-option nzValue="" nzLabel="{{'option.inputPath'|translate}}"></nz-option>
+            <nz-option nzValue="$CUSTOM$" nzLabel="{{'option.chooseFolder'|translate}}"></nz-option>
           </nz-select>
         }
       </nz-col>
@@ -31,10 +32,10 @@
 
   @for (exclude of excludes(); track $index) {
     <nz-row>
-      <nz-col nzSpan="3" class="exclude-span">
-        <span>排除:</span>
+      <nz-col nzSpan="4" class="exclude-span">
+        <span>{{ 'option.exclude'|translate }}:</span>
       </nz-col>
-      <nz-col nzSpan="17">
+      <nz-col nzSpan="16">
         @if (exclude.flag === 'Input') {
           <input type="text" nz-input [ngModel]="exclude.input"
                  (ngModelChange)="changeValue('excludes','input',$index,$event)">
@@ -44,8 +45,8 @@
             @for (option of excludesOptions(); track $index) {
               <nz-option [nzValue]="option.input" [nzLabel]="option.label"></nz-option>
             }
-            <nz-option nzValue="" nzLabel="输入路径"></nz-option>
-            <nz-option nzValue="$CUSTOM$" nzLabel="手动选择路径"></nz-option>
+            <nz-option nzValue="" nzLabel="{{'option.inputPath'|translate}}"></nz-option>
+            <nz-option nzValue="$CUSTOM$" nzLabel="{{'option.chooseFolder'|translate}}"></nz-option>
           </nz-select>
         }
       </nz-col>
@@ -63,7 +64,7 @@
       <nz-col nzOffset="4">
         <button nz-button nz-dropdown nzTrigger="click" [nzDropdownMenu]="addExcludeMenu">
           <nz-icon nzType="plus"/>
-          排除路径
+          {{ 'option.excludePath'|translate }}
         </button>
       </nz-col>
     </nz-row>
@@ -73,13 +74,21 @@
 <nz-dropdown-menu #addIncludeMenu="nzDropdownMenu">
   <ul nz-menu>
     @for (option of includesOptions(); track $index) {
-      <li nz-menu-item (click)="add('includes','input',option.input)">{{ option.input }}</li>
+      <li nz-menu-item (click)="add('includes','input',option.input)">
+        {{ option.input }}
+      </li>
     }
     @if (!hasHomeInclude) {
-      <li nz-menu-item (click)="add('includes','input','~')">用户HOME目录</li>
+      <li nz-menu-item (click)="add('includes','input','~')">
+        {{ 'option.homeFolder'|translate }}
+      </li>
     }
-    <li nz-menu-item (click)="add('includes','input','')">输入路径</li>
-    <li nz-menu-item (click)="add('includes','input','$CUSTOM$')">手动选择路径</li>
+    <li nz-menu-item (click)="add('includes','input','')">
+      {{ 'option.inputPath'|translate }}
+    </li>
+    <li nz-menu-item (click)="add('includes','input','$CUSTOM$')">
+      {{ 'option.chooseFolder'|translate }}
+    </li>
   </ul>
 </nz-dropdown-menu>
 <nz-dropdown-menu #addExcludeMenu="nzDropdownMenu">
@@ -87,8 +96,12 @@
     @for (option of excludesOptions(); track $index) {
       <li nz-menu-item (click)="add('excludes','input',option.input)">{{ option.input }}</li>
     }
-    <li nz-menu-item (click)="add('excludes','input','')">输入路径</li>
-    <li nz-menu-item (click)="add('excludes','input','$CUSTOM$')">手动选择路径</li>
+    <li nz-menu-item (click)="add('excludes','input','')">
+      {{ 'option.inputPath'|translate }}
+    </li>
+    <li nz-menu-item (click)="add('excludes','input','$CUSTOM$')">
+      {{ 'option.chooseFolder'|translate }}
+    </li>
   </ul>
 </nz-dropdown-menu>
 

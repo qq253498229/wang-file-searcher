@@ -6,13 +6,13 @@
   <nz-col nzOffset="1" nzSpan="8">
     <button type="button" nz-button routerLink="/config">
       <nz-icon nzType="setting"/>
-      管理配置
+      {{ 'option.manage'|translate }}
     </button>
   </nz-col>
   <nz-col nzOffset="1" nzSpan="13">
     <nz-select class="select" [ngModel]="current()?.id||''"
                (ngModelChange)="changeCurrent($event)">
-      <nz-option nzValue="" nzLabel="无"></nz-option>
+      <nz-option nzValue="" nzLabel="{{'option.none'|translate}}"></nz-option>
       @for (config of configs(); track $index) {
         @if (config.name) {
           <nz-option [nzValue]="config.id" [nzLabel]="config.name"></nz-option>

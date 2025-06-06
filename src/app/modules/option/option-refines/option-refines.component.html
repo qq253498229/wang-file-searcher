@@ -1,28 +1,28 @@
-<h3>参数</h3>
+<h3>{{ 'option.refine'|translate }}</h3>
 <div class="location">
   @for (refine of refines(); track $index) {
     <nz-row>
       <nz-col nzSpan="6">
         <nz-select class="select" [ngModel]="refine.flag"
                    (ngModelChange)="changeValue('refines','flag',$index,$event)">
-          <nz-option nzLabel="文件名" nzValue="Filename"></nz-option>
-          <nz-option nzLabel="类型" nzValue="FileType"></nz-option>
-          <nz-option nzLabel="大小" nzValue="FileSize"></nz-option>
+          <nz-option nzLabel="{{'refine.filename'|translate}}" nzValue="Filename"></nz-option>
+          <nz-option nzLabel="{{'refine.fileType'|translate}}" nzValue="FileType"></nz-option>
+          <nz-option nzLabel="{{'refine.fileSize'|translate}}" nzValue="FileSize"></nz-option>
         </nz-select>
       </nz-col>
       @if (refine.flag === 'Filename') {
-        <nz-col nzSpan="6">
+        <nz-col nzSpan="8">
           <nz-select class="select" [ngModel]="refine.type"
                      (ngModelChange)="changeValue('refines','type',$index,$event)">
-            <nz-option nzLabel="是" nzValue="Is"></nz-option>
-            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
-            <nz-option nzLabel="包含" nzValue="Contains"></nz-option>
-            <nz-option nzLabel="不包含" nzValue="NotContains"></nz-option>
-            <nz-option nzLabel="开头" nzValue="Begin"></nz-option>
-            <nz-option nzLabel="结尾" nzValue="End"></nz-option>
+            <nz-option nzLabel="{{'refine.is'|translate}}" nzValue="Is"></nz-option>
+            <nz-option nzLabel="{{'refine.not'|translate}}" nzValue="Not"></nz-option>
+            <nz-option nzLabel="{{'refine.contains'|translate}}" nzValue="Contains"></nz-option>
+            <nz-option nzLabel="{{'refine.notContains'|translate}}" nzValue="NotContains"></nz-option>
+            <nz-option nzLabel="{{'refine.begin'|translate}}" nzValue="Begin"></nz-option>
+            <nz-option nzLabel="{{'refine.end'|translate}}" nzValue="End"></nz-option>
           </nz-select>
         </nz-col>
-        <nz-col nzSpan="8">
+        <nz-col nzSpan="6">
           <input type="text" nz-input [ngModel]="refine.input"
                  (ngModelChange)="changeValue('refines','input',$index,$event)">
         </nz-col>
@@ -30,10 +30,10 @@
         <nz-col [nzSpan]="(refine.type !== 'IsFolder'&&refine.type !== 'NotFolder')?6:14">
           <nz-select class="select" [ngModel]="refine.type"
                      (ngModelChange)="changeValue('refines','type',$index,$event)">
-            <nz-option nzLabel="是" nzValue="Is"></nz-option>
-            <nz-option nzLabel="不是" nzValue="Not"></nz-option>
-            <nz-option nzLabel="是文件夹" nzValue="IsFolder"></nz-option>
-            <nz-option nzLabel="非文件夹" nzValue="NotFolder"></nz-option>
+            <nz-option nzLabel="{{'refine.is'|translate}}" nzValue="Is"></nz-option>
+            <nz-option nzLabel="{{'refine.not'|translate}}" nzValue="Not"></nz-option>
+            <nz-option nzLabel="{{'refine.isFolder'|translate}}" nzValue="IsFolder"></nz-option>
+            <nz-option nzLabel="{{'refine.notFolder'|translate}}" nzValue="NotFolder"></nz-option>
           </nz-select>
         </nz-col>
         @if (refine.type !== 'IsFolder' && refine.type !== 'NotFolder') {
@@ -43,14 +43,14 @@
           </nz-col>
         }
       } @else if (refine.flag === 'FileSize') {
-        <nz-col nzSpan="5">
+        <nz-col nzSpan="6">
           <nz-select class="select" [ngModel]="refine.type"
                      (ngModelChange)="changeValue('refines','type',$index,$event)">
-            <nz-option nzLabel="大于" nzValue="GreaterThan"></nz-option>
-            <nz-option nzLabel="小于" nzValue="LessThan"></nz-option>
+            <nz-option nzLabel="{{'refine.lessThan'|translate}}" nzValue="LessThan"></nz-option>
+            <nz-option nzLabel="{{'refine.greaterThan'|translate}}" nzValue="GreaterThan"></nz-option>
           </nz-select>
         </nz-col>
-        <nz-col nzSpan="4">
+        <nz-col nzSpan="3">
           <input type="text" nz-input [ngModel]="refine.input"
                  (ngModelChange)="changeValue('refines','input',$index,$event)">
         </nz-col>
@@ -75,8 +75,14 @@
 </div>
 <nz-dropdown-menu #addRefineMenu="nzDropdownMenu">
   <ul nz-menu>
-    <li nz-menu-item (click)="add('refines','flag','Filename')">文件名</li>
-    <li nz-menu-item (click)="add('refines','flag','FileType')">类型</li>
-    <li nz-menu-item (click)="add('refines','flag','FileSize')">大小</li>
+    <li nz-menu-item (click)="add('refines','flag','Filename')">
+      {{ 'refine.filename'|translate }}
+    </li>
+    <li nz-menu-item (click)="add('refines','flag','FileType')">
+      {{ 'refine.fileType'|translate }}
+    </li>
+    <li nz-menu-item (click)="add('refines','flag','FileSize')">
+      {{ 'refine.fileSize'|translate }}
+    </li>
   </ul>
 </nz-dropdown-menu>
