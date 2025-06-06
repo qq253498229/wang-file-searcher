@@ -2,6 +2,12 @@
 
 该日志由wang-changelog生成，详情见 https://gitee.com/consolelog/wang-changelog
 
+## v0.1.5 (2025-06-06)
+
+### ✨ Features | 新功能
+
+* 添加zorro国际化 (2025-06-06)
+
 ## v0.1.4 (2025-06-06)
 
 ### ✨ Features | 新功能
