@@ -1,5 +1,8 @@
 import { createSelector } from '@ngxs/store';
 import { ResultState, ResultStateModel } from './result.state';
+import { inject } from '@angular/core';
+import { _, TranslateService } from '@ngx-translate/core';
+import { SystemState, SystemStateModel } from '../../common/store/system/system.state';
 
 export class ResultSelector {
 
@@ -18,14 +21,19 @@ export class ResultSelector {
   }
 
   static status() {
-    return createSelector([ResultState], (state: ResultStateModel) => {
+    let translate = inject(TranslateService);
+    return createSelector([ResultState, SystemState],
+      (state: ResultStateModel, _system: SystemStateModel) => {
         if (state.isStop && state.statusPath === '') {
           return '';
         }
         if (state.isStop) {
-          return `搜索完成，搜索到${state.result.length}个结果，总计耗时:${(state.statusTime - state.searchStartTime) / 1000}秒`;
+          return translate.instant(_('status.searchDone'), {
+            length: state.result.length,
+            seconds: (state.statusTime - state.searchStartTime) / 1000,
+          });
         } else {
-          return `正在搜索:${state.statusPath}`;
+          return translate.instant(_('status.searching'), {path: state.statusPath});
         }
       },
     );

@@ -24,6 +24,7 @@ import { UpdateFormValue } from '@ngxs/form-plugin';
 import { concatMap, from, map, tap } from 'rxjs';
 import { ClearResult } from '../result/result.action';
 import { readText, writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface ConfigStateModel {
   testNumber: number;
@@ -47,6 +48,7 @@ export interface ConfigStateModel {
 export class ConfigState implements NgxsOnInit {
   store = inject(Store);
   message = inject(NzMessageService);
+  translate = inject(TranslateService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
     let state = ctx.getState();
@@ -63,7 +65,7 @@ export class ConfigState implements NgxsOnInit {
     let id = generateUid();
     let config = {param, id};
     return from(invoke('save_config', {config})).pipe(
-      tap(() => this.message.success(`保存成功`)),
+      tap(() => this.message.success(this.translate.instant(('config.saveSuccess')))),
       concatMap(() => ctx.dispatch(new InitConfig())),
       concatMap(() => ctx.dispatch(new UseConfig(id))),
     );
@@ -95,7 +97,7 @@ export class ConfigState implements NgxsOnInit {
   saveConfig(ctx: StateContext<ConfigStateModel>, {data}: SaveConfig) {
     let config = data;
     return from(invoke('save_config', {config})).pipe(
-      tap(() => this.message.success(`保存成功`)),
+      tap(() => this.message.success(this.translate.instant(('config.saveSuccess')))),
       concatMap(() => ctx.dispatch(new InitConfig())),
     );
   }
@@ -118,14 +120,14 @@ export class ConfigState implements NgxsOnInit {
       new UpdateFormValue({path: 'search.textForm', value: {text: config.param.text}}),
       new ChangeCurrent(config.id),
     ]).pipe(tap(() => {
-      this.message.success(`配置使用成功`);
+      this.message.success(this.translate.instant(('config.useSuccess')));
     }));
   }
 
   @Action(DeleteConfig)
   deleteConfig(ctx: StateContext<ConfigStateModel>, {data}: DeleteConfig) {
     return from(invoke('delete_config', {config: data})).pipe(
-      tap(() => this.message.success(`删除成功`)),
+      tap(() => this.message.success(this.translate.instant(('config.deleteSuccess')))),
       concatMap(() => ctx.dispatch(new InitConfig())),
     );
   }
@@ -150,7 +152,7 @@ export class ConfigState implements NgxsOnInit {
     ctx.setState(newState);
     let config = ctx.getState().configs[idx];
     return from(invoke('save_config', {config})).pipe(
-      tap(() => this.message.success(`保存成功`)),
+      tap(() => this.message.success(this.translate.instant(('config.saveSuccess')))),
       concatMap(() => ctx.dispatch(new InitConfig())),
     );
   }
@@ -159,7 +161,7 @@ export class ConfigState implements NgxsOnInit {
   copyConfig(_ctx: StateContext<ConfigStateModel>, {data}: CopyConfig) {
     let json = JSON.stringify(data, null, 2);
     return from(writeText(json)).pipe(
-      tap(() => this.message.success(`复制成功`)),
+      tap(() => this.message.success(this.translate.instant(('config.copySuccess')))),
     );
   }
 
@@ -171,8 +173,9 @@ export class ConfigState implements NgxsOnInit {
           //这里要处理后返回新的对象
           return JSON.parse(text);
         } catch (e) {
-          this.message.error(`配置读取失败，不是合法json`);
-          throw new Error(`配置读取失败，不是合法json`);
+          let errorMessage = this.translate.instant(('config.jsonConvertFailed'));
+          this.message.error(errorMessage);
+          throw new Error(errorMessage);
         }
       }),
       tap(config => ctx.dispatch(new SaveConfig(config))),

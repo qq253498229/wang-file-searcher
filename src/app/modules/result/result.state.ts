@@ -1,10 +1,11 @@
-import {inject, Injectable} from '@angular/core';
-import {Action, NgxsOnInit, State, StateContext} from '@ngxs/store';
-import {Observable} from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Action, NgxsOnInit, State, StateContext } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import * as immutable from 'object-path-immutable';
-import {NzMessageService} from 'ng-zorro-antd/message';
-import {StopSearch} from '../search/search.action';
-import {ClearResult, ReceiveResult, ReceiveStatus, Start, Stop} from './result.action';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { StopSearch } from '../search/search.action';
+import { ClearResult, ReceiveResult, ReceiveStatus, Start, Stop } from './result.action';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface ResultStateModel {
   /**
@@ -35,6 +36,7 @@ export interface ResultStateModel {
 })
 export class ResultState implements NgxsOnInit {
   message = inject(NzMessageService);
+  translate = inject(TranslateService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
     let state = ctx.getState();
@@ -65,7 +67,7 @@ export class ResultState implements NgxsOnInit {
     if (!!data.payload && data.payload.is_done) {
       let statusTime = new Date().getTime();
       ctx.patchState({statusTime, statusPath: '0'});
-      this.message.success(`搜索完成`);
+      this.message.success(this.translate.instant(('result.searchDone')));
       return ctx.dispatch(new StopSearch());
     } else if (!!data.payload && !!data.payload.path) {
       let oldTime = ctx.getState().statusTime;

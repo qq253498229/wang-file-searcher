@@ -13,6 +13,7 @@ import {
   InitOptions,
   ResetOptions,
 } from './option.action';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface OptionStateModel {
   /**
@@ -45,6 +46,7 @@ export interface OptionStateModel {
 })
 export class OptionState implements NgxsOnInit {
   message = inject(NzMessageService);
+  translate = inject(TranslateService);
 
   ngxsOnInit(ctx: StateContext<any>): void {
     let state = ctx.getState();
@@ -86,7 +88,7 @@ export class OptionState implements NgxsOnInit {
 
   addWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', input: string) {
     if (ctx.getState()[type].findIndex((s: any) => s.input === input) !== -1) {
-      this.message.info(`路径已经存在`);
+      this.message.info(this.translate.instant(('option.pathExists')));
       return;
     }
     let option = USER_HOME_FOLDER;
@@ -132,7 +134,7 @@ export class OptionState implements NgxsOnInit {
 
   changeWithCheck(ctx: StateContext<OptionStateModel>, type: 'includes' | 'excludes' | 'refines', idx: number, input: string | null) {
     if (!input || ctx.getState()[type].findIndex((s: any, i: number) => s.input === input && i !== idx) !== -1) {
-      this.message.info(`路径已经存在`);
+      this.message.info(this.translate.instant(('option.pathExists')));
       let oldOption = ctx.getState()[type][idx];
       ctx.setState(immutable.set(ctx.getState(), [type, idx], {label: '', type, input: '', flag: 'Custom'}));
       setTimeout(() => {
