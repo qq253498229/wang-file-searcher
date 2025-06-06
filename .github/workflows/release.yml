@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
       - name: 打包
         run: |
           npm ci
@@ -39,7 +44,6 @@ jobs:
           files: |
             ./1so.macos_dmg.zip
             ./1so.macos_app.zip
-          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,6 +57,11 @@ jobs:
           sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
       - name: 拉取代码
         uses: actions/checkout@v4
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
       - name: 打包
         run: |
           npm ci
@@ -76,7 +85,6 @@ jobs:
             ./1so.linux_rpm.zip
             ./1so.linux_deb.zip
             ./1so.linux_appimage.zip
-          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,6 +94,11 @@ jobs:
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          cache: npm
       - name: 打包
         run: |
           npm ci
@@ -107,6 +120,5 @@ jobs:
           files: |
             ./1so.windows_msi.zip
             ./1so.windows_nsis.zip
-          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
