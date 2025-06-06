@@ -39,6 +39,15 @@
       "wix": {
         "language": "zh-CN"
       }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlDOUU5NDY1Qjg3MUFBREQKUldUZHFuRzRaWlNlbkJkejJjTTFYeitpN3FVTnFpNzh1MGsxVlM0dnFrTVVuakZETzM3RXhlNGgK",
+      "endpoints": [
+        "https://github.com/qq253498229/wang-file-searcher/releases/latest/download/updater.json"
+      ]
     }
   }
 }

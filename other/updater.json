@@ -1,0 +1,19 @@
+{
+  "version": "",
+  "notes": "",
+  "pub_date": "",
+  "platforms": {
+    "linux-x86_64": {
+      "signature": "",
+      "url": ""
+    },
+    "windows-x86_64": {
+      "signature": "",
+      "url": ""
+    },
+    "darwin-x86_64": {
+      "signature": "",
+      "url": "https://github.com/qq253498229/wang-file-searcher/releases/download/v0.1.5/1so.macos_app.zip"
+    }
+  }
+}
