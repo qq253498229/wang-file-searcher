@@ -70,15 +70,9 @@
               编辑
             </button>
             <nz-divider nzType="vertical"></nz-divider>
-            @if (data.id === current()?.id) {
-              <button type="button" nz-button nzType="primary" nzSize="small" disabled>
-                使用
-              </button>
-            } @else {
-              <button type="button" nz-button nzType="primary" nzSize="small" (click)="useConfig(data)">
-                使用
-              </button>
-            }
+            <button type="button" nz-button nzType="primary" nzSize="small" (click)="useConfig(data)">
+              使用
+            </button>
             <nz-divider nzType="vertical"></nz-divider>
             <button type="button" nz-button nzType="primary" nzSize="small" (click)="copyConfig(data)">
               复制
